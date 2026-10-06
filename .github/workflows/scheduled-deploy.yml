@@ -1,5 +1,5 @@
 # 예약 공개한 가이드 글이 공개일에 나타나도록 매일 한 번 다시 배포합니다.
-# 저장소 Settings > Secrets and variables > Actions에 DEPLOY_HOOK_URL(Cloudflare 배포 후크 주소)을 넣어야 동작합니다.
+# 저장소 Settings > Secrets and variables > Actions에 DEPLOY_HOOK_URL(Cloudflare Workers Builds 배포 후크 주소)을 넣어야 동작합니다. 설정 방법은 README 참고.
 name: Scheduled redeploy
 
 on:
