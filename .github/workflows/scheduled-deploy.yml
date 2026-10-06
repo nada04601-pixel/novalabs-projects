@@ -1,0 +1,22 @@
+# 예약 공개한 가이드 글이 공개일에 나타나도록 매일 한 번 다시 배포합니다.
+# 저장소 Settings > Secrets and variables > Actions에 DEPLOY_HOOK_URL(Cloudflare 배포 후크 주소)을 넣어야 동작합니다.
+name: Scheduled redeploy
+
+on:
+  schedule:
+    - cron: "10 15 * * *" # 매일 00:10 (한국 시간)
+  workflow_dispatch:
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deploy hook
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "DEPLOY_HOOK_URL is not set; skipping."
+            exit 0
+          fi
+          curl -fsS -X POST "$DEPLOY_HOOK_URL"
