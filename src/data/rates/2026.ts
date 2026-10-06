@@ -23,6 +23,8 @@ export const RATES = {
   },
   localTaxRate: 0.1, // 지방소득세 = 소득세의 10%
   minimumWage: 10_320, // 2026년 최저시급(원)
+  // 구직급여 1일 상한액(원). 고용보험법 시행령으로 정하며 바뀔 수 있습니다. 하한액은 최저임금 × 80% × 소정근로시간
+  unemployment: { dailyMax: 68_100 },
   interestTax: { normal: 0.154, preferential: 0.095, exempt: 0 }, // 이자소득세(지방세 포함)
   // 주택 중개보수 상한요율(2021.10.19 시행). limit은 한도액(원), 없으면 한도 없음
   brokerage: {

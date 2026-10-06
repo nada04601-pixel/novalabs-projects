@@ -17,6 +17,11 @@ import RentTaxCreditCalculator from "@/components/RentTaxCreditCalculator";
 import AgeCalculator from "@/components/AgeCalculator";
 import PercentCalculator from "@/components/PercentCalculator";
 import VatCalculator from "@/components/VatCalculator";
+import WageConverterCalculator from "@/components/WageConverterCalculator";
+import UnemploymentCalculator from "@/components/UnemploymentCalculator";
+import SavingsGoalCalculator from "@/components/SavingsGoalCalculator";
+import AreaConverterCalculator from "@/components/AreaConverterCalculator";
+import DateCalculator from "@/components/DateCalculator";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -49,6 +54,11 @@ const calculators: Record<string, React.ReactNode> = {
   "korean-age": <AgeCalculator />,
   percent: <PercentCalculator />,
   vat: <VatCalculator />,
+  "wage-converter": <WageConverterCalculator />,
+  "unemployment-benefit": <UnemploymentCalculator />,
+  "savings-goal": <SavingsGoalCalculator />,
+  "pyeong-converter": <AreaConverterCalculator />,
+  "date-calculator": <DateCalculator />,
 };
 
 export default async function ToolPage({ params }: Props) {
