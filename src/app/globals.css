@@ -57,3 +57,22 @@ article li{margin:4px 0}
 .list p{margin:4px 0 0;color:var(--mut);font-size:14px}
 .calc h3{font-size:16px;margin:0 0 10px}
 .calc .result+h3{margin-top:28px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.chip{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 12px;font-size:14px}
+.chip button{border:0;background:none;color:var(--mut);font-size:16px;cursor:pointer;padding:0 6px;line-height:1}
+.row{display:flex;gap:8px}.row input{flex:1}
+.btn.sm{padding:9px 16px;font-size:14px;border:0;cursor:pointer;font:inherit;font-weight:700}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button.link{background:none;border:0;color:var(--acc);cursor:pointer;font:inherit;font-size:14px;padding:4px 0}
+.round{border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 12px;background:var(--bg)}
+.round legend{font-weight:700;padding:0 6px}
+.attend{margin:10px 0 4px}.attend td{text-align:center;width:64px}
+.attend input,.inline input,.transfers input{width:auto}
+.inline{flex-direction:row;align-items:center;gap:8px;color:var(--fg)}
+.transfers{list-style:none;padding:0;margin:0 0 12px}
+.transfers li{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.transfers li span{flex:1;min-width:120px}.transfers li.done span,.transfers li.done strong{color:var(--mut);text-decoration:line-through}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.actions.top{margin:0 0 4px;justify-content:flex-end}
+.moim h3:not(:first-of-type){margin-top:24px}
+.logo{white-space:nowrap}
+@media (max-width:480px){header nav a{margin-left:10px;font-size:13px}.logo{font-size:16px}}
