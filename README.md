@@ -23,7 +23,7 @@ npm run build && npm start
 3. `src/data/tools.ts`에 설명·FAQ 추가하고 `tools/[slug]/page.tsx`의 `calculators`에 컴포넌트 연결
 
 ## 애드센스 승인 절차
-1. `src/data/site.ts`의 `email`을 실제 수신 가능한 주소로 변경 (`contact@novalabs.co.kr` 메일 수신 설정 또는 개인 메일)
+1. ~~`src/data/site.ts`의 `email`을 실제 수신 가능한 주소로 변경~~ (완료: nada0460@naver.com)
 2. 배포: Cloudflare Pages (아래 "Cloudflare Pages 배포" 참고) → Custom domains에 `novalabs.co.kr` 추가
 3. Search Console에 도메인 등록 후 `https://novalabs.co.kr/sitemap.xml` 제출, 색인 생성 확인 (1~2주)
 4. 애드센스 가입 → 사이트 `novalabs.co.kr` 추가 → 게시자 ID(`ca-pub-...`) 확인
