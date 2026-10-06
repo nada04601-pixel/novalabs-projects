@@ -8,6 +8,7 @@ export default function Header() {
         <Link href="/" className="logo">{site.name}</Link>
         <nav>
           <Link href="/">계산기</Link>
+          <Link href="/moim">모임 정산</Link>
           <Link href="/guides">가이드</Link>
           <Link href="/about">소개</Link>
         </nav>
