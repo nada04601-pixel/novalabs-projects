@@ -37,17 +37,17 @@ npm run build && npm start
 ## Cloudflare Pages 배포
 `next.config.ts`의 `output: "export"`로 모든 페이지를 `out/` 폴더에 정적 HTML로 만듭니다.
 
-Workers & Pages → Create → Pages → Connect to Git → `AI-IDEA_LAB` 선택 후:
+Workers & Pages → Create → Pages → Connect to Git → `novalabs-projects` 선택 후:
 
 | 항목 | 값 |
 |---|---|
 | Framework preset | Next.js (Static HTML Export) |
-| Root directory | `projects/002-novalab-calc` |
+| Root directory | (비워 둠, 저장소 루트) |
 | Build command | `npm run build` |
 | Build output directory | `out` |
 | 환경변수 | `NEXT_PUBLIC_ADSENSE_CLIENT`, `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` (선택) |
 
-Settings → Builds → Build watch paths의 Include paths를 `projects/002-novalab-calc/*`로 지정하면 이 폴더가 바뀔 때만 배포됩니다.
+`main` 브랜치에 푸시하면 자동으로 배포되고, 다른 브랜치는 미리보기 주소로 배포됩니다.
 `NEXT_PUBLIC_` 값은 빌드할 때 HTML에 들어가므로, 바꾼 뒤에는 꼭 다시 배포하세요.
 
 ## 매년 점검
