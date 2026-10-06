@@ -20,7 +20,7 @@ npm run build && npm start
 ## 새 계산기 추가 (3단계)
 1. `src/lib/calculators/`에 계산 함수 작성
 2. `src/components/`에 입력·결과 컴포넌트 작성
-3. `src/data/tools.ts`에 설명·FAQ 추가하고 `tools/[slug]/page.tsx`의 `calculators`에 컴포넌트 연결
+3. `src/data/tools.ts`에 분류(`category`)·설명·FAQ 추가하고 `tools/[slug]/page.tsx`의 `calculators`에 컴포넌트 연결
 
 ## 애드센스 승인 절차
 1. ~~`src/data/site.ts`의 `email`을 실제 수신 가능한 주소로 변경~~ (완료: nada0460@naver.com)

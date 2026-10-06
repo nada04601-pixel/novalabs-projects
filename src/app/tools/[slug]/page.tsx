@@ -10,6 +10,13 @@ import LoanCalculator from "@/components/LoanCalculator";
 import SavingsCalculator from "@/components/SavingsCalculator";
 import WeeklyHolidayPayCalculator from "@/components/WeeklyHolidayPayCalculator";
 import BrokerageCalculator from "@/components/BrokerageCalculator";
+import AnnualLeaveCalculator from "@/components/AnnualLeaveCalculator";
+import OvertimePayCalculator from "@/components/OvertimePayCalculator";
+import RentConversionCalculator from "@/components/RentConversionCalculator";
+import RentTaxCreditCalculator from "@/components/RentTaxCreditCalculator";
+import AgeCalculator from "@/components/AgeCalculator";
+import PercentCalculator from "@/components/PercentCalculator";
+import VatCalculator from "@/components/VatCalculator";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -35,6 +42,13 @@ const calculators: Record<string, React.ReactNode> = {
   "savings-interest": <SavingsCalculator />,
   "weekly-holiday-pay": <WeeklyHolidayPayCalculator />,
   "brokerage-fee": <BrokerageCalculator />,
+  "annual-leave": <AnnualLeaveCalculator />,
+  "overtime-pay": <OvertimePayCalculator />,
+  "rent-conversion": <RentConversionCalculator />,
+  "rent-tax-credit": <RentTaxCreditCalculator />,
+  "korean-age": <AgeCalculator />,
+  percent: <PercentCalculator />,
+  vat: <VatCalculator />,
 };
 
 export default async function ToolPage({ params }: Props) {
