@@ -1,0 +1,11 @@
+// Cloudflare Workers 정적 자산 배포 설정. next build가 만든 out/ 폴더를 그대로 올립니다.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "novalabs-projects",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}
