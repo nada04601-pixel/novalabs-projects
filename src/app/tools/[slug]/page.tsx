@@ -4,6 +4,8 @@ import { getTool, tools } from "@/data/tools";
 import { RATES } from "@/data/rates/2026";
 import Link from "next/link";
 import { guidesForTool } from "@/data/guides";
+import ToolSidebar from "@/components/ToolSidebar";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import NetSalaryCalculator from "@/components/NetSalaryCalculator";
 import SeveranceCalculator from "@/components/SeveranceCalculator";
 import LoanCalculator from "@/components/LoanCalculator";
@@ -67,7 +69,11 @@ export default async function ToolPage({ params }: Props) {
   const related = guidesForTool(tool.slug);
 
   return (
-    <article className="w page">
+    <div className="w wide page with-side">
+      <ToolSidebar current={`/tools/${tool.slug}`} />
+      <article>
+      <Breadcrumbs items={[{ label: "계산기", href: "/tools" }, { label: tool.category, href: "/tools" }, { label: tool.title }]} />
+      <span className="badge">{tool.category}</span>
       <h1>{tool.title}</h1>
       <p className="lead">{tool.intro}</p>
       {calculators[tool.slug]}
@@ -116,6 +122,7 @@ export default async function ToolPage({ params }: Props) {
           }),
         }}
       />
-    </article>
+      </article>
+    </div>
   );
 }

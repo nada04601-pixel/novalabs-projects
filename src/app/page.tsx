@@ -1,29 +1,17 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CATEGORIES, tools } from "@/data/tools";
 import { guides } from "@/data/guides";
 import { site } from "@/data/site";
+import ToolBrowser from "@/components/ToolBrowser";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function Home() {
   return (
-    <div className="w page">
+    <div className="w wide page">
       <h1>{site.name}</h1>
       <p className="lead">{site.tagline}. 계산 결과와 함께 어떤 기준으로 계산했는지도 설명합니다.</p>
-      {CATEGORIES.map((cat) => (
-        <section key={cat}>
-          <h2>{cat}</h2>
-          <div className="g">
-            {tools.filter((t) => t.category === cat).map((t) => (
-              <Link key={t.slug} href={`/tools/${t.slug}`} className="c">
-                <h3>{t.title}</h3>
-                <p>{t.short}</p>
-              </Link>
-            ))}
-          </div>
-        </section>
-      ))}
+      <ToolBrowser />
 
       <h2>생활 계산 가이드</h2>
       <ul className="list">

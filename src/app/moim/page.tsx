@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import MoimSettlement from "@/components/MoimSettlement";
+import ToolSidebar from "@/components/ToolSidebar";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const faq = [
   {
@@ -34,7 +36,11 @@ export const metadata: Metadata = {
 
 export default function MoimPage() {
   return (
-    <article className="w page">
+    <div className="w wide page with-side">
+      <ToolSidebar current="/moim" />
+      <article>
+      <Breadcrumbs items={[{ label: "계산기", href: "/tools" }, { label: "생활", href: "/tools" }, { label: "모임 정산 계산기" }]} />
+      <span className="badge">생활</span>
       <h1>모임 정산 계산기</h1>
       <p className="lead">
         1차는 다 같이, 2차는 일부만, 술은 마신 사람끼리. 차수별로 누가 참석했고 누가 결제했는지만 넣으면 각자 보낼 돈을 계산하고 송금 횟수를 최소로 줄여 줍니다. 가입 없이 링크로 공유하세요.
@@ -81,6 +87,7 @@ export default function MoimPage() {
           }),
         }}
       />
-    </article>
+      </article>
+    </div>
   );
 }
