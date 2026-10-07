@@ -211,3 +211,19 @@ a.btn.sm{display:inline-block;text-decoration:none}
 .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:0}
 .stats div{background:var(--bg);border-radius:10px;padding:10px 12px}
 .stats dt{font-size:13px;color:var(--mut)}.stats dd{margin:2px 0 0;font-weight:700;font-variant-numeric:tabular-nums}
+/* 설명 팝업(InfoTip) */
+.lab{display:inline-flex;align-items:center;gap:4px}
+.tip{position:static;display:inline-flex}
+label:has(.tip),.tip-wrap{position:relative}
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:0;border-radius:50%;background:none;color:var(--acc);cursor:pointer}
+.tip-btn:hover,.tip-btn[aria-expanded="true"]{background:var(--soft)}
+.tip-btn:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.tip-pop{position:absolute;left:0;top:calc(100% - 4px);z-index:30;display:block;width:min(340px,100%);min-width:min(260px,calc(100vw - 48px));background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(15,23,42,.16);padding:12px 14px;font-size:14px;line-height:1.65;text-align:left;cursor:auto}
+.tip-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.tip-head strong{font-size:14px}
+.tip-close{border:0;background:none;color:var(--mut);font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
+.tip-body{display:block;color:var(--fg)}
+.tip-body b{font-weight:700}
+.tip-body .tip-list{display:block;margin-top:6px}
+.tip-body .tip-list>span{display:block;padding-left:12px;position:relative}
+.tip-body .tip-list>span::before{content:"·";position:absolute;left:2px}
