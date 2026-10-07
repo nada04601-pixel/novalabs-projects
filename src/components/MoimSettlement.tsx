@@ -2,9 +2,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { ceil100, settle } from "@/lib/calculators/settlement";
 import {
-  decodeState,
+  decodeLink,
   emptyRound,
-  encodeState,
+  encodeLink,
   MOIM_LIMITS,
   removeMember,
   sampleState,
@@ -30,19 +30,37 @@ export default function MoimSettlement() {
   const [loaded, setLoaded] = useState(false);
   const [newName, setNewName] = useState("");
   const [notice, setNotice] = useState("");
+  const [link, setLink] = useState("");
 
-  // 링크(#d=...)에 담긴 정산이 있으면 불러옵니다.
+  // 링크(#z=... 또는 예전 형식 #d=...)에 담긴 정산이 있으면 불러옵니다.
   useEffect(() => {
-    const fromLink = decodeState(window.location.hash);
-    if (fromLink) setS(fromLink);
-    setLoaded(true);
+    let alive = true;
+    decodeLink(window.location.hash).then((fromLink) => {
+      if (!alive) return;
+      if (fromLink) setS(fromLink);
+      setLoaded(true);
+    });
+    return () => {
+      alive = false;
+    };
   }, []);
 
-  // 입력이 바뀔 때마다 주소에 반영해, 지금 주소가 곧 공유 링크가 되게 합니다.
+  // 입력이 바뀔 때마다 압축한 링크를 주소에 반영해, 지금 주소가 곧 공유 링크가 되게 합니다.
+  // 복사 버튼은 미리 만들어 둔 링크를 바로 쓰므로 Safari에서도 클립보드 복사가 막히지 않습니다.
   useEffect(() => {
     if (!loaded) return;
-    window.history.replaceState(null, "", `#d=${encodeState(s)}`);
+    let alive = true;
+    encodeLink(s).then((hash) => {
+      if (!alive) return;
+      window.history.replaceState(null, "", `#${hash}`);
+      setLink(window.location.href);
+    });
+    return () => {
+      alive = false;
+    };
   }, [s, loaded]);
+
+  const shareLink = () => link || window.location.href;
 
   const r = useMemo(() => settle(s.members.length, s.rounds), [s.members.length, s.rounds]);
   const name = (i: number) => s.members[i] || `참여자 ${i + 1}`;
@@ -77,7 +95,7 @@ export default function MoimSettlement() {
     lines.push("", "보낼 돈");
     r.transfers.forEach((t) => lines.push(`· ${name(t.from)} → ${name(t.to)} ${won(shown(t.amount))}`));
     if (s.bank) lines.push("", `받는 곳: ${s.bank}`);
-    lines.push("", `정산 내역: ${window.location.href}`);
+    lines.push("", `정산 내역: ${shareLink()}`);
     return lines.join("\n");
   };
 
@@ -85,7 +103,7 @@ export default function MoimSettlement() {
     const lines = [`[${s.title || "모임"}] 아직 정산이 안 된 분들께 알려드려요 🙏`, ""];
     unpaid.forEach((t) => lines.push(`· ${name(t.from)} → ${name(t.to)} ${won(shown(t.amount))}`));
     if (s.bank) lines.push("", `받는 곳: ${s.bank}`);
-    lines.push("", `보낸 뒤 링크에서 '보냈어요'를 눌러 주세요: ${window.location.href}`);
+    lines.push("", `보낸 뒤 링크에서 '보냈어요'를 눌러 주세요: ${shareLink()}`);
     return lines.join("\n");
   };
 
@@ -252,7 +270,7 @@ export default function MoimSettlement() {
         </label>
 
         <div className="actions">
-          <button type="button" className="btn sm" onClick={async () => (await copy(window.location.href)) && flash("링크를 복사했어요")}>
+          <button type="button" className="btn sm" onClick={async () => (await copy(shareLink())) && flash("링크를 복사했어요")}>
             정산 링크 복사
           </button>
           <button type="button" className="btn sm" onClick={async () => (await copy(summaryText())) && flash("정산 안내를 복사했어요")}>
