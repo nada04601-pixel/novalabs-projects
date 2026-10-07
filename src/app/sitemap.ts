@@ -7,7 +7,7 @@ export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const pages = ["", "/moim", "/guides", "/about", "/contact", "/terms", "/privacy"].map((p) => ({
+  const pages = ["", "/tools", "/moim", "/guides", "/about", "/contact", "/terms", "/privacy"].map((p) => ({
     url: `${site.url}${p}`,
     lastModified: now,
   }));

@@ -17,6 +17,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - `src/data/guides.ts` 가이드 글 (`/guides/[slug]`), `tool` 필드로 계산기 페이지와 서로 연결
 - `src/app/ads.txt/route.ts` 게시자 ID가 설정되면 `/ads.txt` 생성
 - `src/app/tools/[slug]/page.tsx` 도구 페이지 (슬러그와 컴포넌트 연결)
+- `src/data/nav.ts` 메뉴·검색·사이드바가 함께 쓰는 도구 목록 (계산기 + 모임 정산). 헤더의 계산기 메뉴, 홈 검색(`ToolBrowser`), 계산기 페이지 왼쪽 메뉴(`ToolSidebar`)가 여기서 자동으로 만들어짐
 - `src/app/moim/` 모임 정산 계산기. 입력 상태를 공유 링크(`#d=…`)에 담아 서버 없이 동작 (`src/lib/moimState.ts`, `src/lib/calculators/settlement.ts`)
 
 ## 새 계산기 추가 (3단계)

@@ -18,8 +18,15 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, view
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <head>
+        {/* 저장된 글자 크기·화면 설정을 첫 화면 그리기 전에 적용해 깜빡임을 막습니다. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{var d=JSON.parse(localStorage.getItem("nl-display")||"{}"),e=document.documentElement;if(d.size==="lg"||d.size==="xl")e.setAttribute("data-fs",d.size);if(d.theme==="light"||d.theme==="dark")e.setAttribute("data-theme",d.theme)}catch(_){}',
+          }}
+        />
         {/* next/script는 data-nscript 속성을 붙여 애드센스 경고가 나므로 일반 script 태그를 씁니다.
             ID가 비어 있을 때 빈 문자열이 <head>에 텍스트로 들어가지 않도록 null을 반환합니다. */}
         {site.adsenseClient ? (

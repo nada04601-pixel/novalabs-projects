@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getGuide, guides } from "@/data/guides";
 import { getTool } from "@/data/tools";
 import { site } from "@/data/site";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -30,6 +31,7 @@ export default async function GuidePage({ params }: Props) {
 
   return (
     <article className="w page">
+      <Breadcrumbs items={[{ label: "가이드", href: "/guides" }, { label: guide.title }]} />
       <h1>{guide.title}</h1>
       <p className="meta">
         <time dateTime={guide.date}>{guide.date.replaceAll("-", ".")}</time> · {site.name}
