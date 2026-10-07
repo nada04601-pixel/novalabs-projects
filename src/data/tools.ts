@@ -1089,7 +1089,7 @@ export const tools: Tool[] = [
   {
     slug: "qr-code",
     category: "디지털 도구",
-    title: "QR코드 만들기",
+    title: "QR 코드 생성기",
     short: "주소, 글, 와이파이, 전화번호를 QR코드로 만들어 PNG·SVG로 내려받습니다.",
     metaDescription:
       "웹 주소, 글, 와이파이 접속 정보, 전화·문자를 QR코드로 바로 만드는 무료 QR코드 생성기. 색과 크기, 오류 복원 수준을 고르고 PNG나 SVG로 내려받을 수 있으며 만료 기간이 없습니다.",
