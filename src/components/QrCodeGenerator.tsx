@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import InfoTip from "@/components/InfoTip";
 import { contrastRatio, isInverted, normalizeUrlOrText, smsPayload, telPayload, wifiPayload, type WifiSecurity } from "@/lib/tools/qr";
 
 type Kind = "text" | "wifi" | "tel" | "sms";
@@ -78,16 +79,35 @@ export default function QrCodeGenerator() {
       </div>
 
       {kind === "text" && (
-        <label>담을 주소나 글
+        <label><span className="lab">담을 주소나 글
+          <InfoTip title="담을 주소나 글">
+            웹사이트 주소(URL)를 넣으면 QR코드를 찍었을 때 그 페이지가 열립니다. <b>novalabs.co.kr</b>처럼 앞부분을 빼고 넣어도 https://를 자동으로 붙여 줍니다. 주소가 아닌 글을 넣으면 찍었을 때 글이 그대로 화면에 표시됩니다.
+          </InfoTip></span>
           <textarea rows={3} maxLength={1500} value={text} onChange={(e) => setText(e.target.value)} placeholder="https://example.com 또는 전하고 싶은 글" />
         </label>
       )}
       {kind === "wifi" && (
         <div className="fields">
-          <label>네트워크 이름 (SSID)
+          <label><span className="lab">네트워크 이름 (SSID)
+            <InfoTip title="SSID(네트워크 이름)란?">
+              SSID는 와이파이 목록에 보이는 <b>와이파이 이름</b>입니다. 예: iptime, KT_GiGA_5G, U+Net1234
+              <span className="tip-list">
+                <span>휴대폰이 그 와이파이에 연결돼 있다면 <b>설정 → Wi-Fi</b>에서 연결된 이름을 그대로 적으세요.</span>
+                <span>공유기 바닥이나 뒷면 스티커의 <b>SSID</b> 또는 <b>네트워크 이름</b> 항목에도 적혀 있습니다.</span>
+                <span>대소문자, 띄어쓰기, 밑줄(_)까지 똑같이 적어야 합니다.</span>
+                <span>이름 끝에 _5G가 붙은 것과 안 붙은 것이 따로 있다면 손님이 쓸 쪽 하나를 고르세요.</span>
+              </span>
+            </InfoTip></span>
             <input value={ssid} maxLength={32} onChange={(e) => setSsid(e.target.value)} />
           </label>
-          <label>보안 방식
+          <label><span className="lab">보안 방식
+            <InfoTip title="보안 방식 고르기">
+              와이파이 비밀번호를 지키는 암호화 방식입니다. 요즘 공유기는 거의 모두 <b>WPA/WPA2/WPA3</b>이니, 잘 모르겠다면 그대로 두세요.
+              <span className="tip-list">
+                <span><b>WEP</b>: 10년 이상 된 공유기에서만 쓰는 오래된 방식입니다.</span>
+                <span><b>암호 없음</b>: 비밀번호 없이 누구나 접속하는 와이파이일 때 고릅니다.</span>
+              </span>
+            </InfoTip></span>
             <select value={sec} onChange={(e) => setSec(e.target.value as WifiSecurity)}>
               <option value="WPA">WPA/WPA2/WPA3</option>
               <option value="WEP">WEP</option>
@@ -95,19 +115,29 @@ export default function QrCodeGenerator() {
             </select>
           </label>
           {sec !== "nopass" && (
-            <label>비밀번호
+            <label><span className="lab">비밀번호
+              <InfoTip title="와이파이 비밀번호">
+                와이파이에 접속할 때 넣는 비밀번호입니다. 공유기 스티커에 <b>비밀번호</b>, <b>Password</b>, <b>WPA Key</b>, <b>무선 키</b> 등으로 적혀 있습니다. 대소문자를 구분하니 정확히 적어 주세요. QR코드를 찍은 사람은 비밀번호를 볼 수 있으니, 가능하면 손님용 와이파이를 따로 만들어 쓰세요.
+              </InfoTip></span>
               <input value={wpass} maxLength={63} onChange={(e) => setWpass(e.target.value)} />
             </label>
           )}
           <label className="inline">
             <input type="checkbox" checked={hidden} onChange={(e) => setHidden(e.target.checked)} />
             숨겨진 네트워크
+            <InfoTip title="숨겨진 네트워크란?">
+              공유기 설정에서 이름을 숨겨 와이파이 목록에 나타나지 않는 네트워크입니다. 휴대폰 와이파이 목록에 이름이 보인다면 <b>체크하지 마세요</b>. 목록에 없는데 이름을 직접 입력해서 접속하는 경우에만 체크합니다.
+            </InfoTip>
           </label>
         </div>
       )}
       {(kind === "tel" || kind === "sms") && (
         <div className="fields">
-          <label>전화번호
+          <label><span className="lab">전화번호
+            <InfoTip title="전화·문자 QR코드">
+              {kind === "tel" ? "QR코드를 찍으면 이 번호로 전화 걸기 화면이 열립니다. 바로 전화가 걸리지는 않고, 찍은 사람이 통화 버튼을 눌러야 걸립니다." : "QR코드를 찍으면 받는 사람 번호와 미리 적은 내용이 채워진 문자 화면이 열립니다. 찍은 사람이 전송을 눌러야 보내집니다."}{" "}
+              하이픈(-)이나 띄어쓰기는 넣어도 자동으로 빠집니다.
+            </InfoTip></span>
             <input inputMode="tel" value={phone} maxLength={20} placeholder="010-1234-5678" onChange={(e) => setPhone(e.target.value)} />
           </label>
           {kind === "sms" && (
@@ -120,12 +150,23 @@ export default function QrCodeGenerator() {
 
       <h3 className="sub">모양</h3>
       <div className="fields">
-        <label>오류 복원 수준
+        <label><span className="lab">오류 복원 수준
+          <InfoTip title="오류 복원 수준이란?">
+            QR코드 일부가 가려지거나 더러워져도 읽힐 수 있게 넣는 여유분입니다. 높을수록 튼튼하지만 점이 촘촘해집니다.
+            <span className="tip-list">
+              <span><b>보통</b>: 화면, 실내 인쇄물에 알맞습니다(기본값).</span>
+              <span><b>높음</b> 이상: 야외 게시물, 스티커처럼 긁히거나 젖을 수 있는 곳에 권합니다.</span>
+              <span><b>낮음</b>: 내용이 길어 QR코드가 너무 촘촘할 때 씁니다.</span>
+            </span>
+          </InfoTip></span>
           <select value={level} onChange={(e) => setLevel(e.target.value as typeof level)}>
             {LEVELS.map((l) => <option key={l.v} value={l.v}>{l.label}</option>)}
           </select>
         </label>
-        <label>크기 (PNG)
+        <label><span className="lab">크기 (PNG)
+          <InfoTip title="이미지 크기">
+            PNG 이미지의 가로·세로 픽셀 수입니다. 화면이나 메신저에 올릴 때는 512px, 포스터처럼 크게 인쇄할 때는 1024px을 고르세요. 아주 크게 인쇄하거나 디자인 프로그램에서 쓸 때는 크기와 상관없이 선명한 <b>SVG 내려받기</b>를 권합니다.
+          </InfoTip></span>
           <select value={size} onChange={(e) => setSize(Number(e.target.value))}>
             {[256, 512, 1024].map((n) => <option key={n} value={n}>{n} × {n}px</option>)}
           </select>
