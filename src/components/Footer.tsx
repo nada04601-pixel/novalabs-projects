@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { site } from "@/data/site";
+import InstallApp from "@/components/InstallApp";
 
 export default function Footer() {
   return (
@@ -11,6 +12,7 @@ export default function Footer() {
           <Link href="/terms">이용약관</Link>
           <Link href="/privacy">개인정보처리방침</Link>
         </nav>
+        <InstallApp />
         <p>계산 결과는 참고용이며 실제 금액과 다를 수 있습니다. 중요한 결정 전에는 공식 기관이나 전문가에게 확인하세요.</p>
         <p>© {site.year} {site.name} ({site.domain})</p>
       </div>
