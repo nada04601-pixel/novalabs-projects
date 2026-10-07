@@ -10,13 +10,19 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: { default: `${site.name} | ${site.tagline}`, template: `%s | ${site.name}` },
   description: site.description,
+  appleWebApp: { title: site.name, statusBarStyle: "default" },
   openGraph: { siteName: site.name, type: "website", locale: "ko_KR" },
   ...(site.googleVerification && { verification: { google: site.googleVerification } }),
   // 애드센스 사이트 소유권 확인용 메타 태그
   ...(site.adsenseClient && { other: { "google-adsense-account": site.adsenseClient } }),
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1020" },
+  ],
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
