@@ -38,6 +38,7 @@ import PdfCompressor from "@/components/PdfCompressor";
 import TypingTest from "@/components/TypingTest";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
+import CharacterCounter from "@/components/CharacterCounter";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -89,6 +90,7 @@ const calculators: Record<string, React.ReactNode> = {
   "typing-test": <TypingTest />,
   "password-generator": <PasswordGenerator />,
   "qr-code": <QrCodeGenerator />,
+  "character-counter": <CharacterCounter />,
 };
 
 export default async function ToolPage({ params }: Props) {

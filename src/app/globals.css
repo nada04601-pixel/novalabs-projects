@@ -204,3 +204,10 @@ input[type="range"]{padding:0;border:0;background:none;accent-color:var(--acc)}
 .drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
 a.btn.sm{display:inline-block;text-decoration:none}
 .calc .actions+h3{margin-top:24px}
+.fields.limit{margin-top:14px}
+.big strong .of{display:inline;font-size:16px;color:var(--mut);letter-spacing:0;font-weight:500}
+.fillbar{height:8px;background:var(--card);border-radius:999px;overflow:hidden;max-width:320px;margin:10px auto 6px}
+.fillbar i{display:block;height:100%;background:var(--acc);border-radius:999px}.fillbar.over i{background:#ef4444}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:0}
+.stats div{background:var(--bg);border-radius:10px;padding:10px 12px}
+.stats dt{font-size:13px;color:var(--mut)}.stats dd{margin:2px 0 0;font-weight:700;font-variant-numeric:tabular-nums}

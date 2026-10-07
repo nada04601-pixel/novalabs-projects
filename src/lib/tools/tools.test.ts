@@ -100,3 +100,37 @@ describe("파일 크기", () => {
     expect(compressedName("보고서.PDF")).toBe("보고서-압축.pdf");
   });
 });
+
+import { graphemes, legacyBytes, manuscriptPages, neisBytes, textStats, utf8Bytes } from "./textCount";
+
+describe("글자수 세기", () => {
+  it("공백 포함·제외와 단어·줄·문단", () => {
+    const s = textStats("안녕 하세요\nHello world\n\n둘째 문단");
+    expect(s.chars).toBe(6 + 11 + 5);
+    expect(s.charsNoSpace).toBe(5 + 10 + 4);
+    expect(s.words).toBe(6);
+    expect(s.lines).toBe(4);
+    expect(s.paragraphs).toBe(2);
+    expect(s.hangul).toBe(9);
+  });
+  it("빈 글", () => {
+    expect(textStats("")).toMatchObject({ chars: 0, words: 0, lines: 0, paragraphs: 0 });
+    expect(textStats("   ").words).toBe(0);
+  });
+  it("이모지와 결합 문자는 한 글자", () => {
+    expect(graphemes("👍🏻a").length).toBe(2);
+    expect(textStats("👨‍👩‍👧").chars).toBe(1);
+  });
+  it("바이트 기준", () => {
+    expect(neisBytes("가a 1")).toBe(3 + 1 + 1 + 1);
+    expect(neisBytes("가\n나")).toBe(3 + 2 + 3);
+    expect(neisBytes("가\r\n나")).toBe(8);
+    expect(legacyBytes("가a\n")).toBe(2 + 1 + 2);
+    expect(utf8Bytes("가a")).toBe(4);
+  });
+  it("원고지 매수", () => {
+    expect(manuscriptPages(0)).toBe(0);
+    expect(manuscriptPages(200)).toBe(1);
+    expect(manuscriptPages(201)).toBe(2);
+  });
+});
