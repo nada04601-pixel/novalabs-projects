@@ -27,6 +27,8 @@ export default async function GuidePage({ params }: Props) {
   const guide = getGuide((await params).slug);
   if (!guide) notFound();
   const tool = guide.tool ? getTool(guide.tool) : undefined;
+  // 모임 정산은 /tools 아래가 아닌 /moim에 있습니다.
+  const toolLink = guide.tool === "moim" ? { href: "/moim", title: "모임 정산 계산기" } : tool && { href: `/tools/${tool.slug}`, title: tool.title };
   const others = guides.filter((g) => g.slug !== guide.slug && g.tool === guide.tool).slice(0, 3);
 
   return (
@@ -45,9 +47,9 @@ export default async function GuidePage({ params }: Props) {
         </section>
       ))}
 
-      {tool && (
+      {toolLink && (
         <p>
-          <Link className="btn" href={`/tools/${tool.slug}`}>{tool.title} 바로가기</Link>
+          <Link className="btn" href={toolLink.href}>{toolLink.title} 바로가기</Link>
         </p>
       )}
 
