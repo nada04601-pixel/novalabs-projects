@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { site } from "@/data/site";
 import { navGroups } from "@/data/nav";
 import DisplaySettings from "@/components/DisplaySettings";
+import Logo from "@/components/Logo";
 
 const MENU = [
   { href: "/", label: "홈" },
@@ -40,7 +40,7 @@ export default function Header() {
   return (
     <header>
       <div className="w wide top">
-        <Link href="/" className="logo">{site.name}</Link>
+        <Logo />
         <DisplaySettings />
       </div>
       <div className="w wide menu" ref={wrap}>
