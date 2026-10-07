@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+// Pretendard(SIL OFL 1.1)를 사이트에 직접 포함합니다. 화면에 쓰인 글자 범위의 파일만 내려받는 분할 버전입니다.
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";

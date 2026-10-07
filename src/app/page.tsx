@@ -9,8 +9,11 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
 export default function Home() {
   return (
     <div className="w wide page">
-      <h1>{site.name}</h1>
-      <p className="lead">{site.tagline}. 계산 결과와 함께 어떤 기준으로 계산했는지도 설명합니다.</p>
+      <section className="hero">
+        <span className="eyebrow">{site.name}</span>
+        <h1>월급부터 대출까지,<br />헷갈리는 계산을 쉽게</h1>
+        <p className="lead">계산 결과와 함께 어떤 기준으로 계산했는지도 설명합니다. 회원가입 없이 바로 쓰고, 입력한 값은 서버로 보내지 않습니다.</p>
+      </section>
       <ToolBrowser />
 
       <h2>생활 계산 가이드</h2>
