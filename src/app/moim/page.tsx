@@ -3,6 +3,7 @@ import Link from "next/link";
 import MoimSettlement from "@/components/MoimSettlement";
 import ToolSidebar from "@/components/ToolSidebar";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { guidesForTool } from "@/data/guides";
 
 const faq = [
   {
@@ -35,6 +36,7 @@ export const metadata: Metadata = {
 };
 
 export default function MoimPage() {
+  const related = guidesForTool("moim");
   return (
     <div className="w wide page with-side">
       <ToolSidebar current="/moim" />
@@ -72,6 +74,15 @@ export default function MoimPage() {
           </details>
         ))}
       </section>
+
+      {related.length > 0 && (
+        <aside className="related">
+          <h2>관련 가이드</h2>
+          <ul>
+            {related.map((g) => <li key={g.slug}><Link href={`/guides/${g.slug}`}>{g.title}</Link></li>)}
+          </ul>
+        </aside>
+      )}
 
       <p className="note">
         단순히 금액을 인원수로 나누기만 하면 된다면 <Link href="/tools/percent">퍼센트 계산기</Link>나 계산기 앱으로도 충분합니다. 이 계산기는 차수와 술값이 섞인 모임을 위해 만들었습니다.
