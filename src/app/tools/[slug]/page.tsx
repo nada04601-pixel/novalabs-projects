@@ -29,6 +29,11 @@ import TargetScoreCalculator from "@/components/TargetScoreCalculator";
 import GraduationCalculator from "@/components/GraduationCalculator";
 import AttendanceCalculator from "@/components/AttendanceCalculator";
 import FreePeriodCalculator from "@/components/FreePeriodCalculator";
+import MeetingAgendaCalculator from "@/components/MeetingAgendaCalculator";
+import TaskTimeCalculator from "@/components/TaskTimeCalculator";
+import PomodoroCalculator from "@/components/PomodoroCalculator";
+import DeadlinePlannerCalculator from "@/components/DeadlinePlannerCalculator";
+import WeeklyGoalCalculator from "@/components/WeeklyGoalCalculator";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -71,6 +76,11 @@ const calculators: Record<string, React.ReactNode> = {
   "graduation-credits": <GraduationCalculator />,
   attendance: <AttendanceCalculator />,
   "free-period": <FreePeriodCalculator />,
+  "meeting-agenda": <MeetingAgendaCalculator />,
+  "task-time": <TaskTimeCalculator />,
+  pomodoro: <PomodoroCalculator />,
+  "deadline-planner": <DeadlinePlannerCalculator />,
+  "weekly-goal": <WeeklyGoalCalculator />,
 };
 
 export default async function ToolPage({ params }: Props) {
