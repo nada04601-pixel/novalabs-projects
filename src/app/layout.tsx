@@ -4,6 +4,7 @@ import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PwaSetup from "@/components/PwaSetup";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -28,11 +29,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
-        {/* 저장된 글자 크기·화면 설정을 첫 화면 그리기 전에 적용해 깜빡임을 막습니다. */}
+        {/* 저장된 글자 크기·화면 설정을 첫 화면 그리기 전에 적용해 깜빡임을 막습니다.
+            앱 설치 이벤트는 화면 준비 전에 올 수 있어 미리 받아 둡니다(InstallApp에서 사용). */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              'try{var d=JSON.parse(localStorage.getItem("nl-display")||"{}"),e=document.documentElement;if(d.size==="lg"||d.size==="xl")e.setAttribute("data-fs",d.size);if(d.theme==="light"||d.theme==="dark")e.setAttribute("data-theme",d.theme)}catch(_){}',
+              'try{var d=JSON.parse(localStorage.getItem("nl-display")||"{}"),e=document.documentElement;if(d.size==="lg"||d.size==="xl")e.setAttribute("data-fs",d.size);if(d.theme==="light"||d.theme==="dark")e.setAttribute("data-theme",d.theme)}catch(_){}addEventListener("beforeinstallprompt",function(v){v.preventDefault();window.__installPrompt=v});',
           }}
         />
         {/* next/script는 data-nscript 속성을 붙여 애드센스 경고가 나므로 일반 script 태그를 씁니다.
@@ -49,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main>{children}</main>
         <Footer />
+        <PwaSetup />
       </body>
     </html>
   );
