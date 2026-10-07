@@ -13,7 +13,9 @@ header .menu{position:relative}
 header .menu nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 header .menu nav::-webkit-scrollbar{display:none}
 .logo{display:inline-flex;align-items:center;gap:9px;color:var(--fg);text-decoration:none}
-.logo-mark{width:30px;height:30px;flex:none}
+.logo-mark{width:34px;height:34px;flex:none}
+:root[data-theme="dark"] .logo-badge{stroke:#4f4bc4;stroke-width:.8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo-badge{stroke:#4f4bc4;stroke-width:.8}}
 .logo-text{font-size:19px;font-weight:800;letter-spacing:-.6px;line-height:1}
 .logo-text b{color:var(--acc);font-weight:700;margin-left:3px}
 footer nav a{margin-left:16px;color:var(--mut);text-decoration:none;font-size:14px}
@@ -86,7 +88,7 @@ button.link{background:none;border:0;color:var(--acc);cursor:pointer;font:inheri
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.actions.top{margin:0 0 4px;justify-content:flex-end}
 .moim h3:not(:first-of-type){margin-top:24px}
 .logo{white-space:nowrap}
-@media (max-width:480px){.logo-text{font-size:17px}.logo-mark{width:26px;height:26px}}
+@media (max-width:480px){.logo-text{font-size:17px}.logo-mark{width:30px;height:30px}}
 
 /* 넓은 레이아웃·헤더 */
 .w.wide{max-width:1120px}
