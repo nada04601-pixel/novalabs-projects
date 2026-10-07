@@ -182,3 +182,25 @@ button.link{background:none;border:0;color:var(--acc);cursor:pointer;font:inheri
 @media (max-width:560px){.weekgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 tr.rest th,tr.rest td{color:var(--mut);font-size:14px}
 .rowlist-row input:disabled{opacity:.45}
+/* 디지털 도구 */
+textarea{font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;box-sizing:border-box;resize:vertical}
+textarea:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+input[type="color"]{padding:4px;height:44px;cursor:pointer}
+input[type="range"]{padding:0;border:0;background:none;accent-color:var(--acc)}
+.calc h3.sub{margin:20px 0 10px}
+.calc .seg button{padding:9px 6px;font-size:14px}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px 14px;margin-top:14px}
+.meter{display:flex;gap:4px;max-width:220px;margin:10px auto 0}.meter i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.meter.l0 i:nth-child(-n+1){background:#ef4444}.meter.l1 i:nth-child(-n+2){background:#f59e0b}.meter.l2 i:nth-child(-n+3){background:#22c55e}.meter.l3 i{background:#16a34a}
+.pwlist{list-style:none;padding:0;margin:0}
+.pwlist li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.pwlist code{flex:1;min-width:0;overflow-wrap:anywhere;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:16px;letter-spacing:.3px}
+.qrbox{background:var(--bg);border-radius:12px;padding:16px;text-align:center}
+.qrbox canvas{max-width:min(100%,320px);height:auto!important;width:auto!important;aspect-ratio:1}
+.typing-target{background:var(--bg);border-radius:12px;padding:16px;font-size:19px;line-height:1.9;margin:0 0 14px;word-break:keep-all}
+.typing-target .ok{color:var(--acc)}.typing-target .bad{color:#ef4444;text-decoration:underline}.typing-target .current{border-bottom:2px solid var(--acc)}.typing-target .todo{color:var(--mut)}
+.drop{position:relative;border:2px dashed var(--line);border-radius:12px;padding:24px 16px;text-align:center;color:var(--fg);background:var(--bg);cursor:pointer}
+.drop:hover,.drop:focus-within{border-color:var(--acc)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+a.btn.sm{display:inline-block;text-decoration:none}
+.calc .actions+h3{margin-top:24px}

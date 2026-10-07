@@ -34,6 +34,10 @@ import TaskTimeCalculator from "@/components/TaskTimeCalculator";
 import PomodoroCalculator from "@/components/PomodoroCalculator";
 import DeadlinePlannerCalculator from "@/components/DeadlinePlannerCalculator";
 import WeeklyGoalCalculator from "@/components/WeeklyGoalCalculator";
+import PdfCompressor from "@/components/PdfCompressor";
+import TypingTest from "@/components/TypingTest";
+import PasswordGenerator from "@/components/PasswordGenerator";
+import QrCodeGenerator from "@/components/QrCodeGenerator";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -81,6 +85,10 @@ const calculators: Record<string, React.ReactNode> = {
   pomodoro: <PomodoroCalculator />,
   "deadline-planner": <DeadlinePlannerCalculator />,
   "weekly-goal": <WeeklyGoalCalculator />,
+  "pdf-compress": <PdfCompressor />,
+  "typing-test": <TypingTest />,
+  "password-generator": <PasswordGenerator />,
+  "qr-code": <QrCodeGenerator />,
 };
 
 export default async function ToolPage({ params }: Props) {
@@ -124,9 +132,13 @@ export default async function ToolPage({ params }: Props) {
         </aside>
       )}
 
-      <p className="note">
-        적용 기준: {RATES.year}년 요율(확인 {RATES.checkedAt}). 참고용 추정치이며 실제 금액은 회사, 금융회사, 관계 기관의 안내를 따릅니다.
-      </p>
+      {tool.category === "디지털 도구" ? (
+        <p className="note">모든 처리는 이 브라우저 안에서 이루어지며, 입력한 내용과 파일은 서버로 전송하거나 저장하지 않습니다.</p>
+      ) : (
+        <p className="note">
+          적용 기준: {RATES.year}년 요율(확인 {RATES.checkedAt}). 참고용 추정치이며 실제 금액은 회사, 금융회사, 관계 기관의 안내를 따릅니다.
+        </p>
+      )}
 
       <script
         type="application/ld+json"
