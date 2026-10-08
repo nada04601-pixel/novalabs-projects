@@ -35,6 +35,9 @@ import PomodoroCalculator from "@/components/PomodoroCalculator";
 import DeadlinePlannerCalculator from "@/components/DeadlinePlannerCalculator";
 import WeeklyGoalCalculator from "@/components/WeeklyGoalCalculator";
 import PdfCompressor from "@/components/PdfCompressor";
+import PdfMerger from "@/components/PdfMerger";
+import PdfSplitter from "@/components/PdfSplitter";
+import PdfOrganizer from "@/components/PdfOrganizer";
 import TypingTest from "@/components/TypingTest";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
@@ -87,6 +90,9 @@ const calculators: Record<string, React.ReactNode> = {
   "deadline-planner": <DeadlinePlannerCalculator />,
   "weekly-goal": <WeeklyGoalCalculator />,
   "pdf-compress": <PdfCompressor />,
+  "pdf-merge": <PdfMerger />,
+  "pdf-split": <PdfSplitter />,
+  "pdf-organize": <PdfOrganizer />,
   "typing-test": <TypingTest />,
   "password-generator": <PasswordGenerator />,
   "qr-code": <QrCodeGenerator />,
