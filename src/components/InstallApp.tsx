@@ -40,7 +40,7 @@ export default function InstallApp() {
   }, []);
 
   if (mode === "hidden") return null;
-  if (mode === "done") return <p className="install">앱으로 설치했어요. 앱 목록에서 노바랩 계산소를 찾아 실행하세요.</p>;
+  if (mode === "done") return <p className="install">앱으로 설치했어요. 앱 목록에서 노바랩 공작소를 찾아 실행하세요.</p>;
 
   if (mode === "ios") {
     return (

@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
     name: site.name,
-    short_name: "노바랩 계산소",
+    short_name: "노바랩 공작소",
     description: site.description,
     lang: "ko",
     start_url: "/",

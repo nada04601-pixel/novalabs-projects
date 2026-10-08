@@ -5,7 +5,7 @@ import { navItems } from "@/data/nav";
 
 export const metadata: Metadata = {
   title: "전체 계산기",
-  description: "연봉 실수령액, 퇴직금, 대출이자부터 만 나이, 부가세, 모임 정산까지 노바랩 계산소의 계산기를 분류별로 찾아보세요.",
+  description: "연봉 실수령액, 퇴직금, 대출이자부터 만 나이, 부가세, 모임 정산까지 노바랩 공작소의 계산기를 분류별로 찾아보세요.",
   alternates: { canonical: "/tools" },
 };
 

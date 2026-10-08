@@ -203,6 +203,29 @@ input[type="range"]{padding:0;border:0;background:none;accent-color:var(--acc)}
 .drop:hover,.drop:focus-within{border-color:var(--acc)}
 .drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
 a.btn.sm{display:inline-block;text-decoration:none}
+/* PDF 합치기·나누기·페이지 정리 */
+.filelist{list-style:none;padding:0;margin:0 0 8px;counter-reset:f}
+.filelist li{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+ol.filelist li::before{counter-increment:f;content:counter(f);flex:none;width:24px;height:24px;border-radius:50%;background:var(--soft);color:var(--acc);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.filelist li.bad{opacity:.6}
+.fname{flex:1;min-width:0;display:flex;flex-direction:column}
+.fname b{font-weight:600;overflow-wrap:anywhere}
+.fname small{color:var(--mut);font-size:13px}
+.fname .err{color:#b45309}
+.ctrl{display:flex;gap:4px;flex:none}
+.ctrl button{font:inherit;font-size:15px;min-width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer}
+.ctrl button:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.ctrl button:disabled{opacity:.35;cursor:not-allowed}
+.list-head .actions.top{display:flex;gap:12px;margin:0}
+.pagegrid{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.pagegrid li{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;margin:0}
+.thumb{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--card);border-radius:8px;overflow:hidden}
+.thumb img{max-width:100%;max-height:100%;box-shadow:0 1px 4px rgba(15,23,42,.18);transition:transform .2s}
+.pno{font-weight:700;font-size:14px}.pno small{font-weight:400;color:var(--mut);font-size:12px}
+.pagegrid .ctrl{flex-wrap:wrap;justify-content:center}
+.pagegrid .ctrl button{min-width:28px;height:30px;font-size:14px}
+.pagegrid .ctrl button{padding:0}
+@media (max-width:480px){.pagegrid{grid-template-columns:repeat(2,1fr);gap:8px}.pagegrid li{padding:8px}.pagegrid .ctrl{flex-wrap:nowrap;width:100%;gap:3px}.pagegrid .ctrl button{flex:1;min-width:0;height:34px}.list-head{flex-wrap:wrap;gap:4px}}
 .calc .actions+h3{margin-top:24px}
 .fields.limit{margin-top:14px}
 .big strong .of{display:inline;font-size:16px;color:var(--mut);letter-spacing:0;font-weight:500}

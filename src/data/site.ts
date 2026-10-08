@@ -1,10 +1,10 @@
 export const site = {
-  name: "노바랩 계산소",
+  name: "노바랩 공작소",
   domain: "novalabs.co.kr",
   url: "https://novalabs.co.kr",
-  tagline: "월급부터 대출까지, 헷갈리는 계산을 쉽게",
+  tagline: "계산부터 문서까지, 자주 쓰는 도구를 한곳에",
   description:
-    "연봉 실수령액, 퇴직금, 대출이자처럼 생활에 필요한 계산을 무료로 해보고 계산 기준까지 확인할 수 있는 노바랩 계산소입니다.",
+    "연봉 실수령액, 퇴직금, 대출이자 같은 생활 계산부터 PDF 용량 줄이기 같은 문서 작업까지, 자주 쓰는 도구를 무료로 바로 쓸 수 있는 노바랩 공작소입니다.",
   email: "nada0460@naver.com",
   year: 2026,
   // 애드센스 게시자 ID(ca-pub-로 시작). 비워두면 광고 스크립트와 ads.txt가 나가지 않습니다.
