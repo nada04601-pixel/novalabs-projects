@@ -48,7 +48,7 @@ export default function Logo() {
     <Link href="/" className="logo" aria-label={`${site.name} 홈`}>
       <LogoMark />
       <span className="logo-text">
-        노바랩<b>계산소</b>
+        노바랩<b>공작소</b>
       </span>
     </Link>
   );

@@ -1,4 +1,4 @@
-# 노바랩 계산소 (novalabs.co.kr)
+# 노바랩 공작소 (novalabs.co.kr)
 
 Next.js (App Router) + TypeScript 기반 계산기 모음 사이트입니다.
 
