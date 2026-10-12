@@ -225,6 +225,11 @@ ol.filelist li::before{counter-increment:f;content:counter(f);flex:none;width:24
 .pagegrid .ctrl{flex-wrap:wrap;justify-content:center}
 .pagegrid .ctrl button{min-width:28px;height:30px;font-size:14px}
 .pagegrid .ctrl button{padding:0}
+.pagegrid li.bad{opacity:.6}
+.tname{font-size:12px;color:var(--mut);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+.tname .err{color:#b45309;white-space:normal}
+.pagegrid a.btn.sm{padding:6px 12px;font-size:13px}
+.result .pagegrid{margin:14px 0 8px}
 @media (max-width:480px){.pagegrid{grid-template-columns:repeat(2,1fr);gap:8px}.pagegrid li{padding:8px}.pagegrid .ctrl{flex-wrap:nowrap;width:100%;gap:3px}.pagegrid .ctrl button{flex:1;min-width:0;height:34px}.list-head{flex-wrap:wrap;gap:4px}}
 .calc .actions+h3{margin-top:24px}
 .fields.limit{margin-top:14px}

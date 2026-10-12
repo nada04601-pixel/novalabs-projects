@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { loadPdfjs } from "@/lib/tools/pdfjs";
 import { formatBytes } from "@/lib/tools/fileSize";
 import { move, normalizeAngle, PDF_MAX_BYTES, pdfBlob, pdfErrorMessage, pdfName, type PagePlan } from "@/lib/tools/pdfPlan";
 
@@ -25,8 +26,7 @@ export default function PdfOrganizer() {
   useEffect(() => () => thumbs.forEach((u) => u && URL.revokeObjectURL(u)), [thumbs]);
 
   const renderThumbs = async (data: ArrayBuffer, id: number) => {
-    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-    pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+    const pdfjs = await loadPdfjs();
     const task = pdfjs.getDocument({ data: new Uint8Array(data) });
     try {
       const doc = await task.promise;

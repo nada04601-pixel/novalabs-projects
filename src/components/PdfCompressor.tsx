@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { loadPdfjs } from "@/lib/tools/pdfjs";
 import { compressedName, formatBytes, PDF_PRESETS, reduction, renderScale, type PdfPreset } from "@/lib/tools/fileSize";
 
 type Mode = "image" | "clean";
@@ -20,8 +21,7 @@ const toJpeg = (c: HTMLCanvasElement, q: number) =>
   new Promise<Blob>((ok, fail) => c.toBlob((b) => (b ? ok(b) : fail(new Error("jpeg"))), "image/jpeg", q));
 
 async function rasterize(data: ArrayBuffer, preset: PdfPreset, onPage: (n: number, total: number) => void) {
-  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+  const pdfjs = await loadPdfjs();
   const { PDFDocument } = await import("pdf-lib");
   const task = pdfjs.getDocument({ data: new Uint8Array(data) });
   const src = await task.promise;
