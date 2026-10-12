@@ -13,7 +13,11 @@ export const metadata: Metadata = {
   description: site.description,
   appleWebApp: { title: site.name, statusBarStyle: "default" },
   openGraph: { siteName: site.name, type: "website", locale: "ko_KR" },
-  ...(site.googleVerification && { verification: { google: site.googleVerification } }),
+  // 검색엔진 사이트 소유권 확인용 메타 태그(구글 Search Console, 네이버 서치어드바이저)
+  verification: {
+    ...(site.googleVerification && { google: site.googleVerification }),
+    ...(site.naverVerification && { other: { "naver-site-verification": site.naverVerification } }),
+  },
   // 애드센스 사이트 소유권 확인용 메타 태그
   ...(site.adsenseClient && { other: { "google-adsense-account": site.adsenseClient } }),
 };

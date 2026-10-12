@@ -25,6 +25,12 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 2. `src/components/`에 입력·결과 컴포넌트 작성
 3. `src/data/tools.ts`에 분류(`category`)·설명·FAQ 추가하고 `tools/[slug]/page.tsx`의 `calculators`에 컴포넌트 연결
 
+## 네이버 검색 등록
+1. [네이버 서치어드바이저](https://searchadvisor.naver.com) → 웹마스터 도구 → 사이트 등록에 `https://novalabs.co.kr` 입력
+2. 소유 확인 방법에서 **HTML 태그**를 골라 `<meta name="naver-site-verification" content="...">`의 `content` 값만 복사
+3. Cloudflare 빌드 변수 `NEXT_PUBLIC_NAVER_SITE_VERIFICATION`에 넣고 재배포한 뒤 서치어드바이저에서 "소유확인"
+4. 요청 → 사이트맵 제출에 `https://novalabs.co.kr/sitemap.xml` 제출, 검증 → robots.txt에서 수집 허용 확인
+
 ## 애드센스 승인 절차
 1. ~~`src/data/site.ts`의 `email`을 실제 수신 가능한 주소로 변경~~ (완료: nada0460@naver.com)
 2. 배포: Cloudflare Workers (아래 "Cloudflare Workers 배포" 참고) → Settings → Domains & Routes에서 `novalabs.co.kr` 연결
@@ -63,6 +69,7 @@ Workers & Pages → `novalabs-projects` → Settings → Build:
 - Settings → Build → **Variables and secrets**에 추가
   - `NEXT_PUBLIC_ADSENSE_CLIENT`: 애드센스 게시자 ID(`ca-pub-...`)
   - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`: Search Console HTML 태그 인증값(선택)
+  - `NEXT_PUBLIC_NAVER_SITE_VERIFICATION`: 네이버 서치어드바이저 HTML 태그 인증값(선택)
 - 값을 바꾼 뒤에는 꼭 다시 배포하세요.
 
 ### 매일 자동 재배포

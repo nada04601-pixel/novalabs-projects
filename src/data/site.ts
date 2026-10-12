@@ -11,4 +11,6 @@ export const site = {
   adsenseClient: process.env.NEXT_PUBLIC_ADSENSE_CLIENT ?? "",
   // Search Console HTML 태그 인증값(content 속성 값)
   googleVerification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "",
+  // 네이버 서치어드바이저 HTML 태그 인증값(content 속성 값)
+  naverVerification: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION ?? "",
 };
