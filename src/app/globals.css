@@ -69,6 +69,9 @@ article li{margin:4px 0}
 .list a{font-weight:700;text-decoration:none;font-size:17px}
 .list p{margin:4px 0 0;color:var(--mut);font-size:14px}
 .list time{display:block;margin-top:6px;color:var(--mut);font-size:13px}
+.share{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin:32px 0 8px;padding:16px 18px;border:1px solid var(--line);border-radius:12px}
+.share span{color:var(--mut);font-size:14px}
+.share .actions{margin:0}
 .calc h3{font-size:16px;margin:0 0 10px}
 .calc .result+h3{margin-top:28px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
