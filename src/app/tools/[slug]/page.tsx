@@ -136,7 +136,7 @@ export default async function ToolPage({ params }: Props) {
         ))}
       </section>
 
-      <ShareButtons title={tool.title} path={`/tools/${tool.slug}`} />
+      <ShareButtons title={tool.title} description={tool.short} path={`/tools/${tool.slug}`} />
 
       {related.length > 0 && (
         <aside className="related">

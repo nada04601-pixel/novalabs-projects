@@ -54,7 +54,7 @@ export default async function GuidePage({ params }: Props) {
         </p>
       )}
 
-      <ShareButtons title={guide.title} path={`/guides/${guide.slug}`} />
+      <ShareButtons title={guide.title} description={guide.description} path={`/guides/${guide.slug}`} />
 
       {others.length > 0 && (
         <aside className="related">

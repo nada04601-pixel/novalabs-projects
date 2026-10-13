@@ -37,6 +37,13 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 2. `#DaumWebMasterTool:` 뒤의 값을 `src/data/site.ts`의 `daumVerification`에 넣고 재배포하면 `/robots.txt` 하단에 들어감 (완료)
 3. 웹마스터도구에서 "로봇룰 테스트" → "인증 시작하기"
 
+## 카카오톡 공유 버튼
+도구·가이드 페이지의 "카카오톡 공유" 버튼은 카카오 JavaScript 키가 있어야 나타납니다.
+1. [카카오 개발자](https://developers.kakao.com) 로그인 → 내 애플리케이션 → 애플리케이션 추가(앱 이름: 노바랩 공작소)
+2. 앱 → 플랫폼 → **Web 플랫폼 등록** → 사이트 도메인에 `https://novalabs.co.kr` 입력
+3. 앱 → 앱 키에서 **JavaScript 키**를 복사해 `src/data/site.ts`의 `kakaoJsKey`에 넣고 재배포(또는 빌드 변수 `NEXT_PUBLIC_KAKAO_JS_KEY`)
+   - JavaScript 키는 페이지에 그대로 공개되는 값이고, 등록한 도메인에서만 동작합니다. REST API 키·Admin 키는 넣지 마세요.
+
 ## 애드센스 승인 절차
 1. ~~`src/data/site.ts`의 `email`을 실제 수신 가능한 주소로 변경~~ (완료: nada0460@naver.com)
 2. 배포: Cloudflare Workers (아래 "Cloudflare Workers 배포" 참고) → Settings → Domains & Routes에서 `novalabs.co.kr` 연결
