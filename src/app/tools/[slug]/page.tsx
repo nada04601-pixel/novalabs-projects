@@ -40,6 +40,7 @@ import PdfSplitter from "@/components/PdfSplitter";
 import PdfOrganizer from "@/components/PdfOrganizer";
 import ImageToPdf from "@/components/ImageToPdf";
 import PdfToImage from "@/components/PdfToImage";
+import WatermarkRemover from "@/components/WatermarkRemover";
 import TypingTest from "@/components/TypingTest";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
@@ -98,6 +99,7 @@ const calculators: Record<string, React.ReactNode> = {
   "pdf-organize": <PdfOrganizer />,
   "jpg-to-pdf": <ImageToPdf />,
   "pdf-to-jpg": <PdfToImage />,
+  "watermark-remover": <WatermarkRemover />,
   "typing-test": <TypingTest />,
   "password-generator": <PasswordGenerator />,
   "qr-code": <QrCodeGenerator />,
