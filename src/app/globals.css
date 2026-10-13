@@ -68,6 +68,7 @@ article li{margin:4px 0}
 .list li{border-bottom:1px solid var(--line);padding:16px 0}
 .list a{font-weight:700;text-decoration:none;font-size:17px}
 .list p{margin:4px 0 0;color:var(--mut);font-size:14px}
+.list time{display:block;margin-top:6px;color:var(--mut);font-size:13px}
 .calc h3{font-size:16px;margin:0 0 10px}
 .calc .result+h3{margin-top:28px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}

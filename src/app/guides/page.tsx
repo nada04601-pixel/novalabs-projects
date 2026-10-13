@@ -18,6 +18,7 @@ export default function Guides() {
           <li key={g.slug}>
             <Link href={`/guides/${g.slug}`}>{g.title}</Link>
             <p>{g.description}</p>
+            <time dateTime={g.date}>{g.date.replaceAll("-", ".")}</time>
           </li>
         ))}
       </ul>
