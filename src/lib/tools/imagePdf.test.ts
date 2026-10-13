@@ -3,7 +3,7 @@ import { deflateSync } from "node:zlib";
 import { PDFDocument } from "pdf-lib";
 import { imagesToPdf } from "./pdfPages";
 import { imagesPdfName, jpegOrientation, pageImageName, pagesZipName, placeImage, sniffImage } from "./imagePdf";
-import { crc32, zipStore } from "./zip";
+import { crc32, uniqueNames, zipStore } from "./zip";
 
 // 4×2px 빨간 JPEG(Pillow로 만든 실제 파일)
 const JPEG = Uint8Array.from(Buffer.from(
@@ -114,6 +114,10 @@ describe("이미지 → PDF", () => {
 });
 
 describe("ZIP 묶기", () => {
+  it("겹치는 파일 이름에 번호를 붙인다(대소문자 무시)", () => {
+    expect(uniqueNames(["a-1-3쪽.pdf", "a-1-3쪽.pdf", "A-1-3쪽.PDF", "b"])).toEqual(["a-1-3쪽.pdf", "a-1-3쪽 (2).pdf", "A-1-3쪽 (3).PDF", "b"]);
+    expect(uniqueNames(["x", "x"])).toEqual(["x", "x (2)"]);
+  });
   it("CRC32를 표준대로 계산한다", () => {
     expect(crc32(new TextEncoder().encode("hello"))).toBe(0x3610a686);
   });
