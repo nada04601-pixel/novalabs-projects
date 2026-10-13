@@ -1119,7 +1119,7 @@ export const tools: Tool[] = [
   {
     slug: "jpg-to-pdf",
     category: "디지털 도구",
-    title: "JPG PDF 변환",
+    title: "이미지를 PDF로",
     short: "사진과 이미지(JPG·PNG) 여러 장을 한 PDF 파일로 바꿉니다.",
     metaDescription:
       "JPG·PNG 이미지를 서버에 올리지 않고 브라우저 안에서 PDF로 바꾸는 무료 JPG PDF 변환 도구. 여러 장을 순서대로 한 파일로 묶고, A4 크기와 여백을 고를 수 있습니다.",
@@ -1149,7 +1149,7 @@ export const tools: Tool[] = [
   {
     slug: "pdf-to-jpg",
     category: "디지털 도구",
-    title: "PDF JPG 변환",
+    title: "PDF를 이미지로",
     short: "PDF의 각 쪽을 JPG·PNG 이미지로 바꿔 내려받습니다.",
     metaDescription:
       "PDF를 서버에 올리지 않고 브라우저 안에서 JPG·PNG 이미지로 바꾸는 무료 PDF JPG 변환 도구. 화질과 쪽 범위를 고르고, 모든 쪽을 ZIP 파일 하나로 내려받을 수 있습니다.",
