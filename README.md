@@ -37,7 +37,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 2. 배포: Cloudflare Workers (아래 "Cloudflare Workers 배포" 참고) → Settings → Domains & Routes에서 `novalabs.co.kr` 연결
 3. Search Console에 도메인 등록 후 `https://novalabs.co.kr/sitemap.xml` 제출, 색인 생성 확인 (1~2주)
 4. 애드센스 가입 → 사이트 `novalabs.co.kr` 추가 → 게시자 ID(`ca-pub-...`) 확인
-5. Cloudflare Workers의 **빌드 변수** `NEXT_PUBLIC_ADSENSE_CLIENT`에 게시자 ID 입력 후 재배포 (아래 "환경변수" 참고)
+5. ~~`src/data/site.ts`의 `adsenseClient`에 게시자 ID 입력 후 재배포~~ (완료: ca-pub-6228511708822958. 빌드 변수 `NEXT_PUBLIC_ADSENSE_CLIENT`가 있으면 그 값을 우선 사용)
    - 광고 스크립트, `google-adsense-account` 메타 태그, `/ads.txt`가 자동 생성됨
 6. 애드센스에서 "사이트 확인"(메타 태그 또는 ads.txt 방식) → "검토 요청"
 7. 승인 후 애드센스 > 광고 > 자동 광고 켜기 (추가 코드 불필요)
@@ -68,7 +68,7 @@ Workers & Pages → `novalabs-projects` → Settings → Build:
 `NEXT_PUBLIC_` 값은 `next build` 때 HTML에 들어가므로 Worker 런타임 변수가 아니라 **빌드 변수**로 넣어야 합니다.
 
 - Settings → Build → **Variables and secrets**에 추가
-  - `NEXT_PUBLIC_ADSENSE_CLIENT`: 애드센스 게시자 ID(`ca-pub-...`)
+  - `NEXT_PUBLIC_ADSENSE_CLIENT`: 애드센스 게시자 ID(`ca-pub-...`, 선택, 비우면 `site.ts`의 기본값 사용)
   - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`: Search Console HTML 태그 인증값(선택)
   - `NEXT_PUBLIC_NAVER_SITE_VERIFICATION`: 네이버 서치어드바이저 HTML 태그 인증값(선택, 비우면 `site.ts`의 기본값 사용)
 - 값을 바꾼 뒤에는 꼭 다시 배포하세요.
