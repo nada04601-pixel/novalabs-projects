@@ -32,6 +32,11 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 4. 요청 → 사이트맵 제출에 `https://novalabs.co.kr/sitemap.xml` 제출, 검증 → robots.txt에서 수집 허용 확인
 5. 요청 → RSS 제출에 `https://novalabs.co.kr/rss.xml` 제출 (공개된 가이드 글 목록. 예약 글은 공개일 재배포 때 자동으로 추가됨)
 
+## 다음 검색 등록
+1. [다음 웹마스터도구](https://webmaster.daum.net)에서 `https://novalabs.co.kr` 등록 → PIN코드 발급
+2. `#DaumWebMasterTool:` 뒤의 값을 `src/data/site.ts`의 `daumVerification`에 넣고 재배포하면 `/robots.txt` 하단에 들어감 (완료)
+3. 웹마스터도구에서 "로봇룰 테스트" → "인증 시작하기"
+
 ## 애드센스 승인 절차
 1. ~~`src/data/site.ts`의 `email`을 실제 수신 가능한 주소로 변경~~ (완료: nada0460@naver.com)
 2. 배포: Cloudflare Workers (아래 "Cloudflare Workers 배포" 참고) → Settings → Domains & Routes에서 `novalabs.co.kr` 연결
