@@ -30,6 +30,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 2. 소유 확인 방법에서 **HTML 태그**를 골라 `<meta name="naver-site-verification" content="...">`의 `content` 값만 복사
 3. `src/data/site.ts`의 `naverVerification`에 넣고(또는 빌드 변수 `NEXT_PUBLIC_NAVER_SITE_VERIFICATION`) 재배포한 뒤 서치어드바이저에서 "소유확인" (완료)
 4. 요청 → 사이트맵 제출에 `https://novalabs.co.kr/sitemap.xml` 제출, 검증 → robots.txt에서 수집 허용 확인
+5. 요청 → RSS 제출에 `https://novalabs.co.kr/rss.xml` 제출 (공개된 가이드 글 목록. 예약 글은 공개일 재배포 때 자동으로 추가됨)
 
 ## 애드센스 승인 절차
 1. ~~`src/data/site.ts`의 `email`을 실제 수신 가능한 주소로 변경~~ (완료: nada0460@naver.com)
