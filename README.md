@@ -28,7 +28,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 ## 네이버 검색 등록
 1. [네이버 서치어드바이저](https://searchadvisor.naver.com) → 웹마스터 도구 → 사이트 등록에 `https://novalabs.co.kr` 입력
 2. 소유 확인 방법에서 **HTML 태그**를 골라 `<meta name="naver-site-verification" content="...">`의 `content` 값만 복사
-3. Cloudflare 빌드 변수 `NEXT_PUBLIC_NAVER_SITE_VERIFICATION`에 넣고 재배포한 뒤 서치어드바이저에서 "소유확인"
+3. `src/data/site.ts`의 `naverVerification`에 넣고(또는 빌드 변수 `NEXT_PUBLIC_NAVER_SITE_VERIFICATION`) 재배포한 뒤 서치어드바이저에서 "소유확인" (완료)
 4. 요청 → 사이트맵 제출에 `https://novalabs.co.kr/sitemap.xml` 제출, 검증 → robots.txt에서 수집 허용 확인
 
 ## 애드센스 승인 절차
@@ -69,7 +69,7 @@ Workers & Pages → `novalabs-projects` → Settings → Build:
 - Settings → Build → **Variables and secrets**에 추가
   - `NEXT_PUBLIC_ADSENSE_CLIENT`: 애드센스 게시자 ID(`ca-pub-...`)
   - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`: Search Console HTML 태그 인증값(선택)
-  - `NEXT_PUBLIC_NAVER_SITE_VERIFICATION`: 네이버 서치어드바이저 HTML 태그 인증값(선택)
+  - `NEXT_PUBLIC_NAVER_SITE_VERIFICATION`: 네이버 서치어드바이저 HTML 태그 인증값(선택, 비우면 `site.ts`의 기본값 사용)
 - 값을 바꾼 뒤에는 꼭 다시 배포하세요.
 
 ### 매일 자동 재배포
