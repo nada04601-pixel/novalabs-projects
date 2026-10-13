@@ -17,9 +17,9 @@ export default function ToolBrowser() {
   const shown = cat === "all" ? matched : matched.filter((i) => i.category === cat);
 
   return (
-    <section className="browser" aria-label="계산기 찾기">
+    <section className="browser" aria-label="도구 찾기">
       <label className="search">
-        <span>계산기 검색</span>
+        <span>도구 검색</span>
         <input
           type="search"
           value={query}
@@ -39,11 +39,11 @@ export default function ToolBrowser() {
       </div>
 
       <div className="list-head">
-        <h2>계산기 목록</h2>
+        <h2>도구 목록</h2>
         <span className="note-sm" aria-live="polite">{shown.length}개</span>
       </div>
       {shown.length === 0 ? (
-        <p className="note">찾는 계산기가 없습니다. 다른 낱말로 검색해 보세요.</p>
+        <p className="note">찾는 도구가 없습니다. 다른 낱말로 검색해 보세요.</p>
       ) : (
         <div className="g">
           {shown.map((i) => (

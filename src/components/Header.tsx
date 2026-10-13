@@ -55,7 +55,7 @@ export default function Header() {
             aria-controls="tools-menu"
             onClick={() => setOpen((v) => !v)}
           >
-            계산기 <span aria-hidden="true">{open ? "▴" : "▾"}</span>
+            도구함 <span aria-hidden="true">{open ? "▴" : "▾"}</span>
           </button>
           <Link href="/guides" className={pathname.startsWith("/guides") ? "on" : ""}>가이드</Link>
         </nav>
@@ -76,7 +76,7 @@ export default function Header() {
                   </button>
                 </li>
               ))}
-              <li><Link href="/tools" className="all">전체 계산기 보기</Link></li>
+              <li><Link href="/tools" className="all">전체 도구 보기</Link></li>
             </ul>
             <div className="mega-items">
               <p className="mega-title">{group.category}</p>
