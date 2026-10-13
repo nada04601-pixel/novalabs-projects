@@ -12,5 +12,7 @@ export const site = {
   // Search Console HTML 태그 인증값(content 속성 값)
   googleVerification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "",
   // 네이버 서치어드바이저 HTML 태그 인증값(content 속성 값). 페이지에 그대로 공개되는 값이라 코드에 둡니다.
+  // 다음 웹마스터도구 인증값(robots.txt 하단의 #DaumWebMasterTool: 뒤 값). robots.txt에 그대로 공개되는 값입니다.
+  daumVerification: "f7a076fbb14df91a7adc32085e4d53a49c0a42ae062204ce61eeb72d82a954dc:UjR58tlt8ZMRZi79BVamzQ==",
   naverVerification: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION || "97502a7fa05b10fbb9b4ed9f301c9bcd3f143822",
 };
