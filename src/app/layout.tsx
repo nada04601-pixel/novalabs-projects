@@ -33,6 +33,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
+        {/* 가이드 RSS 피드 위치를 알립니다. 페이지마다 alternates(canonical)를 따로 정해 메타데이터로 넣으면 덮어써지므로 직접 둡니다. */}
+        <link rel="alternate" type="application/rss+xml" title={`${site.name} 가이드`} href="/rss.xml" />
         {/* 저장된 글자 크기·화면 설정을 첫 화면 그리기 전에 적용해 깜빡임을 막습니다.
             앱 설치 이벤트는 화면 준비 전에 올 수 있어 미리 받아 둡니다(InstallApp에서 사용). */}
         <script
