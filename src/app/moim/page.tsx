@@ -41,7 +41,7 @@ export default function MoimPage() {
     <div className="w wide page with-side">
       <ToolSidebar current="/moim" />
       <article>
-      <Breadcrumbs items={[{ label: "계산기", href: "/tools" }, { label: "생활", href: "/tools" }, { label: "모임 정산 계산기" }]} />
+      <Breadcrumbs items={[{ label: "도구함", href: "/tools" }, { label: "생활", href: "/tools" }, { label: "모임 정산 계산기" }]} />
       <span className="badge">생활</span>
       <h1>모임 정산 계산기</h1>
       <p className="lead">

@@ -17,7 +17,7 @@ export default function Home() {
             <h1>계산부터 문서까지,<br />자주 쓰는 도구를 한곳에</h1>
             <p className="lead">계산 결과와 함께 어떤 기준으로 계산했는지도 설명합니다. 회원가입 없이 바로 쓰고, 입력한 값은 서버로 보내지 않습니다.</p>
             <div className="hero-cta">
-              <a className="btn" href="#tools">계산기 찾기</a>
+              <a className="btn" href="#tools">도구 찾기</a>
               <Link className="btn ghost" href="/moim">모임 정산하기</Link>
             </div>
           </div>

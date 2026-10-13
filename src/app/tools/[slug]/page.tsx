@@ -115,7 +115,7 @@ export default async function ToolPage({ params }: Props) {
     <div className="w wide page with-side">
       <ToolSidebar current={`/tools/${tool.slug}`} />
       <article>
-      <Breadcrumbs items={[{ label: "계산기", href: "/tools" }, { label: tool.category, href: "/tools" }, { label: tool.title }]} />
+      <Breadcrumbs items={[{ label: "도구함", href: "/tools" }, { label: tool.category, href: "/tools" }, { label: tool.title }]} />
       <span className="badge">{tool.category}</span>
       <h1>{tool.title}</h1>
       <p className="lead">{tool.intro}</p>
