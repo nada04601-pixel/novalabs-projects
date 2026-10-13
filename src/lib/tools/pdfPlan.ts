@@ -18,6 +18,9 @@ const baseName = (name: string) => name.replace(/\.pdf$/i, "") || "문서";
 // 보고서.pdf + "1-3쪽" → 보고서-1-3쪽.pdf
 export const pdfName = (name: string, suffix: string) => `${baseName(name)}-${suffix}.pdf`;
 
+// 보고서.pdf를 나눈 파일 묶음 → 보고서-나눈파일.zip
+export const splitZipName = (name: string) => `${baseName(name)}-나눈파일.zip`;
+
 export type PageRangeResult = { ok: true; groups: number[][] } | { ok: false; error: string };
 
 // "1-3, 5, 8-" 같은 입력을 쪽 번호(1부터) 묶음으로 바꿉니다. 쉼표로 나눈 묶음마다 결과 파일 하나가 됩니다.

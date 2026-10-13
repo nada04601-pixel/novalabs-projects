@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { formatBytes } from "@/lib/tools/fileSize";
-import { chunkPages, groupLabel, parsePageRanges, PDF_MAX_BYTES, pdfBlob, pdfErrorMessage, pdfName } from "@/lib/tools/pdfPlan";
+import { chunkPages, groupLabel, parsePageRanges, PDF_MAX_BYTES, pdfBlob, pdfErrorMessage, pdfName, splitZipName } from "@/lib/tools/pdfPlan";
+import { uniqueNames, zipStore } from "@/lib/tools/zip";
 
 type Mode = "ranges" | "every" | "extract";
-type Output = { url: string; name: string; size: number; pages: number };
+type Output = { url: string; name: string; size: number; pages: number; blob: Blob };
 
 const MODES: { key: Mode; label: string }[] = [
   { key: "ranges", label: "범위별로 나누기" },
@@ -21,8 +22,12 @@ export default function PdfSplitter() {
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [outputs, setOutputs] = useState<Output[]>([]);
+  const [zip, setZip] = useState<{ url: string; name: string; size: number } | null>(null);
 
   useEffect(() => () => outputs.forEach((o) => URL.revokeObjectURL(o.url)), [outputs]);
+  useEffect(() => () => { if (zip) URL.revokeObjectURL(zip.url); }, [zip]);
+  // 나눈 결과가 바뀌면 예전 ZIP은 버립니다.
+  useEffect(() => setZip(null), [outputs]);
 
   const pick = async (f: File | null) => {
     setOutputs([]);
@@ -68,14 +73,27 @@ export default function PdfSplitter() {
     try {
       const { splitPdf } = await import("@/lib/tools/pdfPages");
       const parts = await splitPdf(await file.arrayBuffer(), plan.groups);
+      const names = uniqueNames(plan.groups.map((g) => pdfName(file.name, mode === "extract" ? "추출" : groupLabel(g))));
       setOutputs(parts.map((bytes, i) => {
-        const g = plan.groups[i];
         const blob = pdfBlob(bytes);
-        const label = mode === "extract" ? "추출" : groupLabel(g);
-        return { url: URL.createObjectURL(blob), name: pdfName(file.name, label), size: blob.size, pages: g.length };
+        return { url: URL.createObjectURL(blob), name: names[i], size: blob.size, pages: plan.groups[i].length, blob };
       }));
     } catch (e) {
       setError(pdfErrorMessage(e));
+    } finally {
+      setBusy("");
+    }
+  };
+
+  const makeZip = async () => {
+    if (!file || outputs.length < 2) return;
+    setBusy("ZIP 파일로 묶는 중…");
+    try {
+      const entries = await Promise.all(outputs.map(async (o) => ({ name: o.name, data: new Uint8Array(await o.blob.arrayBuffer()) })));
+      const blob = new Blob([zipStore(entries)], { type: "application/zip" });
+      setZip({ url: URL.createObjectURL(blob), name: splitZipName(file.name), size: blob.size });
+    } catch {
+      setError("ZIP 파일을 만들지 못했습니다. 메모리가 부족할 수 있으니 파일을 하나씩 내려받아 주세요.");
     } finally {
       setBusy("");
     }
@@ -118,7 +136,7 @@ export default function PdfSplitter() {
                 : `파일 ${fileCount}개가 만들어집니다: ${plan.groups.slice(0, 6).map(groupLabel).join(", ")}${fileCount > 6 ? " …" : ""}`
               : plan?.error}
           </p>
-          {tooMany && <p className="warn">파일이 100개를 넘으면 하나씩 내려받기 번거롭습니다. 나누는 단위를 키워 보세요.</p>}
+          {tooMany && <p className="warn">한 번에 100개까지 나눌 수 있습니다. 나누는 단위를 키워 보세요.</p>}
         </>
       )}
 
@@ -131,6 +149,13 @@ export default function PdfSplitter() {
       <div className="result" aria-live="polite">
         {busy && <p className="note" role="status">{busy}</p>}
         {error && <p className="warn">{error}</p>}
+        {outputs.length > 1 && !busy && (
+          <div className="actions">
+            {zip
+              ? <a className="btn sm" href={zip.url} download={zip.name}>ZIP 내려받기 ({formatBytes(zip.size)})</a>
+              : <button type="button" className="btn sm" onClick={makeZip}>{outputs.length}개 모두 ZIP으로 묶기</button>}
+          </div>
+        )}
         {outputs.length > 0 && (
           <ul className="filelist">
             {outputs.map((o) => (
@@ -144,7 +169,7 @@ export default function PdfSplitter() {
             ))}
           </ul>
         )}
-        <p className="note">파일은 서버로 올라가지 않고 이 브라우저 안에서만 처리됩니다. 나눈 파일은 각각 내려받으세요.</p>
+        <p className="note">파일은 서버로 올라가지 않고 이 브라우저 안에서만 처리됩니다. 나눈 파일은 하나씩 받거나 ZIP 파일 하나로 묶어 받을 수 있습니다.</p>
       </div>
     </div>
   );

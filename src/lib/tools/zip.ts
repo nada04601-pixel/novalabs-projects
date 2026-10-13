@@ -25,6 +25,17 @@ function dosDateTime(d: Date) {
 
 export type ZipEntry = { name: string; data: Uint8Array };
 
+// 같은 이름이 겹치면 풀 때 앞 파일이 덮어써지므로 "이름 (2).pdf"처럼 번호를 붙입니다.
+export function uniqueNames(names: string[]): string[] {
+  const used = new Set<string>();
+  return names.map((name) => {
+    let n = name;
+    for (let i = 2; used.has(n.toLowerCase()); i++) n = name.replace(/(\.[^.]+)?$/, (ext) => ` (${i})${ext}`);
+    used.add(n.toLowerCase());
+    return n;
+  });
+}
+
 export function zipStore(entries: ZipEntry[], now = new Date()): Uint8Array<ArrayBuffer> {
   const enc = new TextEncoder();
   const { time, date } = dosDateTime(now);

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { degrees, PDFDocument } from "pdf-lib";
 import { arrangePdf, mergePdfs, splitPdf } from "./pdfPages";
-import { chunkPages, groupLabel, isEncryptedError, move, normalizeAngle, parsePageRanges, pdfName } from "./pdfPlan";
+import { chunkPages, groupLabel, isEncryptedError, move, normalizeAngle, parsePageRanges, pdfName, splitZipName } from "./pdfPlan";
 
 // 쪽마다 폭을 다르게 만들어(100, 101, …) 어느 쪽이 어디로 갔는지 확인합니다.
 async function makePdf(pages: number, startWidth = 100) {
@@ -43,6 +43,7 @@ describe("나누기 보조 함수", () => {
     expect(groupLabel([1, 3])).toBe("1,3쪽");
     expect(pdfName("보고서.PDF", "1-3쪽")).toBe("보고서-1-3쪽.pdf");
     expect(pdfName(".pdf", "합본")).toBe("문서-합본.pdf");
+    expect(splitZipName("보고서.pdf")).toBe("보고서-나눈파일.zip");
   });
   it("각도를 90도 단위로 0~270 사이에 맞추고 순서를 한 칸씩 옮긴다", () => {
     expect(normalizeAngle(-90)).toBe(270);
