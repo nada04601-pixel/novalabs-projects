@@ -1,0 +1,6 @@
+# Cloudflare Workers 정적 자산 헤더 설정.
+# 공유 미리보기 이미지(opengraph-image)는 확장자 없이 만들어져 형식을 직접 알려 줍니다.
+/opengraph-image
+  Content-Type: image/png
+/*/opengraph-image
+  Content-Type: image/png
