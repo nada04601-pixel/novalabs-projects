@@ -5,6 +5,7 @@ import { getGuide, guides } from "@/data/guides";
 import { getTool } from "@/data/tools";
 import { site } from "@/data/site";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import ShareButtons from "@/components/ShareButtons";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -52,6 +53,8 @@ export default async function GuidePage({ params }: Props) {
           <Link className="btn" href={toolLink.href}>{toolLink.title} 바로가기</Link>
         </p>
       )}
+
+      <ShareButtons title={guide.title} path={`/guides/${guide.slug}`} />
 
       {others.length > 0 && (
         <aside className="related">

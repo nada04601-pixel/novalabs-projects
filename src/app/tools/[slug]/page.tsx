@@ -44,6 +44,7 @@ import TypingTest from "@/components/TypingTest";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
 import CharacterCounter from "@/components/CharacterCounter";
+import ShareButtons from "@/components/ShareButtons";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -134,6 +135,8 @@ export default async function ToolPage({ params }: Props) {
           </details>
         ))}
       </section>
+
+      <ShareButtons title={tool.title} path={`/tools/${tool.slug}`} />
 
       {related.length > 0 && (
         <aside className="related">
