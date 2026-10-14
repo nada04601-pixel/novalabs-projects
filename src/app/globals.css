@@ -349,3 +349,12 @@ table.stores tbody th a:hover{text-decoration:underline}
 .saju-muted{color:var(--mut);font-size:13px}
 .saju-el-row.wide i{background:var(--acc)}
 .saju-card .saju-elements{margin:0 0 12px}
+.saju-luck-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin:0 0 12px;scrollbar-width:thin}
+.saju-luck{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 2px;cursor:pointer;color:var(--fg)}
+.saju-luck[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.saju-luck b{font-size:20px;line-height:1.2;color:var(--el)}
+.saju-luck small{font-size:11px;color:var(--mut);white-space:nowrap}
+.saju-luck-detail{background:var(--bg);border-radius:12px;padding:16px;margin:0 0 16px}
+.saju-luck-detail h4{margin:0 0 8px;font-size:16px}
+.saju-luck-detail p{margin:0 0 10px;font-size:15px;line-height:1.65}
+.saju-luck-detail p:last-child{margin-bottom:0}

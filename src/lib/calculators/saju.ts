@@ -88,6 +88,8 @@ export type SajuResult = {
   usedTime: { year: number; month: number; day: number; hour: number; minute: number } | null;
   adjustments: string[];
   warnings: string[];
+  // 대운 계산에 쓰는 태어난 순간(UTC 밀리초). 시간을 모르면 그날 정오(한국 시각)
+  birthUtc: number;
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -127,6 +129,24 @@ const eightChar = (c: ReturnType<typeof clockFields>, dayChange: SajuInput["dayC
   ec.setSect(dayChange === "23" ? 1 : 2);
   return ec;
 };
+
+type GanZhi = Omit<Pillar, "label">;
+
+// 천간·지지 번호로 글자와 오행, 일간 기준 십신을 채웁니다.
+const ganZhi = (s: number, b: number, dayStem: number): GanZhi => ({
+  stem: STEMS[s],
+  branch: BRANCHES[b],
+  stemKo: STEMS_KO[s],
+  branchKo: BRANCHES_KO[b],
+  stemElement: STEM_ELEMENT[s],
+  branchElement: BRANCH_ELEMENT[b],
+  stemTenGod: tenGod(dayStem, s).god,
+  branchTenGod: tenGod(dayStem, BRANCH_MAIN_STEM[b]).god,
+});
+
+// 60갑자 순번(甲子=0)
+const sexagenary = (k: number, dayStem: number) => ganZhi(((k % 60) + 60) % 60 % 10, ((k % 60) + 60) % 60 % 12, dayStem);
+const sexagenaryIndex = (s: number, b: number) => (6 * s - 5 * b + 60) % 60;
 
 const toPillar = (label: Pillar["label"], gz: string, dayStem: number): Pillar => {
   const s = STEMS.indexOf(gz[0]);
@@ -184,6 +204,7 @@ export function calcSaju(input: SajuInput): SajuResult | SajuError {
 
   let ymChar;
   let dayChar;
+  let birthUtc: number;
   let usedTime: SajuResult["usedTime"] = null;
 
   if (time) {
@@ -199,6 +220,7 @@ export function calcSaju(input: SajuInput): SajuResult | SajuError {
     }
     const local = clockFields(Math.round((utc + localOffset * 60000) / 60000) * 60000);
     usedTime = local;
+    birthUtc = utc;
     ymChar = eightChar(toChina(utc), dayChange);
     dayChar = eightChar(local, dayChange);
   } else {
@@ -207,7 +229,8 @@ export function calcSaju(input: SajuInput): SajuResult | SajuError {
     dayChar = eightChar(noon, dayChange);
     const start = eightChar(toChina(seoulClockToUtc(solar.year, solar.month, solar.day, 0, 0)), dayChange);
     const end = eightChar(toChina(seoulClockToUtc(solar.year, solar.month, solar.day, 23, 59)), dayChange);
-    ymChar = eightChar(toChina(seoulClockToUtc(solar.year, solar.month, solar.day, 12, 0)), dayChange);
+    birthUtc = seoulClockToUtc(solar.year, solar.month, solar.day, 12, 0);
+    ymChar = eightChar(toChina(birthUtc), dayChange);
     if (start.getMonth() !== end.getMonth()) {
       warnings.push("이날은 절기가 바뀌는 날이라 태어난 시각에 따라 월주" + (start.getYear() !== end.getYear() ? "와 연주가" : "가") + " 달라집니다. 정오 기준으로 보여 드리니 시각을 알면 넣어 주세요.");
     }
@@ -244,7 +267,68 @@ export function calcSaju(input: SajuInput): SajuResult | SajuError {
     usedTime,
     adjustments,
     warnings,
+    birthUtc,
   };
+}
+
+export type LuckPillar = GanZhi & {
+  year: number; // 시작하는 해(대운) 또는 그해(세운)
+  month?: number; // 대운이 시작하는 달
+  age: number; // 시작할 때 만 나이(대운) 또는 그해 생일이 지난 뒤의 만 나이(세운)
+  current: boolean;
+};
+
+export type LuckResult = {
+  forward: boolean; // 순행이면 true
+  // 태어나서 첫 대운이 시작되기까지
+  start: { years: number; months: number };
+  daeun: LuckPillar[];
+  seun: LuckPillar[];
+};
+
+const DAY_MS = 86_400_000;
+const YEAR_MS = 365.2425 * DAY_MS;
+
+// 대운과 세운. 대운은 월주에서 한 칸씩 나아가거나(순행) 물러나며(역행), 양년생 남자·음년생 여자는 순행입니다.
+// 태어난 순간부터 다음 절입(순행) 또는 지난 절입(역행)까지의 시간을 3일 = 1년으로 바꿔 첫 대운의 시작 시점을 정합니다.
+export function calcLuck(
+  r: SajuResult,
+  gender: "male" | "female",
+  today: { year: number; month: number; day: number },
+  seunRange: [number, number] = [-2, 7],
+): LuckResult {
+  const dayStem = STEMS.indexOf(r.dayMaster.stem);
+  const yearStem = STEMS.indexOf(r.pillars[0].stem);
+  const forward = (yearStem % 2 === 0) === (gender === "male");
+
+  // 절기 시각은 중국 표준시 기준이라 태어난 순간도 같은 기준의 시계로 넘겨 차이를 구합니다.
+  const china = clockFields(r.birthUtc + 480 * 60000);
+  const lunar = Solar.fromYmdHms(china.year, china.month, china.day, china.hour, china.minute, 0).getLunar();
+  const jie = (forward ? lunar.getNextJie(false) : lunar.getPrevJie(false)).getSolar();
+  const jieUtc = Date.UTC(jie.getYear(), jie.getMonth() - 1, jie.getDay(), jie.getHour(), jie.getMinute(), jie.getSecond()) - 480 * 60000;
+  const offsetYears = Math.abs(jieUtc - r.birthUtc) / (3 * DAY_MS);
+  const totalMonths = Math.round(offsetYears * 12);
+  const firstStart = new Date(r.birthUtc + 540 * 60000 + offsetYears * YEAR_MS); // 한국 시계 기준
+
+  const todayKey = today.year * 100 + today.month;
+  const month = r.pillars[1];
+  const monthIndex = sexagenaryIndex(STEMS.indexOf(month.stem), BRANCHES.indexOf(month.branch));
+  const daeun: LuckPillar[] = [];
+  for (let i = 1; i <= 10; i++) {
+    const year = firstStart.getUTCFullYear() + 10 * (i - 1);
+    const m = firstStart.getUTCMonth() + 1;
+    daeun.push({ ...sexagenary(monthIndex + (forward ? i : -i), dayStem), year, month: m, age: Math.floor(totalMonths / 12) + 10 * (i - 1), current: false });
+  }
+  const cur = daeun.findLastIndex((d) => d.year * 100 + d.month! <= todayKey);
+  if (cur >= 0) daeun[cur].current = true;
+
+  // 세운: 그해의 간지(입춘 기준). 1984년이 甲子년입니다.
+  const seun: LuckPillar[] = [];
+  for (let y = today.year + seunRange[0]; y <= today.year + seunRange[1]; y++) {
+    seun.push({ ...sexagenary(y - 1984, dayStem), year: y, age: y - r.solar.year, current: y === today.year });
+  }
+
+  return { forward, start: { years: Math.floor(totalMonths / 12), months: totalMonths % 12 }, daeun, seun };
 }
 
 export const groupOf = (god: TenGod): TenGodGroup => TEN_GOD_GROUPS[TEN_GODS.findIndex((pair) => pair.includes(god))];

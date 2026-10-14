@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DAY_MASTER } from "../../data/sajuReading";
-import { calcSaju, lunarToSolar, seoulClockToUtc, seoulOffsetMinutes, tenGod, type SajuInput, type SajuResult } from "./saju";
+import { calcLuck, calcSaju, lunarToSolar, seoulClockToUtc, seoulOffsetMinutes, tenGod, type SajuInput, type SajuResult } from "./saju";
 
 const base: SajuInput = { calendar: "solar", year: 2000, month: 1, day: 1, time: { hour: 12, minute: 0 }, longitude: null, dayChange: "23" };
 const ok = (input: Partial<SajuInput>) => {
@@ -115,5 +115,36 @@ describe("십신", () => {
 describe("풀이 문구", () => {
   it("일간 10가지 문구가 모두 있다", () => {
     expect(Object.keys(DAY_MASTER).join("")).toBe("甲乙丙丁戊己庚辛壬癸");
+  });
+});
+
+describe("대운·세운", () => {
+  // 1990-05-15 11:00 KST(중국 표준시 10:00), 庚午년 辛巳월. 다음 절입 망종 06-06 06:46, 지난 절입 입하 05-06 02:35(중국 표준시)
+  const r = ok({ year: 1990, month: 5, day: 15, time: { hour: 11, minute: 0 } });
+  const today = { year: 2026, month: 10, day: 14 };
+
+  it("양년생 남자는 순행, 다음 절입까지 21.87일 ÷ 3 = 7년 3개월", () => {
+    const l = calcLuck(r, "male", today);
+    expect(l.forward).toBe(true);
+    expect(l.start).toEqual({ years: 7, months: 3 });
+    expect(l.daeun.slice(0, 3).map((d) => d.stem + d.branch)).toEqual(["壬午", "癸未", "甲申"]);
+    expect(l.daeun.map((d) => d.age).slice(0, 3)).toEqual([7, 17, 27]);
+    expect(l.daeun[0]).toMatchObject({ year: 1997, month: 8 });
+    expect(l.daeun.filter((d) => d.current).map((d) => d.stem + d.branch)).toEqual(["甲申"]);
+    expect(l.daeun).toHaveLength(10);
+  });
+  it("양년생 여자는 역행, 지난 절입까지 9.31일 ÷ 3 = 3년 1개월", () => {
+    const l = calcLuck(r, "female", today);
+    expect(l.forward).toBe(false);
+    expect(l.start).toEqual({ years: 3, months: 1 });
+    expect(l.daeun.slice(0, 2).map((d) => d.stem + d.branch)).toEqual(["庚辰", "己卯"]);
+  });
+  it("세운은 그해 간지와 일간 기준 십신", () => {
+    const l = calcLuck(r, "male", today);
+    expect(l.seun.map((s) => s.year)).toEqual([2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033]);
+    const y2026 = l.seun.find((s) => s.current)!;
+    expect(y2026.stem + y2026.branch).toBe("丙午");
+    expect(y2026.age).toBe(36);
+    expect(l.seun[0].stem + l.seun[0].branch).toBe("甲辰");
   });
 });

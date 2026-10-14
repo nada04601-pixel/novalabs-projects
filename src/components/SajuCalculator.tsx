@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
-import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcSaju, formatUsedTime, groupOf, type Element, type SajuResult, type TenGod } from "@/lib/calculators/saju";
-import { DAY_MASTER, ELEMENT_TEXT, MANY, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
+import { useEffect, useState } from "react";
+import { todayKST } from "@/lib/calculators/date";
+import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, formatUsedTime, groupOf, type Element, type LuckPillar, type SajuResult, type TenGod } from "@/lib/calculators/saju";
+import { DAY_MASTER, ELEMENT_TEXT, LUCK_TEXT, MANY, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -16,6 +17,14 @@ export default function SajuCalculator() {
   const [noTime, setNoTime] = useState(false);
   const [city, setCity] = useState<string>("서울");
   const [dayChange, setDayChange] = useState<"23" | "00">("23");
+  const [gender, setGender] = useState<"male" | "female">("female");
+  const [today, setToday] = useState<{ year: number; month: number; day: number } | null>(null);
+
+  // 정적 HTML에 빌드 날짜가 박히지 않도록 마운트 후 오늘 날짜를 채웁니다.
+  useEffect(() => {
+    const [y, mo, d] = todayKST().split("-").map(Number);
+    setToday({ year: y, month: mo, day: d });
+  }, []);
 
   const [h, m] = time.split(":").map(Number);
   const r = calcSaju({
@@ -56,6 +65,12 @@ export default function SajuCalculator() {
           <select value={city} onChange={(e) => setCity(e.target.value)}>
             {CITIES.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
             <option value="">보정 안 함 (한국 표준시)</option>
+          </select>
+        </label>
+        <label>성별 (대운 방향)
+          <select value={gender} onChange={(e) => setGender(e.target.value as "male" | "female")}>
+            <option value="female">여성</option>
+            <option value="male">남성</option>
           </select>
         </label>
         <label>날이 바뀌는 시각
@@ -137,6 +152,7 @@ export default function SajuCalculator() {
             </p>
 
             <Reading r={r} />
+            {today && <Luck key={`${r.birthUtc}-${gender}`} r={r} gender={gender} today={today} />}
           </>
         )}
       </div>
@@ -213,7 +229,73 @@ function Reading({ r }: { r: SajuResult }) {
         </details>
       </section>
 
-      <p className="saju-muted">풀이는 일간·오행·십신의 일반적인 의미를 풀어 쓴 것으로, 대운·세운과 글자 사이의 합·충은 반영하지 않았습니다. 재미와 참고용으로 봐 주세요.</p>
+      <p className="saju-muted">타고난 성향 풀이는 일간·오행·십신의 일반적인 의미를 풀어 쓴 것으로, 글자 사이의 합·충은 반영하지 않았습니다. 재미와 참고용으로 봐 주세요.</p>
+    </div>
+  );
+}
+
+// 운에 들어온 기운이 팔자에 없거나 이미 많은 오행이면 한 줄로 알려 줍니다.
+function elementNotes(r: SajuResult, p: LuckPillar) {
+  return [...new Set([p.stemElement, p.branchElement])].flatMap((e) => {
+    const n = r.elementCount[e];
+    if (n === 0) return [`팔자에 없던 ${e}(${ELEMENT_TEXT[e].trait}) 기운이 들어와 부족한 부분을 채워 줍니다.`];
+    if (n >= MANY) return [`이미 많은 ${e} 기운이 더해져 그 성향이 지나치게 강해질 수 있습니다.`];
+    return [];
+  });
+}
+
+function LuckRow({ items, selected, onSelect, caption }: { items: LuckPillar[]; selected: number; onSelect: (i: number) => void; caption: (p: LuckPillar) => string }) {
+  return (
+    <div className="saju-luck-row" role="group">
+      {items.map((p, i) => (
+        <button key={i} type="button" className="saju-luck" aria-pressed={i === selected} onClick={() => onSelect(i)}>
+          <small>{caption(p)}</small>
+          <b className={EL_CLASS[p.stemElement]}>{p.stem}</b>
+          <b className={EL_CLASS[p.branchElement]}>{p.branch}</b>
+          <small>{p.stemKo}{p.branchKo}{p.current ? " · 지금" : ""}</small>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function LuckDetail({ r, p, title }: { r: SajuResult; p: LuckPillar; title: string }) {
+  return (
+    <div className="saju-luck-detail">
+      <h4>{title}</h4>
+      <p><b>{p.stem}({p.stemKo}{p.stemElement}) · {p.stemTenGod}</b><br />{LUCK_TEXT[p.stemTenGod!]}</p>
+      <p><b>{p.branch}({p.branchKo}{p.branchElement}) · {p.branchTenGod}</b><br />{LUCK_TEXT[p.branchTenGod]}</p>
+      {elementNotes(r, p).map((n) => <p key={n}>{n}</p>)}
+    </div>
+  );
+}
+
+function Luck({ r, gender, today }: { r: SajuResult; gender: "male" | "female"; today: { year: number; month: number; day: number } }) {
+  const l = calcLuck(r, gender, today);
+  const curDaeun = l.daeun.findIndex((d) => d.current);
+  const curSeun = l.seun.findIndex((s) => s.current);
+  const [dSel, setDSel] = useState<number | null>(null);
+  const [sSel, setSSel] = useState<number | null>(null);
+  const di = dSel ?? Math.max(curDaeun, 0);
+  const si = sSel ?? Math.max(curSeun, 0);
+  const d = l.daeun[di];
+  const s = l.seun[si];
+
+  return (
+    <div className="saju-reading">
+      <h3>대운 (10년마다 바뀌는 큰 흐름)</h3>
+      <p className="saju-muted">
+        {l.forward ? "순행" : "역행"} · 태어나고 {l.start.years}년 {l.start.months}개월 뒤부터 10년씩 바뀝니다.
+        {curDaeun < 0 && " 아직 첫 대운이 시작되기 전입니다."}
+        {!r.usedTime && " 태어난 시각을 모르면 시작 시점이 몇 달 어긋날 수 있습니다."}
+      </p>
+      <LuckRow items={l.daeun} selected={di} onSelect={setDSel} caption={(p) => `만 ${p.age}세`} />
+      <LuckDetail r={r} p={d} title={`${d.year}년 ${d.month}월부터 10년 (만 ${d.age}~${d.age + 9}세)`} />
+
+      <h3>세운 (해마다 바뀌는 흐름)</h3>
+      <LuckRow items={l.seun} selected={si} onSelect={setSSel} caption={(p) => `${p.year}`} />
+      <LuckDetail r={r} p={s} title={`${s.year}년 ${s.stemKo}${s.branchKo}년${s.age >= 0 ? ` (생일 지나면 만 ${s.age}세)` : ""}`} />
+      <p className="saju-muted">대운의 천간은 앞 5년, 지지는 뒤 5년에 더 크게 작용한다고 봅니다. 세운은 입춘(2월 4일 무렵)에 바뀝니다. 합·충 같은 글자 사이의 작용은 반영하지 않은 간단한 풀이입니다.</p>
     </div>
   );
 }

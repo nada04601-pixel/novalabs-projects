@@ -11,11 +11,17 @@ declare module "lunar-javascript" {
   export interface LunarDate {
     getEightChar(): EightChar;
     getSolar(): SolarDate;
+    // 직전·다음 절(입춘·경칩 같은 12절). false면 시각까지 정확히 계산합니다.
+    getPrevJie(wholeDay: boolean): { getSolar(): SolarDate };
+    getNextJie(wholeDay: boolean): { getSolar(): SolarDate };
   }
   export interface SolarDate {
     getYear(): number;
     getMonth(): number;
     getDay(): number;
+    getHour(): number;
+    getMinute(): number;
+    getSecond(): number;
     getLunar(): LunarDate;
   }
   export const Solar: {
