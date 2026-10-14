@@ -369,3 +369,16 @@ table.stores tbody th a:hover{text-decoration:underline}
 .saju-hidden b{color:var(--el);font-size:14px;font-weight:700}
 .saju-pillars+.saju-muted{margin:-6px 0 14px}
 .saju-share-note{flex-basis:100%}
+/* 사주 궁합 */
+.match-people{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.match-person{border:1px solid var(--line);border-radius:12px;padding:12px 14px 14px;margin:0;min-width:0}
+.match-person legend{font-weight:700;padding:0 6px}
+.match-person .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+.match-mini{background:var(--bg);border-radius:12px;padding:12px;margin-bottom:14px}
+.match-mini-row{display:flex;gap:8px;justify-content:center;margin-top:6px}
+.match-mini-row span{display:flex;flex-direction:column;align-items:center;background:var(--card);border-radius:8px;padding:4px 10px}
+.match-mini-row b{font-size:22px;line-height:1.25;color:var(--el)}
+.match-score{float:right;color:var(--acc);font-size:14px}
+.match-bar{display:block;margin:0 0 10px}.match-bar i{background:var(--acc)}
+.match-el-row{display:grid;grid-template-columns:52px 1fr 1fr 64px;align-items:center;gap:8px;font-size:14px}
+.match-el-row strong{text-align:right;font-weight:500;font-size:13px}
