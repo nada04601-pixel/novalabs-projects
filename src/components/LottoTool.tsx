@@ -51,6 +51,7 @@ export default function LottoTool() {
       <h2>내 번호로 지난 회차 맞춰보기</h2>
       <p className="note-sm">늘 사는 번호가 있다면 1회부터 {latestDraw.no}회까지 몇 등에 몇 번 당첨됐을지 확인해 보세요.</p>
       <LottoChecker draws={all} />
+      <div className="actions"><Link className="btn sm" href="/tools/lotto-simulator">매주 샀다면 얼마? 로또 시뮬레이터</Link></div>
     </>
   );
 }

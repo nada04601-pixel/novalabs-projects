@@ -309,3 +309,4 @@ table.stores tbody th a:hover{text-decoration:underline}
 .maplinks{display:flex;gap:10px;margin-top:4px;font-size:12px}
 .maplinks a{font-weight:600!important}
 .scroll table.stores{min-width:0}
+.big strong.gain{color:#16a34a}.big strong.loss{color:#dc2626}

@@ -50,6 +50,7 @@ import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
 import CharacterCounter from "@/components/CharacterCounter";
 import LottoTool from "@/components/LottoTool";
+import LottoSimulatorTool from "@/components/LottoSimulatorTool";
 import ShareButtons from "@/components/ShareButtons";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -114,6 +115,7 @@ const calculators: Record<string, React.ReactNode> = {
   "qr-code": <QrCodeGenerator />,
   "character-counter": <CharacterCounter />,
   lotto: <LottoTool />,
+  "lotto-simulator": <LottoSimulatorTool />,
 };
 
 export default async function ToolPage({ params }: Props) {
