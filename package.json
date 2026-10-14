@@ -3,13 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/copy-models.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-models.mjs",
     "build": "next build",
     "start": "next start",
     "test": "vitest run"
   },
   "dependencies": {
     "@mediabunny/mp3-encoder": "1.60.0",
+    "@tensorflow/tfjs": "4.11.0",
+    "@upscalerjs/esrgan-medium": "1.0.0",
     "gifenc": "1.0.3",
     "mediabunny": "1.60.0",
     "next": "^15.0.0",
@@ -18,7 +22,8 @@
     "pretendard": "^1.3.9",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "upscaler": "1.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

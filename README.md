@@ -21,6 +21,10 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - `src/app/moim/` 모임 정산 계산기. 입력 상태를 공유 링크(`#d=…`)에 담아 서버 없이 동작 (`src/lib/moimState.ts`, `src/lib/calculators/settlement.ts`)
 - 로또: `/tools/lotto`(번호 생성·최신 회차·통계·맞춰보기), `/lotto`(전체 당첨번호), `/lotto/[회차]`(회차별 상세). 당첨 결과는 `src/data/lotto/draws.json`에 저장하고 빌드 때 정적 HTML로 들어감
 
+## 이미지 업스케일 AI 모델
+- `/tools/image-upscaler`의 AI 모드는 UpscalerJS(`upscaler`)와 ESRGAN Medium 모델(`@upscalerjs/esrgan-medium`, MIT)을 TensorFlow.js(`@tensorflow/tfjs` 4.11, upscaler가 요구하는 버전)로 브라우저에서 실행합니다.
+- 모델 파일(2배·4배, 각 약 2.8MB)은 저장소에 넣지 않고 `npm run dev`/`npm run build` 직전에 `scripts/copy-models.mjs`가 `node_modules`에서 `public/models/esrgan-medium/`으로 복사합니다(`.gitignore`). 외부 CDN에서 받지 않습니다.
+
 ## 로또 당첨 결과 갱신
 - 자료: 동행복권 추첨 결과를 회차별 JSON으로 공개하는 [smok95/lotto](https://github.com/smok95/lotto) 저장소
 - 자동: `.github/workflows/update-lotto.yml`이 매주 일요일 07:00·12:00, 월요일 09:00(한국 시간)에 새 회차를 받아 `main`에 커밋 → Workers Builds가 다시 배포. `main`에 브랜치 보호가 있으면 Actions 봇의 푸시를 허용해야 합니다.
