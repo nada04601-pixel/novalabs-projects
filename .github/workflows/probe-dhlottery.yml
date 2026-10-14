@@ -10,14 +10,12 @@ jobs:
     steps:
       - run: |
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
-          for u in \
-            "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=1245" \
-            "https://www.dhlottery.co.kr/store.do?method=topStore&pageGubun=L645&drwNo=1245" \
-            "https://www.dhlottery.co.kr/" ; do
-            echo "=================== $u"
-            curl -sS -L -m 30 -A "$UA" -o out.html -D headers.txt -w 'HTTP %{http_code} size %{size_download} final %{url_effective}\n' "$u" || true
-            head -25 headers.txt
-            if grep -qi "euc-kr" headers.txt out.html 2>/dev/null; then iconv -f euc-kr -t utf-8 out.html > u.html || cp out.html u.html; else cp out.html u.html; fi
-            echo "--- head"; head -c 2500 u.html; echo
-            echo "--- store-like lines"; grep -n -i -E "상호|소재지|배출점|tbl_data|storeNm|firmNm|shpNm|자동|수동|api|\.do\?" u.html | head -80
-          done
+          curl -sS -L -m 30 -A "$UA" -c jar -b jar -o home.html https://www.dhlottery.co.kr/
+          echo "--- 메뉴 링크(당첨/판매점/로또 관련)"
+          grep -o -E 'href="[^"]*"' home.html | sort -u | grep -i -E "store|shop|win|prchs|plc|lt645|lotto|result|rslt|645" | head -80
+          echo "--- 메뉴 텍스트 주변"
+          grep -n -E "배출점|당첨판매점|판매점" home.html | head -40
+          echo "--- 스크립트 파일"
+          grep -o -E 'src="[^"]*\.js[^"]*"' home.html | sort -u | head -40
+          echo "--- ajax/fetch url"
+          grep -n -o -E "(url|fetch)\s*[:(]\s*['\"][^'\"]+['\"]" home.html | sort -u | head -60
