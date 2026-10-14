@@ -7,6 +7,7 @@ import { guidesForTool } from "@/data/guides";
 import ToolSidebar from "@/components/ToolSidebar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NetSalaryCalculator from "@/components/NetSalaryCalculator";
+import YearEndTaxCalculator from "@/components/YearEndTaxCalculator";
 import SeveranceCalculator from "@/components/SeveranceCalculator";
 import LoanCalculator from "@/components/LoanCalculator";
 import SavingsCalculator from "@/components/SavingsCalculator";
@@ -71,6 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // 새 도구를 추가하면 여기에 슬러그와 컴포넌트를 연결하세요.
 const calculators: Record<string, React.ReactNode> = {
   "net-salary": <NetSalaryCalculator />,
+  "year-end-tax": <YearEndTaxCalculator />,
   "severance-pay": <SeveranceCalculator />,
   "loan-interest": <LoanCalculator />,
   "savings-interest": <SavingsCalculator />,

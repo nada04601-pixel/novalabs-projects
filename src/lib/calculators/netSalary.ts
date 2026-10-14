@@ -22,7 +22,7 @@ export type NetSalaryResult = {
 
 const floor10 = (n: number) => Math.floor(n / 10) * 10;
 
-function earnedIncomeDeduction(g: number) {
+export function earnedIncomeDeduction(g: number) {
   let d: number;
   if (g <= 5_000_000) d = g * 0.7;
   else if (g <= 15_000_000) d = 3_500_000 + (g - 5_000_000) * 0.4;
@@ -32,7 +32,7 @@ function earnedIncomeDeduction(g: number) {
   return Math.min(d, 20_000_000);
 }
 
-function progressiveTax(base: number) {
+export function progressiveTax(base: number) {
   let tax = 0;
   let prev = 0;
   for (const b of R.incomeTax.brackets) {
@@ -43,7 +43,7 @@ function progressiveTax(base: number) {
   return tax;
 }
 
-function earnedTaxCredit(tax: number, gross: number) {
+export function earnedTaxCredit(tax: number, gross: number) {
   const credit = tax <= 1_300_000 ? tax * 0.55 : 715_000 + (tax - 1_300_000) * 0.3;
   let limit: number;
   if (gross <= 33_000_000) limit = 740_000;
@@ -53,7 +53,7 @@ function earnedTaxCredit(tax: number, gross: number) {
   return Math.min(credit, limit);
 }
 
-function childCredit(n: number) {
+export function childCredit(n: number) {
   if (n <= 0) return 0;
   if (n === 1) return 250_000;
   if (n === 2) return 550_000;
