@@ -22,7 +22,7 @@ export default function LottoTool() {
       <LottoDrawResult draw={latestDraw} compact />
       <p className="note-sm">
         다음 추첨: 제{latestDraw.no + 1}회 {formatDate(nextDrawDate(latestDraw.date))} 20:35경 ·{" "}
-        <Link href={`/lotto/${latestDraw.no}`}>{latestDraw.no}회 등수별 당첨금 자세히 보기</Link>
+        <Link href={`/lotto/${latestDraw.no}`}>{latestDraw.no}회 등수별 당첨금·1등 배출점 보기</Link>
       </p>
 
       <h2>최근 당첨번호</h2>

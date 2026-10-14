@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { draws } from "../data/lotto";
+import { draws, getStores } from "../data/lotto";
+import stores from "../data/lotto/stores.json";
 import {
-  ballTone, checkHistory, frequency, generateGame, generateGames, lite, nextDrawDate, oddEven, parseNumbers, rankOf, sum, validateOptions,
+  ballTone, checkHistory, storeRegions, frequency, generateGame, generateGames, lite, nextDrawDate, oddEven, parseNumbers, rankOf, sum, validateOptions,
 } from "./lotto";
 
 const seeded = (seed = 1) => () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0);
@@ -88,5 +89,32 @@ describe("당첨 결과 자료", () => {
   it("참고 사이트와 같은 최근 결과", () => {
     expect(draws[1244]).toMatchObject({ no: 1245, date: "2026-10-10", nums: [4, 5, 25, 28, 32, 42], bonus: 12 });
     expect(draws[1244].prizes[0]).toEqual([3006515775, 10]);
+  });
+});
+
+describe("1등 배출점", () => {
+  it("지역별로 세고 인터넷 판매는 따로 묶는다", () => {
+    expect(
+      storeRegions([
+        ["가", "자동", "서울 성북구 1", "", 0],
+        ["인터넷 복권판매사이트", "자동", "동행복권(dhlottery.co.kr)", "", 0],
+        ["나", "수동", "서울 도봉구 2", "", 0],
+        ["다", "자동", "CU관설점", "강원 원주시 관설동", 1],
+      ]),
+    ).toEqual([["서울", 2], ["강원", 1], ["인터넷", 1]]);
+  });
+  it("저장된 배출점 자료는 형식이 맞고, 1등이 있던 회차에만 있다", () => {
+    for (const [no, list] of Object.entries(stores as Record<string, unknown[]>)) {
+      const d = draws[Number(no) - 1];
+      expect(d.prizes[0][1]).toBeGreaterThan(0);
+      expect(list.length).toBeLessThanOrEqual(d.prizes[0][1]);
+      for (const s of list as unknown[][]) {
+        expect(s).toHaveLength(5);
+        expect(typeof s[0]).toBe("string");
+        expect((s[0] as string).length).toBeGreaterThan(0);
+        expect(["자동", "수동", "반자동", ""]).toContain(s[1]);
+      }
+    }
+    expect(getStores(1)).toBeUndefined();
   });
 });

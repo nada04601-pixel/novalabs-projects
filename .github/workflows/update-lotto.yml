@@ -1,4 +1,4 @@
-# 매주 토요일 로또 추첨 결과를 받아 src/data/lotto/draws.json에 커밋합니다.
+# 매주 토요일 로또 추첨 결과(draws.json)와 1등 배출점(stores.json)을 받아 커밋합니다.
 # main에 커밋되면 Cloudflare Workers Builds가 자동으로 다시 배포합니다.
 name: Update lotto results
 
@@ -22,15 +22,19 @@ jobs:
           node-version-file: .nvmrc
       - name: Fetch new draws
         run: node scripts/update-lotto.mjs
+      # 동행복권 서버는 해외 접속이 자주 끊기므로, 실패해도 당첨번호는 커밋하고 다음 실행 때 다시 받습니다.
+      - name: Fetch winning stores
+        continue-on-error: true
+        run: node scripts/update-lotto-stores.mjs --minutes 15
       - name: Commit if changed
         run: |
-          if git diff --quiet -- src/data/lotto/draws.json; then
-            echo "No new draws."
+          if git diff --quiet -- src/data/lotto/; then
+            echo "No changes."
             exit 0
           fi
           latest=$(node -e 'const d=require("./src/data/lotto/draws.json");console.log(d.at(-1).no)')
           git config user.name "github-actions[bot]"
           git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
-          git add src/data/lotto/draws.json
-          git commit -m "로또 ${latest}회 당첨 결과 반영"
+          git add src/data/lotto/
+          git commit -m "로또 ${latest}회 당첨 결과·1등 배출점 반영"
           git push
