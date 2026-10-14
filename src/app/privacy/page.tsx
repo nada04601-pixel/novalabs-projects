@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { site } from "@/data/site";
 
-export const metadata: Metadata = { title: "개인정보처리방침" };
+export const metadata: Metadata = {
+  title: "개인정보처리방침",
+  alternates: { canonical: "/privacy", languages: { ko: "/privacy", en: "/en/privacy" } },
+};
 
 export default function Privacy() {
   return (

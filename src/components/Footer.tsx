@@ -6,15 +6,15 @@ import { useLang } from "@/lib/useT";
 
 export default function Footer() {
   if (useLang() === "en") {
-    // 영어 페이지: 소개·문의·약관 페이지는 한국어뿐이라 언어를 밝혀 둡니다. 앱 설치 안내(한국어 이름)는 뺍니다.
+    // 영어 페이지: 소개·문의 페이지는 한국어뿐이라 문의는 메일로 연결합니다. 앱 설치 안내(한국어 이름)는 뺍니다.
     return (
       <footer>
         <div className="w">
           <nav>
             <Link href="/en">All tools</Link>
             <Link href="/">한국어 사이트</Link>
-            <Link href="/privacy" hrefLang="ko">Privacy policy (Korean)</Link>
-            <Link href="/terms" hrefLang="ko">Terms (Korean)</Link>
+            <Link href="/en/privacy">Privacy policy</Link>
+            <Link href="/en/terms">Terms of use</Link>
             <a href={`mailto:${site.email}`}>Contact</a>
           </nav>
           <p>Results are for reference only. Files you use with these tools are processed in your browser and are never uploaded.</p>

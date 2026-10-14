@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { site } from "@/data/site";
 
-export const metadata: Metadata = { title: "이용약관" };
+export const metadata: Metadata = {
+  title: "이용약관",
+  alternates: { canonical: "/terms", languages: { ko: "/terms", en: "/en/terms" } },
+};
 
 export default function Terms() {
   return (
