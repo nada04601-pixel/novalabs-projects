@@ -322,3 +322,18 @@ table.stores tbody th a:hover{text-decoration:underline}
 .top-right{display:flex;align-items:center;gap:8px}
 .lang-switch{font-size:13px;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--bg)}
 .lang-switch:hover{border-color:var(--acc)}
+/* 사주 계산기 */
+.el-wood{--el:#16a34a}.el-fire{--el:#dc2626}.el-earth{--el:#ca8a04}.el-metal{--el:#64748b}.el-water{--el:#2563eb}
+.saju-pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:8px;margin-bottom:14px}
+.saju-pillar{display:flex;flex-direction:column;gap:6px;text-align:center}
+.saju-label{font-size:13px;color:var(--mut)}
+.saju-char{display:flex;flex-direction:column;align-items:center;background:var(--bg);border-radius:12px;border-top:4px solid var(--el);padding:10px 4px}
+.saju-char b{font-size:clamp(26px,7vw,34px);line-height:1.2;color:var(--el);font-weight:700}
+.saju-char small{font-size:12px;color:var(--mut)}
+.saju-notes{font-size:13px;color:var(--mut);margin:8px 0 0;padding-left:18px}
+.saju-elements{display:grid;gap:8px}
+.saju-el-row{display:grid;grid-template-columns:56px 1fr 24px;align-items:center;gap:10px;font-size:14px}
+.saju-el-row strong{text-align:right}
+.saju-bar{height:10px;background:var(--bg);border-radius:6px;overflow:hidden}
+.saju-bar i{display:block;height:100%;background:var(--el);border-radius:6px}
+.saju-summary{font-size:14px;margin:12px 0 0}

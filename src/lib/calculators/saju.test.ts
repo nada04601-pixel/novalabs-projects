@@ -1,0 +1,81 @@
+import { describe, expect, it } from "vitest";
+import { calcSaju, lunarToSolar, seoulClockToUtc, seoulOffsetMinutes, type SajuInput, type SajuResult } from "./saju";
+
+const base: SajuInput = { calendar: "solar", year: 2000, month: 1, day: 1, time: { hour: 12, minute: 0 }, longitude: null, dayChange: "23" };
+const ok = (input: Partial<SajuInput>) => {
+  const r = calcSaju({ ...base, ...input });
+  if ("error" in r) throw new Error(r.error);
+  return r as SajuResult;
+};
+const gz = (r: SajuResult) => r.pillars.map((p) => p.stem + p.branch);
+
+describe("한국 시간대", () => {
+  it("서머타임과 UTC+8:30 시절의 오프셋", () => {
+    expect(seoulOffsetMinutes(Date.UTC(2000, 0, 1))).toBe(540);
+    expect(seoulOffsetMinutes(Date.UTC(1988, 6, 1))).toBe(600);
+    expect(seoulOffsetMinutes(Date.UTC(1960, 0, 1))).toBe(510);
+    expect(seoulOffsetMinutes(Date.UTC(1958, 6, 1))).toBe(570);
+  });
+  it("한국 시계 시각을 UTC로 바꾼다", () => {
+    expect(seoulClockToUtc(2000, 1, 1, 9, 0)).toBe(Date.UTC(2000, 0, 1, 0, 0));
+    expect(seoulClockToUtc(1988, 7, 1, 12, 0)).toBe(Date.UTC(1988, 6, 1, 2, 0));
+  });
+});
+
+describe("사주 팔자", () => {
+  it("2000-01-01은 기묘년 병자월 무오일", () => {
+    expect(gz(ok({}))).toEqual(["己卯", "丙子", "戊午", "戊午"]);
+    expect(ok({}).pillars.map((p) => p.stemKo + p.branchKo)).toEqual(["기묘", "병자", "무오", "무오"]);
+  });
+  it("입춘 시각(2024-02-04 17:27 KST)을 기준으로 연주·월주가 바뀐다", () => {
+    expect(gz(ok({ year: 2024, month: 2, day: 4, time: { hour: 17, minute: 26 } })).slice(0, 2)).toEqual(["癸卯", "乙丑"]);
+    expect(gz(ok({ year: 2024, month: 2, day: 4, time: { hour: 17, minute: 28 } })).slice(0, 2)).toEqual(["甲辰", "丙寅"]);
+  });
+  it("자시 기준에 따라 23시대의 일주가 달라진다", () => {
+    const t = { year: 1990, month: 5, day: 15, time: { hour: 23, minute: 30 } };
+    expect(ok({ ...t, dayChange: "23" }).pillars[2].stem + ok({ ...t, dayChange: "23" }).pillars[2].branch).toBe("辛巳");
+    expect(ok({ ...t, dayChange: "00" }).pillars[2].stem + ok({ ...t, dayChange: "00" }).pillars[2].branch).toBe("庚辰");
+    expect(ok({ ...t, dayChange: "00" }).pillars[3].branch).toBe("子");
+  });
+  it("서머타임과 경도 보정을 반영한다", () => {
+    const r = ok({ year: 1988, month: 7, day: 1, time: { hour: 12, minute: 0 } });
+    expect(r.usedTime).toMatchObject({ hour: 11, minute: 0 });
+    expect(r.adjustments[0]).toContain("서머타임");
+    const s = ok({ year: 1988, month: 7, day: 1, time: { hour: 12, minute: 0 }, longitude: 126.98 });
+    expect(s.usedTime).toMatchObject({ hour: 10, minute: 28 });
+    // 경도 보정으로 시(時)의 경계를 넘는 경우: 13:20 KST → 12:48 지방시(오시)
+    expect(ok({ time: { hour: 13, minute: 20 } }).pillars[3].branch).toBe("未");
+    expect(ok({ time: { hour: 13, minute: 20 }, longitude: 126.98 }).pillars[3].branch).toBe("午");
+  });
+  it("UTC+8:30 시절의 시각은 30분을 더해 한국 표준시로 맞춘다", () => {
+    expect(ok({ year: 1960, month: 1, day: 1, time: { hour: 12, minute: 0 } }).usedTime).toMatchObject({ hour: 12, minute: 30 });
+  });
+  it("오행은 기둥마다 두 글자씩 센다", () => {
+    const r = ok({});
+    expect(Object.values(r.elementCount).reduce((a, b) => a + b)).toBe(8);
+    expect(r.elementCount).toEqual({ 목: 1, 화: 3, 토: 3, 금: 0, 수: 1 });
+    expect(r.dayMaster).toEqual({ stem: "戊", stemKo: "무", element: "토", yang: true });
+    expect(r.animal).toBe("토끼");
+  });
+  it("시간을 모르면 시주를 빼고, 절입일이면 알려 준다", () => {
+    const r = ok({ year: 2024, month: 2, day: 4, time: null });
+    expect(r.pillars).toHaveLength(3);
+    expect(r.warnings[0]).toContain("연주");
+    expect(Object.values(r.elementCount).reduce((a, b) => a + b)).toBe(6);
+    expect(ok({ year: 2024, month: 2, day: 10, time: null }).warnings).toHaveLength(0);
+  });
+});
+
+describe("음력", () => {
+  it("윤달을 포함해 양력으로 바꾼다", () => {
+    expect(lunarToSolar(2023, 2, 1, true)).toEqual({ year: 2023, month: 3, day: 22 });
+    expect(lunarToSolar(2024, 1, 1, false)).toEqual({ year: 2024, month: 2, day: 10 });
+    expect(ok({ calendar: "lunar", year: 2024, month: 1, day: 1 }).solar).toEqual({ year: 2024, month: 2, day: 10 });
+  });
+  it("없는 날짜는 오류", () => {
+    expect(calcSaju({ ...base, calendar: "lunar", year: 2024, month: 2, day: 1, leapMonth: true })).toHaveProperty("error");
+    expect(calcSaju({ ...base, calendar: "lunar", year: 2024, month: 1, day: 30 })).toHaveProperty("error");
+    expect(calcSaju({ ...base, month: 2, day: 30 })).toHaveProperty("error");
+    expect(calcSaju({ ...base, year: 1899 })).toHaveProperty("error");
+  });
+});
