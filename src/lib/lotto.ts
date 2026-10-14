@@ -159,3 +159,89 @@ export function parseNumbers(text: string): number[] {
   }
   return out;
 }
+
+// ── 로또 시뮬레이터: "지난 N년간 매주 이 번호로 샀다면?" ──
+
+// 시뮬레이터로 보내는 형식: [회차, 추첨일, 번호 6개, 보너스, 1~5등 1게임당 당첨금]
+export type SimDraw = [number, string, number[], number, number[]];
+export const simLite = (d: Draw): SimDraw => [d.no, d.date, d.nums, d.bonus, d.prizes.map(([p]) => p)];
+
+export const TICKET = 1000;
+
+// 복권 당첨금 원천징수: 200만 원 이하 비과세, 넘으면 구입비 1,000원을 뺀 금액에
+// 3억 원까지 22%(소득세 20%+지방소득세 2%), 3억 원 초과분 33%
+export function lottoTax(prize: number): number {
+  if (prize <= 2_000_000) return 0;
+  const base = prize - TICKET;
+  const high = Math.max(0, base - 300_000_000);
+  return Math.floor((base - high) * 0.22 + high * 0.33);
+}
+
+// 최근 years년 동안의 회차(years가 0이면 전체). 최신 추첨일에서 years년을 거슬러 올라갑니다.
+export function drawsSince<T extends { 1: string }>(draws: T[], years: number): T[] {
+  if (!years || draws.length === 0) return draws;
+  const last = new Date(`${draws[draws.length - 1][1]}T00:00:00Z`);
+  last.setUTCFullYear(last.getUTCFullYear() - years);
+  const from = last.toISOString().slice(0, 10);
+  return draws.filter((d) => d[1] > from);
+}
+
+export type SimResult = {
+  weeks: number;
+  spent: number;
+  won: number; // 세전 당첨금 합계
+  tax: number;
+  counts: number[]; // 인덱스 1~5: 등수별 당첨 횟수(장 수 반영)
+  best: { no: number; date: string; rank: number; prize: number } | null;
+  firstDate: string;
+  lastDate: string;
+};
+
+// 매주 같은 번호 tickets장을 샀다고 보고 회차별 실제 당첨금으로 계산합니다.
+export function simulate(mine: number[], draws: SimDraw[], tickets = 1): SimResult {
+  const counts = [0, 0, 0, 0, 0, 0];
+  let won = 0;
+  let tax = 0;
+  let best: SimResult["best"] = null;
+  for (const [no, date, nums, bonus, prizes] of draws) {
+    const rank = rankOf(mine, nums, bonus);
+    if (rank === 0) continue;
+    const prize = prizes[rank - 1];
+    counts[rank] += tickets;
+    won += prize * tickets;
+    tax += lottoTax(prize) * tickets;
+    if (!best || rank < best.rank || (rank === best.rank && prize > best.prize)) best = { no, date, rank, prize };
+  }
+  return {
+    weeks: draws.length,
+    spent: draws.length * TICKET * tickets,
+    won,
+    tax,
+    counts,
+    best,
+    firstDate: draws[0]?.[1] ?? "",
+    lastDate: draws[draws.length - 1]?.[1] ?? "",
+  };
+}
+
+// 같은 돈을 매주 적금처럼 넣었다면(연 rate, 주 단위 복리, 세전) 마지막 주에 얼마인지
+export function savingsValue(weekly: number, weeks: number, rate = 0.03): number {
+  const r = rate / 52;
+  return Math.round(r === 0 ? weekly * weeks : weekly * (((1 + r) ** weeks - 1) / r) * (1 + r));
+}
+
+// 공유 링크의 해시(#n=1,2,3,4,5,6&y=10&t=1)를 읽고 씁니다.
+export const SIM_YEARS = [1, 5, 10, 20, 0] as const;
+export function parseSimHash(hash: string): { nums: number[]; years: number; tickets: number } | null {
+  const p = new URLSearchParams(hash.replace(/^#/, ""));
+  const nums = parseNumbers(p.get("n") ?? "").slice(0, PICK).sort((a, b) => a - b);
+  if (nums.length !== PICK) return null;
+  const y = Number(p.get("y"));
+  const t = Number(p.get("t"));
+  return {
+    nums,
+    years: (SIM_YEARS as readonly number[]).includes(y) ? y : 10,
+    tickets: Number.isInteger(t) && t >= 1 && t <= 5 ? t : 1,
+  };
+}
+export const simHash = (nums: number[], years: number, tickets: number) => `#n=${nums.join(",")}&y=${years}&t=${tickets}`;
