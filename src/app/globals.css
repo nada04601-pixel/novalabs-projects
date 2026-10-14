@@ -280,7 +280,8 @@ label:has(.tip),.tip-wrap{position:relative}
 .games{list-style:none;padding:0;margin:0}
 .games li{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 0;border-bottom:1px solid var(--line)}
 .game-label{width:18px;color:var(--mut)}
-.game-hist{margin-left:auto;color:var(--mut);font-size:13px}
+.game-hist{margin-left:auto;color:var(--mut);font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.game-hist .btn.sm{padding:5px 10px;font-size:12px}
 .lotto-opts{margin-top:8px;border-bottom:0;padding:8px 0 0}
 .numpad{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-top:10px;max-width:460px}
 .numpad button{font:inherit;font-size:14px;padding:8px 0;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer;font-variant-numeric:tabular-nums}

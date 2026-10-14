@@ -9,7 +9,7 @@ const NEXT: Record<string, Mark | undefined> = { none: "fixed", fixed: "excluded
 const ALL = Array.from({ length: MAX }, (_, i) => i + 1);
 
 // 무작위 번호 생성기. 번호판을 누르면 일반 → 고정 → 제외 순서로 바뀝니다.
-export default function LottoGenerator({ draws }: { draws: DrawLite[] }) {
+export default function LottoGenerator({ draws, onPick }: { draws: DrawLite[]; onPick?: (nums: number[]) => void }) {
   const [count, setCount] = useState(5);
   const [marks, setMarks] = useState<Record<number, Mark>>({});
   const [games, setGames] = useState<number[][]>([]);
@@ -88,7 +88,12 @@ export default function LottoGenerator({ draws }: { draws: DrawLite[] }) {
                   <li key={g.join(",")}>
                     <b className="game-label">{String.fromCharCode(65 + i)}</b>
                     <LottoBalls nums={g} />
-                    <span className="game-hist">{best > 0 ? `지난 회차 최고 ${best}등` : "지난 회차 5등 이상 없음"}</span>
+                    <span className="game-hist">
+                      {best > 0 ? `지난 회차 최고 ${best}등` : "지난 회차 5등 이상 없음"}
+                      {onPick && (
+                        <button type="button" className="btn sm ghost" onClick={() => onPick(g)}>이 번호로 시뮬레이션</button>
+                      )}
+                    </span>
                   </li>
                 );
               })}
