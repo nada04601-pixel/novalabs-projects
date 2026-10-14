@@ -10,12 +10,12 @@ jobs:
     steps:
       - run: |
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
-          for i in 1 2 3 4; do curl -sS -L -m 40 -A "$UA" -c jar -b jar -o home.html https://www.dhlottery.co.kr/ && break; echo "retry $i"; sleep 10; done
-          echo "--- 메뉴 링크(당첨/판매점/로또 관련)"
-          grep -o -E 'href="[^"]*"' home.html | sort -u | grep -i -E "store|shop|win|prchs|plc|lt645|lotto|result|rslt|645" | head -80
-          echo "--- 메뉴 텍스트 주변"
-          grep -n -E "배출점|당첨판매점|판매점" home.html | head -40
-          echo "--- 스크립트 파일"
-          grep -o -E 'src="[^"]*\.js[^"]*"' home.html | sort -u | head -40
-          echo "--- ajax/fetch url"
-          grep -n -o -E "(url|fetch)\s*[:(]\s*['\"][^'\"]+['\"]" home.html | sort -u | head -60
+          get() { for i in 1 2 3 4; do curl -sS -L -m 40 -A "$UA" -c jar -b jar "$@" && return 0; echo "retry $i" >&2; sleep 10; done; return 1; }
+          get -o w.html https://www.dhlottery.co.kr/wnprchsplcsrch/home
+          wc -c w.html
+          echo "--- 주소/요청 관련 줄"
+          grep -n -E "wnprchsplcsrch|ajax|url\s*:|fetch\(|\.do|/api|srch|Epsd|drwNo|ltEpsd|shp|Shp" w.html | grep -v -E "^\s*$" | head -120
+          echo "--- 페이지 전용 스크립트"
+          for s in $(grep -o -E 'src="[^"]*\.js[^"]*"' w.html | sed 's/src="//;s/"$//' | grep -v -E "jquery|swiper|rsa|moment|xlsx|common/(cmmUtil|fileUtil|gmUtil|msgUtil)|resources/js/common"); do
+            echo "=== $s"; get -s "https://www.dhlottery.co.kr$s" | grep -n -E "url|ajax|fetch|wnprchs" | head -60
+          done
