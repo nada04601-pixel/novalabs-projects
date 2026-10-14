@@ -1,0 +1,23 @@
+# 임시: GitHub Actions에서 동행복권 당첨 판매점 페이지에 접속되는지 확인 (확인 후 삭제)
+name: Probe dhlottery
+on:
+  push:
+    branches: [claude/kind-meitner-wkzm8d]
+    paths: [.github/workflows/probe-dhlottery.yml]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
+          for u in \
+            "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=1245" \
+            "https://www.dhlottery.co.kr/store.do?method=topStore&pageGubun=L645&drwNo=1245" \
+            "https://www.dhlottery.co.kr/" ; do
+            echo "=================== $u"
+            curl -sS -L -m 30 -A "$UA" -o out.html -D headers.txt -w 'HTTP %{http_code} size %{size_download} final %{url_effective}\n' "$u" || true
+            head -25 headers.txt
+            if grep -qi "euc-kr" headers.txt out.html 2>/dev/null; then iconv -f euc-kr -t utf-8 out.html > u.html || cp out.html u.html; else cp out.html u.html; fi
+            echo "--- head"; head -c 2500 u.html; echo
+            echo "--- store-like lines"; grep -n -i -E "상호|소재지|배출점|tbl_data|storeNm|firmNm|shpNm|자동|수동|api|\.do\?" u.html | head -80
+          done
