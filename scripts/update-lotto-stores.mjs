@@ -8,6 +8,8 @@ import { readFile, writeFile } from "node:fs/promises";
 const BASE = "https://www.dhlottery.co.kr";
 const DRAWS = new URL("../src/data/lotto/draws.json", import.meta.url);
 const FILE = new URL("../src/data/lotto/stores.json", import.meta.url);
+// 동행복권은 262회부터 1등 배출점을 공개합니다(그 전 회차는 조회해도 빈 목록). src/lib/lotto.ts의 STORES_FROM과 같은 값
+const FIRST = 262;
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36";
 
 const arg = (name, def) => {
@@ -73,7 +75,7 @@ async function main() {
   const latest = draws.at(-1).no;
   const stores = JSON.parse(await readFile(FILE, "utf8").catch(() => "{}"));
   // 1등이 나온 회차 가운데 아직 받지 못한 회차를 최신부터 받습니다(최신 회차가 가장 먼저 필요하므로).
-  const todo = draws.filter((d) => d.prizes[0][1] > 0 && !stores[d.no]).map((d) => d.no).reverse();
+  const todo = draws.filter((d) => d.no >= FIRST && d.prizes[0][1] > 0 && !stores[d.no]).map((d) => d.no).reverse();
   console.log(`받을 회차 ${todo.length}개`);
   if (todo.length === 0) return;
 
@@ -102,7 +104,7 @@ async function main() {
     await sleep(300);
   }
   await save();
-  const left = draws.filter((d) => d.prizes[0][1] > 0 && !stores[d.no]).length;
+  const left = draws.filter((d) => d.no >= FIRST && d.prizes[0][1] > 0 && !stores[d.no]).length;
   console.log(`저장 ${done}개 · 실패 ${failed}개 · 남은 회차 ${left}개`);
 }
 

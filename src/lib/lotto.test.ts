@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { draws, getStores } from "../data/lotto";
 import stores from "../data/lotto/stores.json";
 import {
-  ballTone, checkHistory, storeRegions, frequency, generateGame, generateGames, lite, nextDrawDate, oddEven, parseNumbers, rankOf, sum, validateOptions,
+  ballTone, checkHistory, storeRegions, STORES_FROM, frequency, generateGame, generateGames, lite, nextDrawDate, oddEven, parseNumbers, rankOf, sum, validateOptions,
 } from "./lotto";
 
 const seeded = (seed = 1) => () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0);
@@ -106,6 +106,7 @@ describe("1등 배출점", () => {
   it("저장된 배출점 자료는 형식이 맞고, 1등이 있던 회차에만 있다", () => {
     for (const [no, list] of Object.entries(stores as Record<string, unknown[]>)) {
       const d = draws[Number(no) - 1];
+      expect(d.no).toBeGreaterThanOrEqual(STORES_FROM);
       expect(d.prizes[0][1]).toBeGreaterThan(0);
       expect(list.length).toBeLessThanOrEqual(d.prizes[0][1]);
       for (const s of list as unknown[][]) {
@@ -116,5 +117,8 @@ describe("1등 배출점", () => {
       }
     }
     expect(getStores(1)).toBeUndefined();
+    // 실제 자료 확인: 1245회 1등 10게임은 모두 자동, 배출점 10곳
+    expect(getStores(1245)).toHaveLength(10);
+    expect(getStores(1245)!.every((s) => s[1] === "자동")).toBe(true);
   });
 });

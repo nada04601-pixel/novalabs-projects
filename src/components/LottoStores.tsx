@@ -1,4 +1,4 @@
-import { storeRegions, type Draw, type Store } from "@/lib/lotto";
+import { storeRegions, STORES_FROM, type Draw, type Store } from "@/lib/lotto";
 
 // 회차별 1등 배출점 목록과 지역별 개수
 export default function LottoStores({ draw, stores }: { draw: Draw; stores: Store[] | undefined }) {
@@ -8,6 +8,8 @@ export default function LottoStores({ draw, stores }: { draw: Draw; stores: Stor
       <h2>1등 배출점</h2>
       {winners === 0 ? (
         <p className="note-sm">이 회차는 1등 당첨자가 없어 당첨금이 다음 회차로 이월됐습니다.</p>
+      ) : draw.no < STORES_FROM ? (
+        <p className="note-sm">동행복권은 {STORES_FROM}회부터 1등 배출점을 공개하고 있어, 이 회차의 판매점 정보는 없습니다.</p>
       ) : !stores ? (
         <p className="note-sm">이 회차의 1등 배출점 정보를 아직 불러오지 못했습니다. 동행복권 &gt; 판매점 &gt; 당첨 판매점 조회에서 확인할 수 있습니다.</p>
       ) : stores.length === 0 ? (

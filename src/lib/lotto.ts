@@ -16,6 +16,9 @@ export type Draw = {
   firstBy: { auto: number; manual: number; semi: number };
 };
 
+// 동행복권이 1등 배출점을 공개하는 첫 회차
+export const STORES_FROM = 262;
+
 // 1등 배출점: [상호, 구분(자동·수동·반자동), 주소, 당첨 당시 주소(바뀐 경우만), 폐점이면 1]
 export type Store = [string, string, string, string, number];
 
