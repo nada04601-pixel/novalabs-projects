@@ -1,7 +1,10 @@
 import { RATES } from "@/data/rates/2026";
 
-export const CATEGORIES = ["급여·근로", "대출·저축", "부동산", "생활", "학교·학업", "업무·일정", "디지털 도구"] as const;
+export const CATEGORIES = ["급여·근로", "대출·저축", "부동산", "생활", "학교·학업", "업무·일정", "PDF", "이미지", "동영상·오디오", "텍스트·유틸리티"] as const;
 export type Category = (typeof CATEGORIES)[number];
+
+// 브라우저 안에서 파일·글을 다루는 디지털 도구 분류. 페이지 아래에 "서버로 보내지 않음" 안내를 붙입니다.
+export const DIGITAL_CATEGORIES: readonly Category[] = ["PDF", "이미지", "동영상·오디오", "텍스트·유틸리티"];
 
 export type Tool = {
   slug: string;
@@ -1003,7 +1006,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "pdf-compress",
-    category: "디지털 도구",
+    category: "PDF",
     title: "PDF 용량 줄이기",
     short: "PDF를 서버에 올리지 않고 브라우저 안에서 압축해 용량을 줄입니다.",
     metaDescription:
@@ -1032,7 +1035,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "pdf-merge",
-    category: "디지털 도구",
+    category: "PDF",
     title: "PDF 합치기",
     short: "여러 PDF 파일을 원하는 순서대로 한 파일로 합칩니다.",
     metaDescription:
@@ -1062,7 +1065,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "pdf-split",
-    category: "디지털 도구",
+    category: "PDF",
     title: "PDF 나누기·페이지 추출",
     short: "PDF를 쪽 범위별로 나누거나 원하는 쪽만 뽑아 새 파일로 만듭니다.",
     metaDescription:
@@ -1091,7 +1094,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "pdf-organize",
-    category: "디지털 도구",
+    category: "PDF",
     title: "PDF 페이지 정리",
     short: "PDF 쪽을 미리보기로 보며 순서 변경, 회전, 삭제를 한 번에 합니다.",
     metaDescription:
@@ -1120,7 +1123,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "jpg-to-pdf",
-    category: "디지털 도구",
+    category: "PDF",
     title: "이미지를 PDF로",
     short: "사진과 이미지(JPG·PNG) 여러 장을 한 PDF 파일로 바꿉니다.",
     metaDescription:
@@ -1150,7 +1153,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "pdf-to-jpg",
-    category: "디지털 도구",
+    category: "PDF",
     title: "PDF를 이미지로",
     short: "PDF의 각 쪽을 JPG·PNG 이미지로 바꿔 내려받습니다.",
     metaDescription:
@@ -1179,7 +1182,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "watermark-remover",
-    category: "디지털 도구",
+    category: "이미지",
     title: "워터마크 지우기 (이미지·동영상)",
     short: "사진과 동영상에서 고른 영역의 로고·글자·날짜 표시를 주변 색으로 메워 지웁니다.",
     metaDescription:
@@ -1209,7 +1212,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "video-trim",
-    category: "디지털 도구",
+    category: "동영상·오디오",
     title: "동영상 자르기",
     short: "동영상에서 필요한 구간만 남겨 MP4·WEBM으로 저장합니다.",
     metaDescription:
@@ -1238,7 +1241,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "video-compress",
-    category: "디지털 도구",
+    category: "동영상·오디오",
     title: "동영상 용량 줄이기",
     short: "해상도와 비트레이트를 낮춰 동영상 파일 크기를 줄입니다.",
     metaDescription:
@@ -1267,7 +1270,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "video-to-gif",
-    category: "디지털 도구",
+    category: "동영상·오디오",
     title: "동영상 GIF 변환",
     short: "동영상의 짧은 구간을 움직이는 GIF(움짤)로 바꿉니다.",
     metaDescription:
@@ -1296,7 +1299,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "video-to-mp3",
-    category: "디지털 도구",
+    category: "동영상·오디오",
     title: "동영상 MP3 추출",
     short: "동영상에서 소리만 뽑아 MP3 파일로 저장합니다.",
     metaDescription:
@@ -1325,7 +1328,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "typing-test",
-    category: "디지털 도구",
+    category: "텍스트·유틸리티",
     title: "타자 속도 테스트",
     short: "한글·영어 문장을 따라 쳐서 분당 타수와 정확도를 측정합니다.",
     metaDescription:
@@ -1354,7 +1357,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "password-generator",
-    category: "디지털 도구",
+    category: "텍스트·유틸리티",
     title: "비밀번호 생성기",
     short: "길이와 글자 종류를 골라 추측하기 어려운 무작위 비밀번호를 만듭니다.",
     metaDescription:
@@ -1383,7 +1386,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "qr-code",
-    category: "디지털 도구",
+    category: "텍스트·유틸리티",
     title: "QR 코드 생성기",
     short: "주소, 글, 와이파이, 전화번호를 QR코드로 만들어 PNG·SVG로 내려받습니다.",
     metaDescription:
@@ -1412,7 +1415,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "character-counter",
-    category: "디지털 도구",
+    category: "텍스트·유틸리티",
     title: "글자수 세기",
     short: "공백 포함·제외 글자수와 바이트, 단어·줄 수를 바로 세고 제한까지 남은 글자를 알려줍니다.",
     metaDescription:
@@ -1472,7 +1475,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "image-upscaler",
-    category: "디지털 도구",
+    category: "이미지",
     title: "이미지 업스케일링 (AI 화질 개선)",
     short: "작거나 흐린 이미지를 AI로 2배·4배 키워 선명하게 만듭니다.",
     metaDescription:

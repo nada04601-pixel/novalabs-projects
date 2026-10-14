@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getTool, tools } from "@/data/tools";
+import { DIGITAL_CATEGORIES, getTool, tools } from "@/data/tools";
 import { hasEn } from "@/lib/i18n";
 import { RATES } from "@/data/rates/2026";
 import Link from "next/link";
@@ -170,7 +170,7 @@ export default async function ToolPage({ params }: Props) {
 
       {tool.note ? (
         <p className="note">{tool.note}</p>
-      ) : tool.category === "디지털 도구" ? (
+      ) : DIGITAL_CATEGORIES.includes(tool.category) ? (
         <p className="note">모든 처리는 이 브라우저 안에서 이루어지며, 입력한 내용과 파일은 서버로 전송하거나 저장하지 않습니다.</p>
       ) : (
         <p className="note">
