@@ -9,6 +9,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@mediabunny/mp3-encoder": "1.60.0",
+    "gifenc": "1.0.3",
     "mediabunny": "1.60.0",
     "next": "^15.0.0",
     "pdf-lib": "^1.17.1",

@@ -43,6 +43,8 @@ import PdfToImage from "@/components/PdfToImage";
 import WatermarkRemover from "@/components/WatermarkRemover";
 import VideoTrimmer from "@/components/VideoTrimmer";
 import VideoCompressor from "@/components/VideoCompressor";
+import VideoToGif from "@/components/VideoToGif";
+import AudioExtractor from "@/components/AudioExtractor";
 import TypingTest from "@/components/TypingTest";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
@@ -104,6 +106,8 @@ const calculators: Record<string, React.ReactNode> = {
   "watermark-remover": <WatermarkRemover />,
   "video-trim": <VideoTrimmer />,
   "video-compress": <VideoCompressor />,
+  "video-to-gif": <VideoToGif />,
+  "video-to-mp3": <AudioExtractor />,
   "typing-test": <TypingTest />,
   "password-generator": <PasswordGenerator />,
   "qr-code": <QrCodeGenerator />,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { editedName, estimateBytes, fitShortSide, formatTime, parseTime, trimError, videoBitrate } from "./videoEdit";
+import { editedName, estimateBytes, estimateGifBytes, fitShortSide, formatTime, frameTimes, gifDelay, gifSize, parseTime, trimError, videoBitrate } from "./videoEdit";
 
 describe("시간 입력", () => {
   it("초, 분:초, 시:분:초를 읽는다", () => {
@@ -53,5 +53,26 @@ describe("압축 계산", () => {
   it("결과 파일 이름", () => {
     expect(editedName("여행.영상.mov", "자름", "mp4")).toBe("여행.영상-자름.mp4");
     expect(editedName(".mp4", "압축", "webm")).toBe("동영상-압축.webm");
+  });
+});
+
+describe("GIF 계산", () => {
+  it("폭에 맞춰 줄이고 높이는 비율대로 짝수", () => {
+    expect(gifSize(1920, 1080, 480)).toEqual({ w: 480, h: 270 });
+    expect(gifSize(1080, 1920, 320)).toEqual({ w: 320, h: 568 });
+    expect(gifSize(300, 200, 640)).toEqual({ w: 300, h: 200 });
+  });
+  it("구간에서 fps 간격으로 프레임 시각을 뽑는다", () => {
+    expect(frameTimes(2, 3, 4)).toEqual([2, 2.25, 2.5, 2.75]);
+    expect(frameTimes(0, 10, 12)).toHaveLength(120);
+    expect(frameTimes(5, 5.01, 8)).toEqual([5]);
+  });
+  it("프레임 간격은 10ms 단위", () => {
+    expect(gifDelay(8)).toBe(130);
+    expect(gifDelay(12)).toBe(80);
+    expect(gifDelay(15)).toBe(70);
+  });
+  it("예상 크기", () => {
+    expect(estimateGifBytes(480, 270, 120)).toBe(7_776_000);
   });
 });

@@ -64,3 +64,28 @@ export const estimateBytes = (videoBps: number, audioBps: number, seconds: numbe
 // 결과 파일 이름: 여행.mov + "자름" + mp4 → 여행-자름.mp4
 export const editedName = (name: string, suffix: string, ext: string) =>
   `${name.replace(/\.[^.]+$/, "") || "동영상"}-${suffix}.${ext}`;
+
+// GIF 만들기: 프레임 수와 크기가 커지면 파일이 수십 MB가 되고 휴대폰 메모리가 모자라므로 길이를 제한합니다.
+export const GIF_MAX_SECONDS = 20;
+export const GIF_FPS = [8, 12, 15] as const;
+export const GIF_WIDTHS = [320, 480, 640] as const;
+
+// 원본보다 크게 만들지 않고, 높이는 비율에 맞춰 짝수로 정합니다.
+export function gifSize(w: number, h: number, width: number) {
+  const outW = Math.min(width, w);
+  return { w: outW, h: Math.max(2, Math.round((h * outW) / w / 2) * 2) };
+}
+
+// start~end 구간에서 fps 간격으로 뽑을 프레임 시각(초). 끝 시각은 포함하지 않습니다.
+export function frameTimes(start: number, end: number, fps: number): number[] {
+  const n = Math.max(1, Math.floor((end - start) * fps + 1e-6));
+  return Array.from({ length: n }, (_, i) => start + i / fps);
+}
+
+// GIF 한 프레임은 압축 후 대략 픽셀 수의 0.3~0.6바이트입니다. 넉넉히 0.5로 어림합니다.
+export const estimateGifBytes = (w: number, h: number, frames: number) => Math.round(w * h * frames * 0.5);
+
+// GIF 프레임 간격은 1/100초 단위라 반올림합니다(12fps → 80ms).
+export const gifDelay = (fps: number) => Math.round(100 / fps) * 10;
+
+export const MP3_BITRATES = [128, 192, 320] as const;
