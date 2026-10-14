@@ -1,6 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import ShareLinkButtons from "@/components/ShareLinkButtons";
+import { decodeMatchLink, encodeMatchLink, type BirthLink } from "@/lib/sajuLink";
 import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, calcSaju, type Element, type SajuResult } from "@/lib/calculators/saju";
 import { MAX, calcMatch } from "@/lib/calculators/sajuMatch";
 import { DAY_MASTER_REL_TEXT, GRADE_TEXT, PARTNER_GOD_TEXT, SPOUSE_REL_TEXT, ZODIAC_REL_TEXT } from "@/data/sajuMatchText";
@@ -9,6 +11,10 @@ const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토:
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
 type Person = { calendar: "solar" | "lunar"; year: string; month: number; day: number; leap: boolean; time: string; noTime: boolean };
+
+const toLink = (p: Person): BirthLink => ({ calendar: p.calendar, year: Number(p.year), month: p.month, day: p.day, leap: p.leap, time: p.noTime || !p.time ? null : p.time });
+// 링크에 시각이 없으면 "시간 모름"으로, 입력칸에는 이전 시각을 그대로 둡니다.
+const fromLink = (l: BirthLink, prev: Person): Person => ({ calendar: l.calendar, year: String(l.year), month: l.month, day: l.day, leap: l.leap, time: l.time ?? prev.time, noTime: !l.time });
 
 function PersonFields({ title, p, set }: { title: string; p: Person; set: (p: Person) => void }) {
   const up = (patch: Partial<Person>) => set({ ...p, ...patch });
@@ -68,6 +74,23 @@ export default function SajuMatchCalculator() {
   const [b, setB] = useState<Person>({ calendar: "solar", year: "1993", month: 11, day: 2, leap: false, time: "14:00", noTime: false });
   const [city, setCity] = useState("서울");
   const [dayChange, setDayChange] = useState<"23" | "00">("23");
+  const [linked, setLinked] = useState(false);
+
+  // 공유 링크(#ay=…&by=…)로 들어오면 두 사람의 입력값을 채웁니다.
+  useEffect(() => {
+    const load = () => {
+      const s = decodeMatchLink(window.location.hash);
+      if (!s) return;
+      setA((prev) => fromLink(s.a, prev));
+      setB((prev) => fromLink(s.b, prev));
+      setCity(s.city);
+      setDayChange(s.dayChange);
+      setLinked(true);
+    };
+    load();
+    window.addEventListener("hashchange", load);
+    return () => window.removeEventListener("hashchange", load);
+  }, []);
 
   const calc = (p: Person) => {
     const [h, m] = p.time.split(":").map(Number);
@@ -87,6 +110,7 @@ export default function SajuMatchCalculator() {
 
   return (
     <div className="calc">
+      {linked && <p className="warn">공유받은 링크의 두 사람 생년월일로 계산한 궁합입니다. 값을 바꾸면 그 값으로 다시 계산합니다.</p>}
       <div className="match-people">
         <PersonFields title="나" p={a} set={setA} />
         <PersonFields title="상대" p={b} set={setB} />
@@ -110,7 +134,14 @@ export default function SajuMatchCalculator() {
         {"error" in ra || "error" in rb ? (
           <p className="warn">{"error" in ra ? `나: ${ra.error}` : ""} {"error" in rb ? `상대: ${rb.error}` : ""}</p>
         ) : (
-          <MatchResultView a={ra} b={rb} />
+          <>
+            <MatchResultView a={ra} b={rb} />
+            <ShareLinkButtons
+              hash={() => encodeMatchLink({ a: toLink(a), b: toLink(b), city, dayChange })}
+              title="사주 궁합 결과"
+              note="링크에는 두 사람의 생년월일·시각이 담기니, 두 사람 모두 괜찮을 때 믿을 수 있는 사람에게만 보내세요."
+            />
+          </>
         )}
       </div>
     </div>
