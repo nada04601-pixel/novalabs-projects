@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { todayKST } from "@/lib/calculators/date";
+import { decodeSajuLink, encodeSajuLink, type SajuLinkState } from "@/lib/sajuLink";
 import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, findRelations, findShinsal, natalSlots, formatUsedTime, groupOf, type Element, type LuckPillar, type Relation, type SajuResult, type Shinsal, type TenGod } from "@/lib/calculators/saju";
 import { DAY_MASTER, ELEMENT_TEXT, HIDDEN_ONLY, REVEAL_TEXT, ROOT_TEXT, LUCK_TEXT, MANY, PLACE_MEANING, RELATION_TEXT, SHINSAL_TEXT, SPOUSE_CLASH, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
 
@@ -20,12 +21,47 @@ export default function SajuCalculator() {
   const [gender, setGender] = useState<"male" | "female">("female");
   const [withHidden, setWithHidden] = useState(false);
   const [today, setToday] = useState<{ year: number; month: number; day: number } | null>(null);
+  const [fromLink, setFromLink] = useState(false);
 
   // 정적 HTML에 빌드 날짜가 박히지 않도록 마운트 후 오늘 날짜를 채웁니다.
   useEffect(() => {
     const [y, mo, d] = todayKST().split("-").map(Number);
     setToday({ year: y, month: mo, day: d });
   }, []);
+
+  // 공유 링크(#y=…&m=…&d=…)로 들어오면 그 입력값으로 채웁니다.
+  useEffect(() => {
+    const load = () => {
+      const s = decodeSajuLink(window.location.hash);
+      if (!s) return;
+      setCalendar(s.calendar);
+      setYear(String(s.year));
+      setMonth(s.month);
+      setDay(s.day);
+      setLeap(s.leap);
+      setNoTime(!s.time);
+      if (s.time) setTime(s.time);
+      setCity(s.city);
+      setDayChange(s.dayChange);
+      setGender(s.gender);
+      setFromLink(true);
+    };
+    load();
+    window.addEventListener("hashchange", load);
+    return () => window.removeEventListener("hashchange", load);
+  }, []);
+
+  const linkState: SajuLinkState = {
+    calendar,
+    year: Number(year),
+    month,
+    day,
+    leap,
+    time: noTime || !time ? null : time,
+    city,
+    dayChange,
+    gender,
+  };
 
   const [h, m] = time.split(":").map(Number);
   const r = calcSaju({
@@ -41,6 +77,7 @@ export default function SajuCalculator() {
 
   return (
     <div className="calc">
+      {fromLink && <p className="warn">공유받은 링크의 생년월일로 계산한 결과입니다. 값을 바꾸면 그 값으로 다시 계산합니다.</p>}
       <div className="seg" role="group" aria-label="달력">
         <button type="button" aria-pressed={calendar === "solar"} onClick={() => setCalendar("solar")}>양력</button>
         <button type="button" aria-pressed={calendar === "lunar"} onClick={() => setCalendar("lunar")}>음력</button>
@@ -139,6 +176,7 @@ export default function SajuCalculator() {
                 {r.adjustments.map((a) => <li key={a}>{a}</li>)}
               </ul>
             )}
+            <ShareResult state={linkState} />
 
             <h3>오행 분포</h3>
             <div className="seg" role="group" aria-label="오행 세는 방식">
@@ -383,5 +421,39 @@ function ShinsalList({ list }: { list: Shinsal[] }) {
         );
       })}
     </ul>
+  );
+}
+
+// 입력값을 담은 링크를 공유합니다. 생년월일은 주소의 # 뒤에만 들어가 서버로 보내지지 않습니다.
+function ShareResult({ state }: { state: SajuLinkState }) {
+  const [canShare, setCanShare] = useState(false);
+  const [copied, setCopied] = useState(false);
+  // 서버에서 만든 HTML과 어긋나지 않도록 화면이 뜬 뒤에 확인합니다.
+  useEffect(() => setCanShare(typeof navigator.share === "function"), []);
+  const url = () => `${window.location.origin}${window.location.pathname}#${encodeSajuLink(state)}`;
+
+  const copy = async () => {
+    const u = url();
+    try {
+      await navigator.clipboard.writeText(u);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      window.prompt("아래 주소를 복사하세요", u);
+    }
+  };
+
+  return (
+    <div className="actions">
+      {canShare && (
+        <button type="button" className="btn sm" onClick={() => navigator.share({ title: "사주 만세력 결과", url: url() }).catch(() => {})}>
+          결과 공유하기
+        </button>
+      )}
+      <button type="button" className={`btn sm${canShare ? " ghost" : ""}`} onClick={copy}>
+        {copied ? "복사했어요" : "결과 링크 복사"}
+      </button>
+      <span className="saju-muted saju-share-note">링크에는 생년월일·시각이 담기니 믿을 수 있는 사람에게만 보내세요.</span>
+    </div>
   );
 }

@@ -368,3 +368,4 @@ table.stores tbody th a:hover{text-decoration:underline}
 .saju-hidden{display:flex;flex-direction:column;gap:2px;background:var(--bg);border-radius:10px;padding:6px 2px;font-size:11px;color:var(--mut);text-align:center}
 .saju-hidden b{color:var(--el);font-size:14px;font-weight:700}
 .saju-pillars+.saju-muted{margin:-6px 0 14px}
+.saju-share-note{flex-basis:100%}
