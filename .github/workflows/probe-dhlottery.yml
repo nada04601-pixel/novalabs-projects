@@ -10,7 +10,7 @@ jobs:
     steps:
       - run: |
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
-          curl -sS -L -m 30 -A "$UA" -c jar -b jar -o home.html https://www.dhlottery.co.kr/
+          for i in 1 2 3 4; do curl -sS -L -m 40 -A "$UA" -c jar -b jar -o home.html https://www.dhlottery.co.kr/ && break; echo "retry $i"; sleep 10; done
           echo "--- 메뉴 링크(당첨/판매점/로또 관련)"
           grep -o -E 'href="[^"]*"' home.html | sort -u | grep -i -E "store|shop|win|prchs|plc|lt645|lotto|result|rslt|645" | head -80
           echo "--- 메뉴 텍스트 주변"
