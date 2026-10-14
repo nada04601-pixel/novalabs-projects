@@ -1,0 +1,34 @@
+// lunar-javascript(1.7.7)는 타입 선언을 함께 배포하지 않아 여기서 쓰는 함수만 적어 둡니다.
+declare module "lunar-javascript" {
+  export interface EightChar {
+    // 1: 23시에 날이 바뀜(자시 기준), 2: 0시에 날이 바뀜(야자시)
+    setSect(sect: 1 | 2): void;
+    getYear(): string;
+    getMonth(): string;
+    getDay(): string;
+    getTime(): string;
+  }
+  export interface LunarDate {
+    getEightChar(): EightChar;
+    getSolar(): SolarDate;
+    // 직전·다음 절(입춘·경칩 같은 12절). false면 시각까지 정확히 계산합니다.
+    getPrevJie(wholeDay: boolean): { getSolar(): SolarDate };
+    getNextJie(wholeDay: boolean): { getSolar(): SolarDate };
+  }
+  export interface SolarDate {
+    getYear(): number;
+    getMonth(): number;
+    getDay(): number;
+    getHour(): number;
+    getMinute(): number;
+    getSecond(): number;
+    getLunar(): LunarDate;
+  }
+  export const Solar: {
+    fromYmdHms(y: number, m: number, d: number, h: number, mi: number, s: number): SolarDate;
+  };
+  export const Lunar: {
+    // 윤달은 달을 음수로 넘깁니다(윤2월 → -2).
+    fromYmd(y: number, m: number, d: number): LunarDate;
+  };
+}

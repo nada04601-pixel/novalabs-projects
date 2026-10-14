@@ -18,6 +18,7 @@ import OvertimePayCalculator from "@/components/OvertimePayCalculator";
 import RentConversionCalculator from "@/components/RentConversionCalculator";
 import RentTaxCreditCalculator from "@/components/RentTaxCreditCalculator";
 import AgeCalculator from "@/components/AgeCalculator";
+import SajuCalculator from "@/components/SajuCalculator";
 import PercentCalculator from "@/components/PercentCalculator";
 import VatCalculator from "@/components/VatCalculator";
 import WageConverterCalculator from "@/components/WageConverterCalculator";
@@ -89,6 +90,7 @@ const calculators: Record<string, React.ReactNode> = {
   "rent-conversion": <RentConversionCalculator />,
   "rent-tax-credit": <RentTaxCreditCalculator />,
   "korean-age": <AgeCalculator />,
+  saju: <SajuCalculator />,
   percent: <PercentCalculator />,
   vat: <VatCalculator />,
   "wage-converter": <WageConverterCalculator />,

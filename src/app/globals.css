@@ -322,3 +322,49 @@ table.stores tbody th a:hover{text-decoration:underline}
 .top-right{display:flex;align-items:center;gap:8px}
 .lang-switch{font-size:13px;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--bg)}
 .lang-switch:hover{border-color:var(--acc)}
+/* 사주 계산기 */
+.el-wood{--el:#16a34a}.el-fire{--el:#dc2626}.el-earth{--el:#ca8a04}.el-metal{--el:#64748b}.el-water{--el:#2563eb}
+.saju-pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:8px;margin-bottom:14px}
+.saju-pillar{display:flex;flex-direction:column;gap:6px;text-align:center}
+.saju-label{font-size:13px;color:var(--mut)}
+.saju-char{display:flex;flex-direction:column;align-items:center;background:var(--bg);border-radius:12px;border-top:4px solid var(--el);padding:10px 4px}
+.saju-char b{font-size:clamp(26px,7vw,34px);line-height:1.2;color:var(--el);font-weight:700}
+.saju-char small{font-size:12px;color:var(--mut)}
+.saju-notes{font-size:13px;color:var(--mut);margin:8px 0 0;padding-left:18px}
+.saju-elements{display:grid;gap:8px}
+.saju-el-row{display:grid;grid-template-columns:56px 1fr 32px;align-items:center;gap:10px;font-size:14px}
+.saju-el-row strong{text-align:right}
+.saju-bar{height:10px;background:var(--bg);border-radius:6px;overflow:hidden}
+.saju-bar i{display:block;height:100%;background:var(--el);border-radius:6px}
+.saju-summary{font-size:14px;margin:12px 0 0}
+.saju-god{font-style:normal;font-size:12px;color:var(--fg);margin-top:4px;padding:1px 8px;border-radius:999px;background:var(--soft)}
+.saju-reading{margin-top:28px}
+.saju-card{background:var(--bg);border-radius:12px;padding:16px;margin:0 0 12px}
+.saju-card h4{margin:0 0 8px;font-size:16px}
+.saju-card p{margin:0 0 10px;font-size:15px;line-height:1.65}
+.saju-card p:last-child{margin-bottom:0}
+.saju-card details{margin-top:10px}
+.saju-tags{display:flex;flex-wrap:wrap;gap:6px}
+.saju-tags span{font-size:13px;padding:2px 10px;border-radius:999px;background:var(--soft);color:var(--acc)}
+.saju-muted{color:var(--mut);font-size:13px}
+.saju-el-row.wide i{background:var(--acc)}
+.saju-card .saju-elements{margin:0 0 12px}
+.saju-luck-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin:0 0 12px;scrollbar-width:thin}
+.saju-luck{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 2px;cursor:pointer;color:var(--fg)}
+.saju-luck[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.saju-luck b{font-size:20px;line-height:1.2;color:var(--el)}
+.saju-luck small{font-size:11px;color:var(--mut);white-space:nowrap}
+.saju-luck-detail{background:var(--bg);border-radius:12px;padding:16px;margin:0 0 16px}
+.saju-luck-detail h4{margin:0 0 8px;font-size:16px}
+.saju-luck-detail p{margin:0 0 10px;font-size:15px;line-height:1.65}
+.saju-luck-detail p:last-child{margin-bottom:0}
+.saju-rel{list-style:none;padding:0;margin:0}
+.saju-rel li{font-size:15px;line-height:1.65;padding:10px 0;border-top:1px solid var(--line)}
+.saju-rel li:first-child{border-top:0;padding-top:0}
+.saju-luck-detail .saju-rel{margin-top:4px;border-top:1px solid var(--line);padding-top:10px}
+.saju-tone{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;vertical-align:1px}
+.saju-tone.good{background:#dcfce7;color:#166534}.saju-tone.bad{background:#fee2e2;color:#991b1b}.saju-tone.mixed{background:#fef3c7;color:#92400e}
+.saju-luck-detail .saju-rel+.saju-rel{border-top:1px solid var(--line);margin-top:10px}
+.saju-hidden{display:flex;flex-direction:column;gap:2px;background:var(--bg);border-radius:10px;padding:6px 2px;font-size:11px;color:var(--mut);text-align:center}
+.saju-hidden b{color:var(--el);font-size:14px;font-weight:700}
+.saju-pillars+.saju-muted{margin:-6px 0 14px}
