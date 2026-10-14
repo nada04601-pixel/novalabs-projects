@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { todayKST } from "@/lib/calculators/date";
 import { decodeSajuLink, encodeSajuLink, type SajuLinkState } from "@/lib/sajuLink";
 import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, findRelations, findShinsal, natalSlots, formatUsedTime, groupOf, type Element, type LuckPillar, type Relation, type SajuResult, type Shinsal, type TenGod } from "@/lib/calculators/saju";
@@ -312,7 +313,7 @@ function Reading({ r }: { r: SajuResult }) {
         )}
       </section>
 
-      <p className="saju-muted">풀이는 일간·오행·십신, 합·충·형·파·해, 신살의 일반적인 의미를 풀어 쓴 것입니다. 신살은 학파마다 기준이 조금씩 달라 다른 만세력과 결과가 다를 수 있습니다. 재미와 참고용으로 봐 주세요.</p>
+      <p className="saju-muted">풀이는 일간·오행·십신, 합·충·형·파·해, 신살의 일반적인 의미를 풀어 쓴 것입니다. 신살은 학파마다 기준이 조금씩 달라 다른 만세력과 결과가 다를 수 있습니다. 재미와 참고용으로 봐 주세요. 두 사람의 궁합은 <Link href="/tools/saju-match">사주 궁합 계산기</Link>에서 볼 수 있습니다.</p>
     </div>
   );
 }

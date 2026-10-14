@@ -19,6 +19,7 @@ import RentConversionCalculator from "@/components/RentConversionCalculator";
 import RentTaxCreditCalculator from "@/components/RentTaxCreditCalculator";
 import AgeCalculator from "@/components/AgeCalculator";
 import SajuCalculator from "@/components/SajuCalculator";
+import SajuMatchCalculator from "@/components/SajuMatchCalculator";
 import PercentCalculator from "@/components/PercentCalculator";
 import VatCalculator from "@/components/VatCalculator";
 import WageConverterCalculator from "@/components/WageConverterCalculator";
@@ -91,6 +92,7 @@ const calculators: Record<string, React.ReactNode> = {
   "rent-tax-credit": <RentTaxCreditCalculator />,
   "korean-age": <AgeCalculator />,
   saju: <SajuCalculator />,
+  "saju-match": <SajuMatchCalculator />,
   percent: <PercentCalculator />,
   vat: <VatCalculator />,
   "wage-converter": <WageConverterCalculator />,

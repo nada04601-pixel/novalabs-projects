@@ -8,9 +8,9 @@ export type Element = "목" | "화" | "토" | "금" | "수";
 export const ELEMENTS: Element[] = ["목", "화", "토", "금", "수"];
 export const ELEMENT_HANJA: Record<Element, string> = { 목: "木", 화: "火", 토: "土", 금: "金", 수: "水" };
 
-const STEMS = "甲乙丙丁戊己庚辛壬癸";
+export const STEMS = "甲乙丙丁戊己庚辛壬癸";
 const STEMS_KO = "갑을병정무기경신임계";
-const BRANCHES = "子丑寅卯辰巳午未申酉戌亥";
+export const BRANCHES = "子丑寅卯辰巳午未申酉戌亥";
 const BRANCHES_KO = "자축인묘진사오미신유술해";
 const ANIMALS = ["쥐", "소", "호랑이", "토끼", "용", "뱀", "말", "양", "원숭이", "닭", "개", "돼지"];
 const STEM_ELEMENT: Element[] = ["목", "목", "화", "화", "토", "토", "금", "금", "수", "수"];
@@ -487,6 +487,10 @@ const CANOPY = "辰戌丑未";
 const WHITE_TIGER = ["甲辰", "乙未", "丙戌", "丁丑", "戊辰", "壬戌", "癸丑"];
 const KUIGANG = ["庚辰", "庚戌", "壬辰", "壬戌", "戊戌"];
 const RESENTMENT = [[0, 7], [1, 6], [2, 9], [3, 8], [4, 11], [5, 10]]; // 子未 丑午 寅酉 卯申 辰亥 巳戌
+
+// 두 지지가 원진인지, 같은 삼합(申子辰·寅午戌·巳酉丑·亥卯未) 무리인지
+export const isResentment = (a: string, b: string) => RESENTMENT.some((pair) => samePair(BRANCHES.indexOf(a), BRANCHES.indexOf(b), pair));
+export const sameTrine = (a: string, b: string) => a !== b && GROUP_OF(BRANCHES.indexOf(a)) === GROUP_OF(BRANCHES.indexOf(b));
 
 const pillarPlace = (n: string) => (n.length === 1 ? `${n}주` : n);
 
