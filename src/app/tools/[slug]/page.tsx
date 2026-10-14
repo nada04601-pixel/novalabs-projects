@@ -41,6 +41,7 @@ import PdfOrganizer from "@/components/PdfOrganizer";
 import ImageToPdf from "@/components/ImageToPdf";
 import PdfToImage from "@/components/PdfToImage";
 import WatermarkRemover from "@/components/WatermarkRemover";
+import ImageUpscaler from "@/components/ImageUpscaler";
 import VideoTrimmer from "@/components/VideoTrimmer";
 import VideoCompressor from "@/components/VideoCompressor";
 import VideoToGif from "@/components/VideoToGif";
@@ -106,6 +107,7 @@ const calculators: Record<string, React.ReactNode> = {
   "jpg-to-pdf": <ImageToPdf />,
   "pdf-to-jpg": <PdfToImage />,
   "watermark-remover": <WatermarkRemover />,
+  "image-upscaler": <ImageUpscaler />,
   "video-trim": <VideoTrimmer />,
   "video-compress": <VideoCompressor />,
   "video-to-gif": <VideoToGif />,
