@@ -38,8 +38,8 @@
 
 **대표 이미지(썸네일)**
 `thumbnails/` 폴더에 원고 번호와 같은 이름의 PNG(1080×1080)가 있습니다. 글쓰기 화면에서 이미지를 본문에 넣고 '대표 이미지'로 지정하세요.
-핵심 내용은 가운데에 모아 두어서, 스킨이 4:3 등으로 잘라도 제목은 보입니다(16:9로 자르는 스킨은 아래 항목이 잘릴 수 있음).
-문구를 고치려면 `thumbnails/make-thumbnails.mjs`의 `POSTS`를 고친 뒤 `node blog/tistory/thumbnails/make-thumbnails.mjs`를 실행하세요
+이미지는 주제 태그, 글 제목, 후킹 문구 두 줄로만 구성했습니다. 내용은 가운데에 모아 두어서 스킨이 4:3 등으로 잘라도 대부분 보입니다(16:9로 자르는 스킨은 위아래가 잘릴 수 있음).
+문구를 고치려면 `thumbnails/make-thumbnails.mjs`의 `POSTS`(`title`, `hook`)를 고친 뒤 `node blog/tistory/thumbnails/make-thumbnails.mjs`를 실행하세요
 (번호를 붙이면 그 글만: `... make-thumbnails.mjs 05`).
 
 **마크다운 모드로 올릴 때**

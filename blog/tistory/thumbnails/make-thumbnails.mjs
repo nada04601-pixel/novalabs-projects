@@ -14,77 +14,77 @@ const chrome =
   process.env.CHROME ||
   ["/opt/pw-browsers/chromium-1194/chrome-linux/chrome", "/usr/bin/chromium", "/usr/bin/google-chrome"].find(existsSync);
 
-// accent: 글마다 다른 강조색. points의 **굵게**는 강조색으로 칠합니다.
+// accent: 글마다 다른 강조색. hook(후킹 문구 두 줄)의 **굵게**는 강조색으로 칠합니다.
 const POSTS = [
   {
     file: "01-year-end-tax",
     tag: "연말정산",
     accent: "#2f6fed",
     title: ["연말정산,", "10월부터 바꿀 수 있는 3가지"],
-    points: ["카드 사용액이 총급여 25%를 넘었다면 **체크카드 30%**", "연금저축·IRP는 12월에 넣어도 **최대 16.5%**", "월세 사는 직장인은 **월세의 최대 17%** 공제"],
+    hook: ["아는 사람만 돌려받는", "**13월의 월급**"],
   },
   {
     file: "02-resignation-money",
     tag: "퇴사·이직",
     accent: "#0f9d76",
     title: ["퇴사 전에", "꼭 계산해 볼 돈 4가지"],
-    points: ["퇴직금: 재직 **1년 + 하루**를 확인", "남은 연차는 **연차수당**으로", "실업급여 하루 **최소 66,048원**", "건강보험료: **임의계속가입** 비교"],
+    hook: ["단 하루 차이로", "퇴직금이 **0원**이 될 수도"],
   },
   {
     file: "03-part-time-paycheck",
     tag: "알바 월급",
     accent: "#e8590c",
     title: ["2026 최저시급 10,320원", "알바 월급 직접 계산하기"],
-    points: ["주 **15시간**부터 주휴수당", "밤 10시 이후 근무는 **1.5배**", "3.3% 뗀 세금은 **5월에 환급**"],
+    hook: ["딱 1시간 더 일했을 뿐인데", "주휴수당 **월 13만 원**"],
   },
   {
     file: "04-browser-pdf-video",
     tag: "PDF·동영상",
     accent: "#7048e8",
     title: ["설치 없이", "PDF·동영상 정리하기"],
-    points: ["사진 → PDF → 합치기 → **압축은 마지막에**", "파일은 **서버로 보내지 않고** 브라우저에서", "동영상 **자르기·압축·GIF·MP3**"],
+    hook: ["아직도 프로그램 깔고 계세요?", "**브라우저면 충분합니다**"],
   },
   {
     file: "05-loan-savings",
     tag: "대출·적금",
     accent: "#1c7ed6",
     title: ["1억 대출, 상환 방식만 바꿔도", "이자 1,000만 원 넘게 차이"],
-    points: ["총 이자: 원금균등 < 원리금균등 < **만기일시**", "적금 이자는 같은 금리 예금의 **절반쯤**", "이자에서는 **15.4%** 세금이 빠진다"],
+    hook: ["같은 1억, 같은 금리인데", "이자가 **2배**"],
   },
   {
     file: "06-work-time-tools",
     tag: "시간 관리",
     accent: "#c2255c",
     title: ["회의·하루·마감까지", "시간 나누는 5가지 방법"],
-    points: ["회의는 **안건별 끝나는 시각**부터", "하루 계획은 **못 넣는 일**을 먼저 확인", "마감은 **거꾸로 시작일**을 계산"],
+    hook: ["계획이 무너지는 건", "**의지 탓이 아닙니다**"],
   },
   {
     file: "07-moving-rent",
     tag: "이사·전월세",
     accent: "#2b8a3e",
     title: ["전월세 계약 전에", "계산해 볼 4가지"],
-    points: ["복비는 정해진 값이 아니라 **상한**", "보증금 ↔ 월세는 **전환율**로 비교", "전용 84㎡는 약 **25.4평**", "월세는 연말정산 **세액공제**까지"],
+    hook: ["복비, 부르는 대로", "**다 내셨나요?**"],
   },
   {
     file: "08-college-semester",
     tag: "대학생활",
     accent: "#f08c00",
     title: ["기말고사 몇 점 받아야", "A가 나올까?"],
-    points: ["반영 비율로 **기말 목표 점수** 계산", "결석 **몇 번 더** 빠지면 F인지", "목표 평점까지 **남은 학기 평균**", "졸업은 **영역별 학점**까지 확인"],
+    hook: ["중간고사 망쳤어도", "**아직 늦지 않았습니다**"],
   },
   {
     file: "09-year-end-party",
     tag: "송년회 정산",
     accent: "#d6336c",
     title: ["송년회 N빵,", "공평하게 나누는 법"],
-    points: ["2차는 **간 사람끼리** 나누기", "술값은 **마신 사람끼리** 나누기", "송금은 6번 → **4번으로**"],
+    hook: ["\"나 2차 안 갔는데?\"", "**이 말 나오기 전에**"],
   },
   {
     file: "10-site-intro",
     tag: "무료 도구 모음",
     accent: "#2f6fed",
     title: ["회원가입 없이 쓰는", "무료 생활 도구 45가지"],
-    points: ["연봉·퇴직금·대출 같은 **생활 계산**", "PDF·동영상 **변환과 압축**", "입력한 값은 **서버로 보내지 않아요**"],
+    hook: ["매번 검색하던 그 계산,", "**이제 한곳에서**"],
   },
 ];
 
@@ -102,23 +102,18 @@ html,body{width:1080px;height:1080px}
 body{font-family:P,sans-serif;background:#f6f8fc;color:#141a2a;word-break:keep-all;position:relative;overflow:hidden}
 .band{position:absolute;inset:0 0 auto 0;height:14px;background:${p.accent}}
 .blob{position:absolute;right:-180px;top:-180px;width:560px;height:560px;border-radius:50%;background:${p.accent};opacity:.09}
-.wrap{position:absolute;inset:90px 84px 84px 84px;display:flex;flex-direction:column}
+.wrap{position:absolute;inset:84px;display:flex;flex-direction:column}
 .main{margin:auto 0;display:flex;flex-direction:column}
 .tag{align-self:flex-start;font-weight:700;font-size:30px;color:#fff;background:${p.accent};padding:12px 28px;border-radius:999px}
 h1{margin-top:44px;font-weight:800;font-size:${titleSize}px;line-height:1.22;letter-spacing:-0.03em}
-.rule{width:96px;height:8px;border-radius:4px;background:${p.accent};margin:${p.points.length > 3 ? "36px 0 32px" : "44px 0 40px"}}
-ul{list-style:none;display:flex;flex-direction:column;gap:${p.points.length > 3 ? 14 : 20}px}
-li{display:flex;align-items:center;gap:24px;background:#fff;border:2px solid #e3e8f2;border-radius:20px;padding:${p.points.length > 3 ? "18px 28px" : "22px 28px"};font-weight:500;font-size:${p.points.length > 3 ? 32 : 35}px;line-height:1.3;letter-spacing:-0.02em}
-li i{flex:none;font-style:normal;width:50px;height:50px;border-radius:50%;background:${p.accent};color:#fff;font-weight:800;font-size:27px;display:flex;align-items:center;justify-content:center}
-li b{font-weight:800}
-.foot{display:flex;justify-content:space-between;align-items:center;font-size:28px;color:#4a5468}
-.foot b{font-weight:800;color:#141a2a;font-size:32px}
+.rule{width:110px;height:10px;border-radius:5px;background:${p.accent};margin:70px 0 60px}
+.hook{font-weight:700;font-size:68px;line-height:1.32;letter-spacing:-0.03em;color:#3a4256}
+.hook b{font-weight:800;color:${p.accent}}
 </style></head><body><div class="band"></div><div class="blob"></div><div class="wrap">
 <div class="main"><div class="tag">${esc(p.tag)}</div>
 <h1>${p.title.map(esc).join("<br>")}</h1>
 <div class="rule"></div>
-<ul>${p.points.map((t, i) => `<li><i>${i + 1}</i><span>${mark(t, p.accent)}</span></li>`).join("")}</ul></div>
-<div class="foot"><span>무료 계산기 · 회원가입 없음</span><b>노바랩 공작소 · novalabs.co.kr</b></div>
+<div class="hook">${p.hook.map((t) => mark(t, p.accent)).join("<br>")}</div></div>
 </div></body></html>`;
 }
 
