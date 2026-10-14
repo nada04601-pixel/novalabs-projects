@@ -5,7 +5,7 @@ export const langOf = (path: string | null | undefined): Lang => (path === "/en"
 export const pick = (lang: Lang, ko: string, en: string) => (lang === "en" ? en : ko);
 export const locale = (lang: Lang) => (lang === "en" ? "en-US" : "ko-KR");
 
-// 영어 버전이 있는 도구(해외에서도 쓸 수 있는 디지털 도구). 한글 타자 연습·나이스 바이트 글자수 세기는 한국어만 둡니다.
+// 영어 버전이 있는 도구(해외에서도 쓸 수 있는 PDF·이미지·동영상·유틸리티 도구). 한글 타자 연습·나이스 바이트 글자수 세기는 한국어만 둡니다.
 export const EN_TOOLS = [
   "pdf-compress", "pdf-merge", "pdf-split", "pdf-organize", "jpg-to-pdf", "pdf-to-jpg",
   "image-upscaler", "watermark-remover",

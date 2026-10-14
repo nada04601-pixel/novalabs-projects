@@ -13,7 +13,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 ## 구조
 - `src/lib/calculators/` 계산 로직(순수 함수)
 - `src/data/rates/2026.ts` 연도별 요율·기준값 (출처와 확인일 기록)
-- `src/data/tools.ts` 도구 목록과 설명·FAQ (본문, 메타데이터, FAQ 구조화 데이터로 사용)
+- `src/data/tools.ts` 도구 목록과 설명·FAQ. 분류는 `CATEGORIES`(디지털 도구는 PDF·이미지·동영상·오디오·텍스트·유틸리티로 나눔, 한 분류가 10개를 넘으면 다시 나누기를 권장) (본문, 메타데이터, FAQ 구조화 데이터로 사용)
 - `src/data/guides.ts` 가이드 글 (`/guides/[slug]`), `tool` 필드로 계산기 페이지와 서로 연결
 - `src/app/ads.txt/route.ts` 게시자 ID가 설정되면 `/ads.txt` 생성
 - `src/app/tools/[slug]/page.tsx` 도구 페이지 (슬러그와 컴포넌트 연결)
@@ -22,7 +22,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - 로또: `/tools/lotto-simulator`(번호 생성 + 매주 샀다면? 시뮬레이션), `/lotto`(당첨번호 조회: 최신 회차·1등 배출점·전체 회차 검색·출현 통계), `/lotto/[회차]`(회차별 상세). 예전 `/tools/lotto`는 `public/_redirects`로 시뮬레이터로 옮김. 당첨 결과는 `src/data/lotto/draws.json`에 저장하고 빌드 때 정적 HTML로 들어감
 
 ## 영어 페이지 (/en)
-- 해외에서도 쓸 수 있는 디지털 도구 14개만 영어 버전이 있습니다. 목록은 `src/lib/i18n.ts`의 `EN_TOOLS`(한글 타자 연습, 나이스 바이트 글자수 세기, 한국 기준 계산기는 한국어만).
+- 해외에서도 쓸 수 있는 도구(PDF·이미지·동영상·오디오·유틸리티) 14개만 영어 버전이 있습니다. 목록은 `src/lib/i18n.ts`의 `EN_TOOLS`(한글 타자 연습, 나이스 바이트 글자수 세기, 한국 기준 계산기는 한국어만).
 - 주소: `/en`(영어 홈), `/en/tools/[slug]`. 한국어 주소는 그대로이고, 두 페이지는 hreflang(`alternates.languages`)과 사이트맵으로 서로 연결됩니다.
 - 영어 제목·설명·사용법·FAQ: `src/data/tools.en.ts`. 화면 문구는 각 컴포넌트에서 `useT()`로 `t("한국어", "English")`처럼 나란히 적고, 경로가 `/en`이면 영어를 고릅니다(`src/lib/useT.ts`). 라이브러리의 오류 문구·파일 이름은 `lang` 인자(기본 `ko`)로 바꿉니다.
 - 헤더의 언어 전환 링크는 같은 도구의 다른 언어 페이지로, 영어 버전이 없는 페이지에서는 영어 홈으로 갑니다.
