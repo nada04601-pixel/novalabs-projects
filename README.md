@@ -25,6 +25,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - 자료: 동행복권 추첨 결과를 회차별 JSON으로 공개하는 [smok95/lotto](https://github.com/smok95/lotto) 저장소
 - 자동: `.github/workflows/update-lotto.yml`이 매주 일요일 07:00·12:00, 월요일 09:00(한국 시간)에 새 회차를 받아 `main`에 커밋 → Workers Builds가 다시 배포. `main`에 브랜치 보호가 있으면 Actions 봇의 푸시를 허용해야 합니다.
 - 수동: `node scripts/update-lotto.mjs` (빠진 회차만 추가), `--all`은 전체를 다시 받음. Actions 탭에서 "Update lotto results"를 직접 실행해도 됩니다.
+- 1등 배출점: `src/data/lotto/stores.json`. 동행복권 당첨 판매점 조회(`/wnprchsplcsrch/selectLtWnShp.do`)에서 `node scripts/update-lotto-stores.mjs`로 받으며, 같은 주간 워크플로가 함께 실행합니다. 동행복권은 해외(GitHub Actions) 접속이 자주 끊겨 요청마다 다시 시도하고, 시간이 다 되면 받은 데까지 저장한 뒤 다음 실행 때 빠진 회차부터 이어 받습니다. 실패해도 당첨번호 갱신은 막지 않습니다.
 
 ## 새 계산기 추가 (3단계)
 1. `src/lib/calculators/`에 계산 함수 작성

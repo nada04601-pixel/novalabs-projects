@@ -16,6 +16,22 @@ export type Draw = {
   firstBy: { auto: number; manual: number; semi: number };
 };
 
+// 동행복권이 1등 배출점을 공개하는 첫 회차
+export const STORES_FROM = 262;
+
+// 1등 배출점: [상호, 구분(자동·수동·반자동), 주소, 당첨 당시 주소(바뀐 경우만), 폐점이면 1]
+export type Store = [string, string, string, string, number];
+
+// 주소 앞부분(시·도)으로 지역별 배출점 수를 셉니다. 인터넷 판매는 따로 묶습니다.
+export function storeRegions(stores: Store[]): [string, number][] {
+  const m = new Map<string, number>();
+  for (const [name, , addr, old] of stores) {
+    const region = /인터넷|dhlottery/.test(name + addr) ? "인터넷" : ((old || addr).split(" ")[0] || "기타");
+    m.set(region, (m.get(region) ?? 0) + 1);
+  }
+  return [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ko"));
+}
+
 // 화면으로 보내는 가벼운 형식: [회차, 추첨일, 번호 6개, 보너스]
 export type DrawLite = [number, string, number[], number];
 export const lite = (d: Draw): DrawLite => [d.no, d.date, d.nums, d.bonus];
