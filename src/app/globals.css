@@ -268,3 +268,31 @@ label:has(.tip),.tip-wrap{position:relative}
 .wm-canvas{display:block;max-width:100%;max-height:70vh;margin:0 auto 12px;border-radius:8px;background:var(--bg);touch-action:none;user-select:none}
 .wm-progress{width:100%;height:10px;margin:0 0 12px;accent-color:var(--acc)}
 .wm-audio{display:block;width:100%;margin:0 0 12px}
+
+/* 로또: 공 색은 동행복권 구간 색(1~10 노랑, 11~20 파랑, 21~30 빨강, 31~40 회색, 41~45 초록) */
+.balls{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;vertical-align:middle}
+.ball{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#111827;box-shadow:inset 0 -3px 0 rgba(0,0,0,.12);flex:none;font-variant-numeric:tabular-nums}
+.ball.sm{width:28px;height:28px;font-size:12px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)}
+.ball.t1{background:#fbc400}.ball.t2{background:#69c8f2}.ball.t3{background:#ff7272}.ball.t4{background:#aaa}.ball.t5{background:#b0d840}
+.balls .plus{color:var(--mut);font-weight:700;margin:0 2px}
+.lotto-draw .balls{margin:4px 0 14px}
+.draw-head{margin:0 0 10px;color:var(--mut);font-size:14px}.draw-head strong{color:var(--fg);font-size:18px;margin-right:6px}
+.games{list-style:none;padding:0;margin:0}
+.games li{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.game-label{width:18px;color:var(--mut)}
+.game-hist{margin-left:auto;color:var(--mut);font-size:13px}
+.lotto-opts{margin-top:8px;border-bottom:0;padding:8px 0 0}
+.numpad{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-top:10px;max-width:460px}
+.numpad button{font:inherit;font-size:14px;padding:8px 0;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer;font-variant-numeric:tabular-nums}
+.numpad button.fixed,.mk.fixed{background:var(--acc);border-color:var(--acc);color:var(--accfg)}
+.numpad button.excluded{color:var(--mut);text-decoration:line-through;opacity:.55}
+.mk{font-weight:700;padding:0 6px;border-radius:6px}.mk.excluded{text-decoration:line-through;color:var(--mut)}
+table.draws th,table.draws td{vertical-align:middle;white-space:nowrap}
+.freq{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px 14px}
+.freq li{display:flex;align-items:center;gap:8px;font-size:13px}
+.freq .bar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}.freq .bar i{display:block;height:100%;background:var(--acc)}
+.freq .cnt{width:44px;text-align:right;color:var(--mut);font-variant-numeric:tabular-nums}
+.result-balls{margin-top:10px}
+.pager{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:14px;font-size:14px;color:var(--mut)}
+.pager button:disabled{opacity:.4;cursor:default}
+@media (max-width:520px){.ball{width:36px;height:36px;font-size:15px}.numpad{grid-template-columns:repeat(7,1fr)}.game-hist{margin-left:26px;width:100%}}

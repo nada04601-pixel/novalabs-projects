@@ -49,6 +49,7 @@ import TypingTest from "@/components/TypingTest";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
 import CharacterCounter from "@/components/CharacterCounter";
+import LottoTool from "@/components/LottoTool";
 import ShareButtons from "@/components/ShareButtons";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -112,6 +113,7 @@ const calculators: Record<string, React.ReactNode> = {
   "password-generator": <PasswordGenerator />,
   "qr-code": <QrCodeGenerator />,
   "character-counter": <CharacterCounter />,
+  lotto: <LottoTool />,
 };
 
 export default async function ToolPage({ params }: Props) {
@@ -157,7 +159,9 @@ export default async function ToolPage({ params }: Props) {
         </aside>
       )}
 
-      {tool.category === "디지털 도구" ? (
+      {tool.note ? (
+        <p className="note">{tool.note}</p>
+      ) : tool.category === "디지털 도구" ? (
         <p className="note">모든 처리는 이 브라우저 안에서 이루어지며, 입력한 내용과 파일은 서버로 전송하거나 저장하지 않습니다.</p>
       ) : (
         <p className="note">
