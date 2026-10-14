@@ -21,6 +21,8 @@ describe("다국어", () => {
     expect(switchPath("/lotto", "en")).toBe("/en");
     expect(switchPath("/en/tools/pdf-merge", "ko")).toBe("/tools/pdf-merge");
     expect(switchPath("/en", "ko")).toBe("/");
+    expect(switchPath("/privacy", "en")).toBe("/en/privacy");
+    expect(switchPath("/en/terms", "ko")).toBe("/terms");
   });
   it("영어 파일 이름과 문구", () => {
     expect(compressedName("report.pdf", "en")).toBe("report-compressed.pdf");

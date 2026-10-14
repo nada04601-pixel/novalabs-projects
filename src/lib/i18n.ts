@@ -21,6 +21,8 @@ export function switchPath(path: string, to: Lang): string {
     const ko = path.replace(/^\/en(?=\/|$)/, "");
     return ko || "/";
   }
+  // 약관 페이지는 영어판이 따로 있습니다.
+  if (/^\/(privacy|terms)\/?$/.test(path)) return `/en${path.replace(/\/$/, "")}`;
   const m = path.match(/^\/tools\/([^/]+)\/?$/);
   return m && hasEn(m[1]) ? `/en/tools/${m[1]}` : "/en";
 }
