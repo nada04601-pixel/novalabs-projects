@@ -7,12 +7,13 @@ on:
 jobs:
   probe:
     runs-on: ubuntu-latest
+    timeout-minutes: 6
     steps:
       - run: |
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
           B=https://www.dhlottery.co.kr
-          get() { for i in 1 2 3 4 5 6 7 8; do curl -sS -L --connect-timeout 15 -m 40 -A "$UA" -c jar -b jar "$@" && return 0; echo "retry $i" >&2; sleep 10; done; return 1; }
-          get -o w.html $B/wnprchsplcsrch/home
+          get() { for i in 1 2 3; do curl -sS -L --connect-timeout 10 -m 20 -A "$UA" -c jar -b jar "$@" && return 0; echo "retry $i" >&2; sleep 3; done; return 1; }
+          date -u; get -o w.html $B/wnprchsplcsrch/home || true; date -u
           H=(-H "AJAX: true" -H "requestMenuUri: /wnprchsplcsrch/home" -H "X-Requested-With: XMLHttpRequest" -H "Referer: $B/wnprchsplcsrch/home" -H "Accept: application/json")
           call() { echo "=== $1"; get -s -G "$B/wnprchsplcsrch/selectLtWnShp.do" "${H[@]}" $2 | head -c 3000; echo; }
           call "1245 rank1" "--data-urlencode srchWnShpRnk=1 --data-urlencode srchLtEpsd=1245 --data-urlencode srchShpLctn="
