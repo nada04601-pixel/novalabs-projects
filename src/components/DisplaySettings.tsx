@@ -1,19 +1,20 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useT } from "@/lib/useT";
 
 type Size = "md" | "lg" | "xl";
 type Theme = "system" | "light" | "dark";
 const KEY = "nl-display";
 
-const SIZES: { v: Size; label: string }[] = [
-  { v: "md", label: "보통" },
-  { v: "lg", label: "크게" },
-  { v: "xl", label: "아주 크게" },
+const SIZES: { v: Size; label: string; en: string }[] = [
+  { v: "md", label: "보통", en: "Normal" },
+  { v: "lg", label: "크게", en: "Large" },
+  { v: "xl", label: "아주 크게", en: "Extra large" },
 ];
-const THEMES: { v: Theme; label: string }[] = [
-  { v: "system", label: "기기 설정" },
-  { v: "light", label: "밝게" },
-  { v: "dark", label: "어둡게" },
+const THEMES: { v: Theme; label: string; en: string }[] = [
+  { v: "system", label: "기기 설정", en: "System" },
+  { v: "light", label: "밝게", en: "Light" },
+  { v: "dark", label: "어둡게", en: "Dark" },
 ];
 
 // <html>에 반영합니다. 첫 화면 깜빡임을 막는 같은 처리가 layout.tsx의 인라인 스크립트에도 있습니다.
@@ -26,6 +27,7 @@ function apply(size: Size, theme: Theme) {
 }
 
 export default function DisplaySettings() {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [size, setSize] = useState<Size>("md");
   const [theme, setTheme] = useState<Theme>("system");
@@ -67,20 +69,20 @@ export default function DisplaySettings() {
   return (
     <div className="display" ref={box}>
       <button type="button" className="display-btn" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-        글자·화면 설정
+        {t("글자·화면 설정", "Display")}
       </button>
       {open && (
-        <div className="display-pop" role="dialog" aria-label="글자·화면 설정">
-          <p>글자 크기</p>
+        <div className="display-pop" role="dialog" aria-label={t("글자·화면 설정", "Display settings")}>
+          <p>{t("글자 크기", "Text size")}</p>
           <div className="seg">
             {SIZES.map((s) => (
-              <button key={s.v} type="button" aria-pressed={size === s.v} onClick={() => save(s.v, theme)}>{s.label}</button>
+              <button key={s.v} type="button" aria-pressed={size === s.v} onClick={() => save(s.v, theme)}>{t(s.label, s.en)}</button>
             ))}
           </div>
-          <p>화면</p>
+          <p>{t("화면", "Theme")}</p>
           <div className="seg">
-            {THEMES.map((t) => (
-              <button key={t.v} type="button" aria-pressed={theme === t.v} onClick={() => save(size, t.v)}>{t.label}</button>
+            {THEMES.map((th) => (
+              <button key={th.v} type="button" aria-pressed={theme === th.v} onClick={() => save(size, th.v)}>{t(th.label, th.en)}</button>
             ))}
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTool, tools } from "@/data/tools";
+import { hasEn } from "@/lib/i18n";
 import { RATES } from "@/data/rates/2026";
 import Link from "next/link";
 import { guidesForTool } from "@/data/guides";
@@ -65,7 +66,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: tool.title,
     description: tool.metaDescription,
-    alternates: { canonical: `/tools/${tool.slug}` },
+    alternates: {
+      canonical: `/tools/${tool.slug}`,
+      // 영어 버전이 있는 도구는 언어별 페이지를 서로 알려 줍니다(hreflang).
+      ...(hasEn(tool.slug) && {
+        languages: { ko: `/tools/${tool.slug}`, en: `/en/tools/${tool.slug}`, "x-default": `/tools/${tool.slug}` },
+      }),
+    },
   };
 }
 

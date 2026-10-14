@@ -1,5 +1,6 @@
 // 이미지 업스케일링. AI 모드(ESRGAN, 브라우저에서 TensorFlow.js로 실행)와
 // 빠른 모드(Lanczos3 보간 + 언샤프 마스크)의 크기 한도와 화소 계산을 둡니다.
+import { pick, type Lang } from "../i18n";
 
 export type UpscaleMode = "ai" | "fast";
 export type Scale = 2 | 4;
@@ -11,21 +12,30 @@ export const OUT_MAX_PIXELS = 16_000_000;
 export const AI_MAX_INPUT: Record<Scale, number> = { 2: 1_500_000, 4: 500_000 };
 export const UPSCALE_MAX_BYTES = 30 * 1024 * 1024;
 
-export function checkUpscale(w: number, h: number, scale: Scale, mode: UpscaleMode): string | null {
+export function checkUpscale(w: number, h: number, scale: Scale, mode: UpscaleMode, lang: Lang = "ko"): string | null {
+  const n = (v: number) => v.toLocaleString(lang === "en" ? "en-US" : "ko-KR");
   const ow = w * scale;
   const oh = h * scale;
   if (ow > OUT_MAX_SIDE || oh > OUT_MAX_SIDE || ow * oh > OUT_MAX_PIXELS) {
-    return `결과가 ${ow.toLocaleString("ko-KR")}×${oh.toLocaleString("ko-KR")}px로 너무 큽니다. 배율을 낮추거나 더 작은 이미지를 쓰세요.`;
+    return pick(
+      lang,
+      `결과가 ${n(ow)}×${n(oh)}px로 너무 큽니다. 배율을 낮추거나 더 작은 이미지를 쓰세요.`,
+      `The result would be ${n(ow)}×${n(oh)}px, which is too large. Lower the scale or use a smaller image.`,
+    );
   }
   if (mode === "ai" && w * h > AI_MAX_INPUT[scale]) {
-    return `AI 모드 ${scale}배는 ${(AI_MAX_INPUT[scale] / 1e6).toLocaleString("ko-KR")}백만 화소 이하 이미지까지 처리합니다(지금 ${((w * h) / 1e6).toFixed(1)}백만 화소). 빠른 모드를 쓰거나 2배로 낮춰 보세요.`;
+    return pick(
+      lang,
+      `AI 모드 ${scale}배는 ${n(AI_MAX_INPUT[scale] / 1e6)}백만 화소 이하 이미지까지 처리합니다(지금 ${((w * h) / 1e6).toFixed(1)}백만 화소). 빠른 모드를 쓰거나 2배로 낮춰 보세요.`,
+      `AI mode at ${scale}x handles images up to ${n(AI_MAX_INPUT[scale] / 1e6)} megapixels (this one is ${((w * h) / 1e6).toFixed(1)} MP). Use Fast mode or try 2x.`,
+    );
   }
   return null;
 }
 
 // 결과 파일 이름: 사진.jpg → 사진-4x.png
-export const upscaledName = (name: string, scale: Scale, ext: "png" | "jpg") =>
-  `${name.replace(/\.[^.]+$/, "") || "이미지"}-${scale}x.${ext}`;
+export const upscaledName = (name: string, scale: Scale, ext: "png" | "jpg", lang: Lang = "ko") =>
+  `${name.replace(/\.[^.]+$/, "") || pick(lang, "이미지", "image")}-${scale}x.${ext}`;
 
 type Pixels = { data: Uint8ClampedArray; width: number; height: number };
 

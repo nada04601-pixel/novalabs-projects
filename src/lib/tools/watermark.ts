@@ -1,4 +1,5 @@
 // 워터마크 지우기: 고른 사각형 영역을 주변 픽셀로 메웁니다(인페인팅). 이미지와 동영상 프레임에 함께 씁니다.
+import { pick, type Lang } from "../i18n";
 
 export type Rect = { x: number; y: number; w: number; h: number };
 
@@ -181,7 +182,8 @@ export const smoothItersFor = (rects: Rect[]) =>
   Math.min(120, Math.max(20, Math.round(Math.max(0, ...rects.map((r) => Math.min(r.w, r.h))) * 1.5)));
 
 // 결과 파일 이름: 사진.jpg → 사진-워터마크제거.png
-export const cleanedName = (name: string, ext: string) => `${name.replace(/\.[^.]+$/, "") || "파일"}-워터마크제거.${ext}`;
+export const cleanedName = (name: string, ext: string, lang: Lang = "ko") =>
+  `${name.replace(/\.[^.]+$/, "") || pick(lang, "파일", "file")}-${pick(lang, "워터마크제거", "no-watermark")}.${ext}`;
 
 // 브라우저가 녹화할 수 있는 동영상 형식 중 첫 번째. 어디서나 열리는 H.264 MP4를 먼저 시도하고, 안 되면 WebM,
 // 마지막으로 코덱을 지정하지 않은 MP4(사파리)를 씁니다. 크롬은 코덱 없는 MP4에 VP9를 넣어 아이폰에서 안 열릴 수 있습니다.

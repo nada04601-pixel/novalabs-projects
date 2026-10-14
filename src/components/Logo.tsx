@@ -43,7 +43,17 @@ export function LogoMark({ className = "logo-mark" }: { className?: string }) {
   );
 }
 
-export default function Logo() {
+export default function Logo({ lang = "ko" }: { lang?: "ko" | "en" }) {
+  if (lang === "en") {
+    return (
+      <Link href="/en" className="logo" aria-label={`${site.nameEn} home`}>
+        <LogoMark />
+        <span className="logo-text">
+          Nova<b>Labs</b>
+        </span>
+      </Link>
+    );
+  }
   return (
     <Link href="/" className="logo" aria-label={`${site.name} 홈`}>
       <LogoMark />

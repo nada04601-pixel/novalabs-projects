@@ -23,7 +23,7 @@ const logo = `data:image/svg+xml;base64,${Buffer.from(
 
 const clip = (s: string, max: number) => (s.length > max ? `${s.slice(0, max - 1)}…` : s);
 
-export async function ogImage({ label, title, description }: { label: string; title: string; description: string }) {
+export async function ogImage({ label, title, description, lang = "ko" }: { label: string; title: string; description: string; lang?: "ko" | "en" }) {
   const titleSize = title.length > 34 ? 54 : title.length > 22 ? 62 : 72;
   return new ImageResponse(
     (
@@ -48,7 +48,7 @@ export async function ogImage({ label, title, description }: { label: string; ti
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logo} width={64} height={64} alt="" />
           <div style={{ display: "flex", fontSize: 34, fontWeight: 800 }}>
-            노바랩<span style={{ color: "#c4b5fd", marginLeft: 8 }}>공작소</span>
+            {lang === "en" ? "Nova" : "노바랩"}<span style={{ color: "#c4b5fd", marginLeft: lang === "en" ? 0 : 8 }}>{lang === "en" ? "Labs" : "공작소"}</span>
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "center" }}>
@@ -65,7 +65,7 @@ export async function ogImage({ label, title, description }: { label: string; ti
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 26, fontWeight: 600, color: "#a5a8e0" }}>
-          <div style={{ display: "flex" }}>무료 · 가입 없이 바로 사용</div>
+          <div style={{ display: "flex" }}>{lang === "en" ? "Free · No sign-up · Runs in your browser" : "무료 · 가입 없이 바로 사용"}</div>
           <div style={{ display: "flex", color: "#fff" }}>{site.domain}</div>
         </div>
       </div>

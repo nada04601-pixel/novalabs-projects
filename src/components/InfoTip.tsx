@@ -1,8 +1,10 @@
 "use client";
+import { useT } from "@/lib/useT";
 import { useEffect, useId, useRef, useState } from "react";
 
 // 입력 항목 이름 옆의 ⓘ 버튼. 누르면 설명 팝업을 띄우고, 바깥을 누르거나 Esc를 누르면 닫습니다.
 export default function InfoTip({ title, children }: { title: string; children: React.ReactNode }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const id = useId();
   const box = useRef<HTMLSpanElement>(null);
@@ -33,7 +35,7 @@ export default function InfoTip({ title, children }: { title: string; children: 
         ref={btn}
         type="button"
         className="tip-btn"
-        aria-label={`${title} 설명 보기`}
+        aria-label={t(`${title} 설명 보기`, `About ${title}`)}
         aria-expanded={open}
         aria-controls={id}
         onClick={(e) => {
@@ -52,7 +54,7 @@ export default function InfoTip({ title, children }: { title: string; children: 
         <span className="tip-pop" id={id} role="dialog" aria-label={title}>
           <span className="tip-head">
             <strong>{title}</strong>
-            <button type="button" className="tip-close" aria-label="설명 닫기" onClick={(e) => { e.preventDefault(); setOpen(false); }}>×</button>
+            <button type="button" className="tip-close" aria-label={t("설명 닫기", "Close")} onClick={(e) => { e.preventDefault(); setOpen(false); }}>×</button>
           </span>
           <span className="tip-body">{children}</span>
         </span>

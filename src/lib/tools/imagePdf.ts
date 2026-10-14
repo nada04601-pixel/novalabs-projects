@@ -1,4 +1,5 @@
 // 이미지 ↔ PDF 변환에 쓰는 계산: 이미지 형식 판별, JPEG 회전 정보, 쪽 배치, 파일 이름
+import { pick, type Lang } from "../i18n";
 
 export const IMAGE_MAX_BYTES = 50 * 1024 * 1024;
 export const MAX_IMAGES = 100;
@@ -73,27 +74,29 @@ export function placeImage(imgW: number, imgH: number, mode: PageMode, margin = 
 }
 
 export const MARGINS = [
-  { key: "none", label: "없음", pt: 0 },
-  { key: "small", label: "좁게", pt: 20 },
-  { key: "large", label: "넓게", pt: 40 },
+  { key: "none", label: "없음", labelEn: "None", pt: 0 },
+  { key: "small", label: "좁게", labelEn: "Narrow", pt: 20 },
+  { key: "large", label: "넓게", labelEn: "Wide", pt: 40 },
 ] as const;
 export type MarginKey = (typeof MARGINS)[number]["key"];
 
 export const RENDER_PRESETS = {
-  screen: { label: "보통", dpi: 100 },
-  sharp: { label: "선명하게", dpi: 150 },
-  print: { label: "인쇄용", dpi: 300 },
+  screen: { label: "보통", labelEn: "Standard", dpi: 100 },
+  sharp: { label: "선명하게", labelEn: "Sharp", dpi: 150 },
+  print: { label: "인쇄용", labelEn: "Print", dpi: 300 },
 } as const;
 export type RenderPreset = keyof typeof RENDER_PRESETS;
 
-const stripExt = (name: string) => name.replace(/\.[^./\\]+$/, "") || "문서";
+const stripExt = (name: string, lang: Lang = "ko") => name.replace(/\.[^./\\]+$/, "") || pick(lang, "문서", "document");
 
 // 사진.jpg 한 장 → 사진.pdf, 여러 장 → 사진-합본.pdf
-export const imagesPdfName = (names: string[]) =>
-  names.length === 0 ? "이미지.pdf" : `${stripExt(names[0])}${names.length > 1 ? "-합본" : ""}.pdf`;
+export const imagesPdfName = (names: string[], lang: Lang = "ko") =>
+  names.length === 0
+    ? pick(lang, "이미지.pdf", "images.pdf")
+    : `${stripExt(names[0], lang)}${names.length > 1 ? pick(lang, "-합본", "-combined") : ""}.pdf`;
 
 // 보고서.pdf의 3쪽(전체 12쪽) → 보고서-03.jpg. 쪽 번호 자릿수를 맞춰 파일 정렬이 흐트러지지 않게 합니다.
 export const pageImageName = (pdf: string, page: number, total: number, ext: "jpg" | "png") =>
   `${stripExt(pdf)}-${String(page).padStart(String(total).length, "0")}.${ext}`;
 
-export const pagesZipName = (pdf: string) => `${stripExt(pdf)}-이미지.zip`;
+export const pagesZipName = (pdf: string, lang: Lang = "ko") => `${stripExt(pdf, lang)}-${pick(lang, "이미지", "images")}.zip`;

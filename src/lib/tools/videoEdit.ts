@@ -1,4 +1,5 @@
 // 동영상 자르기·용량 줄이기에 쓰는 계산: 시간 입력, 화질 프리셋, 비트레이트와 예상 용량, 파일 이름
+import { pick, type Lang } from "../i18n";
 
 // 파일 크기 한도. 결과 파일을 메모리에 모아 내려받으므로 너무 큰 파일은 휴대폰에서 멈출 수 있습니다.
 export const VIDEO_MAX_BYTES = 2 * 1024 * 1024 * 1024;
@@ -26,19 +27,20 @@ export function formatTime(seconds: number): string {
 export const MIN_CLIP = 0.1;
 
 // 자를 구간이 올바른지 확인합니다. 문제가 있으면 안내 문구, 없으면 null입니다.
-export function trimError(start: number | null, end: number | null, duration: number): string | null {
-  if (start === null) return "시작 시간을 1:23.5처럼 입력해 주세요.";
-  if (end === null) return "끝 시간을 1:23.5처럼 입력해 주세요.";
-  if (start >= duration) return `시작 시간은 영상 길이(${formatTime(duration)})보다 앞이어야 합니다.`;
-  if (end > duration + 0.05) return `끝 시간은 영상 길이(${formatTime(duration)})를 넘을 수 없습니다.`;
-  if (end - start < MIN_CLIP) return "끝 시간이 시작 시간보다 뒤여야 합니다.";
+export function trimError(start: number | null, end: number | null, duration: number, lang: Lang = "ko"): string | null {
+  const t = (ko: string, en: string) => pick(lang, ko, en);
+  if (start === null) return t("시작 시간을 1:23.5처럼 입력해 주세요.", "Enter the start time like 1:23.5.");
+  if (end === null) return t("끝 시간을 1:23.5처럼 입력해 주세요.", "Enter the end time like 1:23.5.");
+  if (start >= duration) return t(`시작 시간은 영상 길이(${formatTime(duration)})보다 앞이어야 합니다.`, `The start time must be before the end of the video (${formatTime(duration)}).`);
+  if (end > duration + 0.05) return t(`끝 시간은 영상 길이(${formatTime(duration)})를 넘을 수 없습니다.`, `The end time can't be past the end of the video (${formatTime(duration)}).`);
+  if (end - start < MIN_CLIP) return t("끝 시간이 시작 시간보다 뒤여야 합니다.", "The end time must be after the start time.");
   return null;
 }
 
 export const COMPRESS_PRESETS = {
-  strong: { label: "많이 줄이기", desc: "480p", maxShort: 480, bpp: 0.07, audio: 64_000 },
-  medium: { label: "권장", desc: "720p", maxShort: 720, bpp: 0.08, audio: 96_000 },
-  light: { label: "화질 우선", desc: "1080p", maxShort: 1080, bpp: 0.09, audio: 128_000 },
+  strong: { label: "많이 줄이기", labelEn: "Smallest", desc: "480p", maxShort: 480, bpp: 0.07, audio: 64_000 },
+  medium: { label: "권장", labelEn: "Recommended", desc: "720p", maxShort: 720, bpp: 0.08, audio: 96_000 },
+  light: { label: "화질 우선", labelEn: "Best quality", desc: "1080p", maxShort: 1080, bpp: 0.09, audio: 128_000 },
 } as const;
 export type CompressPreset = keyof typeof COMPRESS_PRESETS;
 
@@ -62,8 +64,8 @@ export const estimateBytes = (videoBps: number, audioBps: number, seconds: numbe
   Math.round(((videoBps + audioBps) * seconds) / 8 * 1.02);
 
 // 결과 파일 이름: 여행.mov + "자름" + mp4 → 여행-자름.mp4
-export const editedName = (name: string, suffix: string, ext: string) =>
-  `${name.replace(/\.[^.]+$/, "") || "동영상"}-${suffix}.${ext}`;
+export const editedName = (name: string, suffix: string, ext: string, lang: Lang = "ko") =>
+  `${name.replace(/\.[^.]+$/, "") || pick(lang, "동영상", "video")}-${suffix}.${ext}`;
 
 // GIF 만들기: 프레임 수와 크기가 커지면 파일이 수십 MB가 되고 휴대폰 메모리가 모자라므로 길이를 제한합니다.
 export const GIF_MAX_SECONDS = 20;

@@ -35,12 +35,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* 가이드 RSS 피드 위치를 알립니다. 페이지마다 alternates(canonical)를 따로 정해 메타데이터로 넣으면 덮어써지므로 직접 둡니다. */}
         <link rel="alternate" type="application/rss+xml" title={`${site.name} 가이드`} href="/rss.xml" />
-        {/* 저장된 글자 크기·화면 설정을 첫 화면 그리기 전에 적용해 깜빡임을 막습니다.
+        {/* 영어 페이지(/en)는 문서 언어를 en으로 바꾸고, 저장된 글자 크기·화면 설정을 첫 화면 그리기 전에 적용해 깜빡임을 막습니다.
             앱 설치 이벤트는 화면 준비 전에 올 수 있어 미리 받아 둡니다(InstallApp에서 사용). */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              'try{var d=JSON.parse(localStorage.getItem("nl-display")||"{}"),e=document.documentElement;if(d.size==="lg"||d.size==="xl")e.setAttribute("data-fs",d.size);if(d.theme==="light"||d.theme==="dark")e.setAttribute("data-theme",d.theme)}catch(_){}addEventListener("beforeinstallprompt",function(v){v.preventDefault();window.__installPrompt=v});',
+              'try{var e=document.documentElement,p=location.pathname;if(p==="/en"||p.indexOf("/en/")===0)e.lang="en";var d=JSON.parse(localStorage.getItem("nl-display")||"{}");if(d.size==="lg"||d.size==="xl")e.setAttribute("data-fs",d.size);if(d.theme==="light"||d.theme==="dark")e.setAttribute("data-theme",d.theme)}catch(_){}addEventListener("beforeinstallprompt",function(v){v.preventDefault();window.__installPrompt=v});',
           }}
         />
         {/* next/script는 data-nscript 속성을 붙여 애드센스 경고가 나므로 일반 script 태그를 씁니다.

@@ -1,4 +1,5 @@
 // 브라우저 안에서 동영상을 읽고 다시 쓰는 부분(mediabunny). 이 도구 페이지를 열었을 때만 라이브러리를 내려받습니다.
+import { pick, type Lang } from "../i18n";
 
 export type VideoInfo = {
   duration: number;
@@ -180,14 +181,14 @@ export async function makeGif(
 }
 
 // 오류를 안내 문구로 바꿉니다. 사용자가 멈춘 경우는 빈 문자열입니다.
-export function convertErrorMessage(e: unknown): string {
+export function convertErrorMessage(e: unknown, lang: Lang = "ko"): string {
   const name = e instanceof Error ? e.name : "";
   const msg = e instanceof Error ? e.message : "";
   if (name === "ConversionCanceledError" || /cancel/i.test(msg)) return "";
-  if (msg === "no-audio") return "이 동영상에는 소리가 없거나, 이 브라우저가 읽을 수 없는 소리 형식입니다.";
-  if (msg === "no-video") return "동영상 트랙을 찾지 못했습니다. 소리만 있는 파일이거나 손상된 파일일 수 있습니다.";
-  if (msg === "no-encoder") return "이 브라우저는 동영상 인코딩을 지원하지 않습니다. 최신 크롬·엣지·사파리에서 다시 시도해 주세요.";
-  if (msg === "invalid") return "이 동영상의 코덱은 이 브라우저에서 변환할 수 없습니다. 다른 브라우저(크롬·엣지)에서 시도해 보세요.";
-  if (/unsupported|format/i.test(msg)) return "지원하지 않는 동영상 형식입니다. MP4·MOV·WEBM·MKV 파일을 골라 주세요.";
-  return "동영상을 처리하지 못했습니다. 메모리가 부족할 수 있으니 더 짧은 영상으로 다시 시도해 주세요.";
+  if (msg === "no-audio") return pick(lang, "이 동영상에는 소리가 없거나, 이 브라우저가 읽을 수 없는 소리 형식입니다.", "This video has no audio, or its audio format can't be read by this browser.");
+  if (msg === "no-video") return pick(lang, "동영상 트랙을 찾지 못했습니다. 소리만 있는 파일이거나 손상된 파일일 수 있습니다.", "No video track found. The file may be audio-only or damaged.");
+  if (msg === "no-encoder") return pick(lang, "이 브라우저는 동영상 인코딩을 지원하지 않습니다. 최신 크롬·엣지·사파리에서 다시 시도해 주세요.", "This browser can't encode video. Try again in the latest Chrome, Edge or Safari.");
+  if (msg === "invalid") return pick(lang, "이 동영상의 코덱은 이 브라우저에서 변환할 수 없습니다. 다른 브라우저(크롬·엣지)에서 시도해 보세요.", "This video's codec can't be converted in this browser. Try another browser such as Chrome or Edge.");
+  if (/unsupported|format/i.test(msg)) return pick(lang, "지원하지 않는 동영상 형식입니다. MP4·MOV·WEBM·MKV 파일을 골라 주세요.", "Unsupported video format. Please choose an MP4, MOV, WEBM or MKV file.");
+  return pick(lang, "동영상을 처리하지 못했습니다. 메모리가 부족할 수 있으니 더 짧은 영상으로 다시 시도해 주세요.", "Couldn't process the video. The device may be low on memory - try a shorter clip.");
 }

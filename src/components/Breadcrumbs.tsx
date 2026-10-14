@@ -4,11 +4,11 @@ import { site } from "@/data/site";
 type Crumb = { label: string; href?: string };
 
 // 경로 표시와 검색엔진용 BreadcrumbList 구조화 데이터
-export default function Breadcrumbs({ items }: { items: Crumb[] }) {
-  const all: Crumb[] = [{ label: "홈", href: "/" }, ...items];
+export default function Breadcrumbs({ items, lang = "ko" }: { items: Crumb[]; lang?: "ko" | "en" }) {
+  const all: Crumb[] = [lang === "en" ? { label: "Home", href: "/en" } : { label: "홈", href: "/" }, ...items];
   return (
     <>
-      <nav className="crumbs" aria-label="현재 위치">
+      <nav className="crumbs" aria-label={lang === "en" ? "Breadcrumb" : "현재 위치"}>
         <ol>
           {all.map((c, i) => (
             <li key={i}>
