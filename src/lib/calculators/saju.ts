@@ -18,6 +18,23 @@ const BRANCH_ELEMENT: Element[] = ["수", "토", "목", "목", "토", "화", "�
 // 지지의 본기(가장 큰 지장간). 지지의 십신은 이 천간으로 정합니다. 子癸 丑己 寅甲 卯乙 辰戊 巳丙 午丁 未己 申庚 酉辛 戌戊 亥壬
 const BRANCH_MAIN_STEM = [9, 5, 0, 1, 4, 2, 3, 5, 6, 7, 4, 8];
 
+// 지장간(지지 속에 숨은 천간)과 월률분야 일수(30일 중 며칠을 맡는지). 여기·중기·정기 순서이며 마지막이 본기입니다.
+// 학파마다 조금씩 다르며, 국내에서 흔히 쓰는 표를 따릅니다(申은 戊·壬·庚).
+const HIDDEN_STEMS: [number, number][][] = [
+  [[8, 10], [9, 20]], // 子 壬癸
+  [[9, 9], [7, 3], [5, 18]], // 丑 癸辛己
+  [[4, 7], [2, 7], [0, 16]], // 寅 戊丙甲
+  [[0, 10], [1, 20]], // 卯 甲乙
+  [[1, 9], [9, 3], [4, 18]], // 辰 乙癸戊
+  [[4, 7], [6, 7], [2, 16]], // 巳 戊庚丙
+  [[2, 10], [5, 9], [3, 11]], // 午 丙己丁
+  [[3, 9], [1, 3], [5, 18]], // 未 丁乙己
+  [[4, 7], [8, 7], [6, 16]], // 申 戊壬庚
+  [[6, 10], [7, 20]], // 酉 庚辛
+  [[7, 9], [3, 3], [4, 18]], // 戌 辛丁戊
+  [[4, 7], [0, 7], [8, 16]], // 亥 戊甲壬
+];
+
 export type TenGod = "비견" | "겁재" | "식신" | "상관" | "편재" | "정재" | "편관" | "정관" | "편인" | "정인";
 export type TenGodGroup = "비겁" | "식상" | "재성" | "관성" | "인성";
 export const TEN_GOD_GROUPS: TenGodGroup[] = ["비겁", "식상", "재성", "관성", "인성"];
@@ -74,12 +91,21 @@ export type Pillar = {
   branchElement: Element;
   stemTenGod: TenGod | null; // 일간 자리는 null
   branchTenGod: TenGod;
+  hidden: HiddenStem[]; // 지장간(여기·중기·정기 순)
 };
+
+export type HiddenStem = { stem: string; stemKo: string; element: Element; tenGod: TenGod; days: number };
 
 export type SajuResult = {
   solar: { year: number; month: number; day: number };
   pillars: Pillar[]; // 시주는 시간을 모르면 빠집니다
   elementCount: Record<Element, number>;
+  // 지장간을 반영한 오행 세력. 천간은 1, 지지는 1을 지장간 일수 비율로 나눕니다(합계는 글자 수와 같음).
+  elementPower: Record<Element, number>;
+  // 일간과 같은 오행을 지장간에 품은 지지 자리(통근)
+  roots: string[];
+  // 지장간이 천간에 드러난 글자(투출)와 그 천간 자리
+  revealed: { stem: string; places: string[] }[];
   // 일간을 뺀 나머지 글자(시간을 알면 7개, 모르면 5개)의 십신 그룹별 개수
   tenGodCount: Record<TenGodGroup, number>;
   dayMaster: { stem: string; stemKo: string; element: Element; yang: boolean };
@@ -142,7 +168,11 @@ const ganZhi = (s: number, b: number, dayStem: number): GanZhi => ({
   branchElement: BRANCH_ELEMENT[b],
   stemTenGod: tenGod(dayStem, s).god,
   branchTenGod: tenGod(dayStem, BRANCH_MAIN_STEM[b]).god,
+  hidden: hiddenOf(b, dayStem),
 });
+
+const hiddenOf = (b: number, dayStem: number): HiddenStem[] =>
+  HIDDEN_STEMS[b].map(([h, days]) => ({ stem: STEMS[h], stemKo: STEMS_KO[h], element: STEM_ELEMENT[h], tenGod: tenGod(dayStem, h).god, days }));
 
 // 60갑자 순번(甲子=0)
 const sexagenary = (k: number, dayStem: number) => ganZhi(((k % 60) + 60) % 60 % 10, ((k % 60) + 60) % 60 % 12, dayStem);
@@ -153,6 +183,7 @@ const toPillar = (label: Pillar["label"], gz: string, dayStem: number): Pillar =
   const b = BRANCHES.indexOf(gz[1]);
   return {
     stemTenGod: label === "일주" ? null : tenGod(dayStem, s).god,
+    hidden: hiddenOf(b, dayStem),
     branchTenGod: tenGod(dayStem, BRANCH_MAIN_STEM[b]).god,
     label,
     stem: gz[0],
@@ -250,6 +281,24 @@ export function calcSaju(input: SajuInput): SajuResult | SajuError {
     elementCount[p.branchElement]++;
   }
 
+  const elementPower = Object.fromEntries(ELEMENTS.map((e) => [e, 0])) as Record<Element, number>;
+  for (const p of pillars) {
+    elementPower[p.stemElement] += 1;
+    for (const h of p.hidden) elementPower[h.element] += h.days / 30;
+  }
+  for (const e of ELEMENTS) elementPower[e] = Math.round(elementPower[e] * 10) / 10;
+
+  const dayElement = STEM_ELEMENT[dmIndex];
+  const roots = pillars.filter((p) => p.hidden.some((h) => h.element === dayElement)).map((p) => p.label[0] + "지");
+  const revealed: SajuResult["revealed"] = [];
+  for (const p of pillars) {
+    if (!pillars.some((q) => q.hidden.some((h) => h.stem === p.stem))) continue;
+    const place = p.label[0] + "간";
+    const hit = revealed.find((x) => x.stem === p.stem);
+    if (hit) hit.places.push(place);
+    else revealed.push({ stem: p.stem, places: [place] });
+  }
+
   const tenGodCount = Object.fromEntries(TEN_GOD_GROUPS.map((g) => [g, 0])) as Record<TenGodGroup, number>;
   for (const p of pillars) {
     if (p.stemTenGod) tenGodCount[groupOf(p.stemTenGod)]++;
@@ -261,6 +310,9 @@ export function calcSaju(input: SajuInput): SajuResult | SajuError {
     solar,
     pillars,
     elementCount,
+    elementPower,
+    roots,
+    revealed,
     tenGodCount,
     dayMaster: { stem: dm.stem, stemKo: dm.stemKo, element: dm.stemElement, yang: dmIndex % 2 === 0 },
     animal: ANIMALS[BRANCHES.indexOf(pillars[0].branch)],

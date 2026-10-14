@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { todayKST } from "@/lib/calculators/date";
 import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, findRelations, findShinsal, natalSlots, formatUsedTime, groupOf, type Element, type LuckPillar, type Relation, type SajuResult, type Shinsal, type TenGod } from "@/lib/calculators/saju";
-import { DAY_MASTER, ELEMENT_TEXT, LUCK_TEXT, MANY, PLACE_MEANING, RELATION_TEXT, SHINSAL_TEXT, SPOUSE_CLASH, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
+import { DAY_MASTER, ELEMENT_TEXT, HIDDEN_ONLY, REVEAL_TEXT, ROOT_TEXT, LUCK_TEXT, MANY, PLACE_MEANING, RELATION_TEXT, SHINSAL_TEXT, SPOUSE_CLASH, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -18,6 +18,7 @@ export default function SajuCalculator() {
   const [city, setCity] = useState<string>("서울");
   const [dayChange, setDayChange] = useState<"23" | "00">("23");
   const [gender, setGender] = useState<"male" | "female">("female");
+  const [withHidden, setWithHidden] = useState(false);
   const [today, setToday] = useState<{ year: number; month: number; day: number } | null>(null);
 
   // 정적 HTML에 빌드 날짜가 박히지 않도록 마운트 후 오늘 날짜를 채웁니다.
@@ -110,9 +111,15 @@ export default function SajuCalculator() {
                     <b>{p.branch}</b><small>{p.branchKo} · {p.branchElement}</small>
                     <em className="saju-god">{p.branchTenGod}</em>
                   </span>
+                  <span className="saju-hidden" title="지장간(지지 속에 숨은 천간)">
+                    {p.hidden.map((h) => (
+                      <span key={h.stem} className={EL_CLASS[h.element]}><b>{h.stem}</b> {h.tenGod}</span>
+                    ))}
+                  </span>
                 </div>
               ))}
             </div>
+            <p className="saju-muted">맨 아래 작은 글자는 지지 속에 숨은 천간(지장간)과 그 십신입니다. 위에서부터 여기·중기·정기 순이며, 마지막 정기가 그 지지의 본래 기운입니다.</p>
 
             {r.warnings.map((w) => <p key={w} className="warn">{w}</p>)}
 
@@ -134,9 +141,13 @@ export default function SajuCalculator() {
             )}
 
             <h3>오행 분포</h3>
+            <div className="seg" role="group" aria-label="오행 세는 방식">
+              <button type="button" aria-pressed={!withHidden} onClick={() => setWithHidden(false)}>글자 수</button>
+              <button type="button" aria-pressed={withHidden} onClick={() => setWithHidden(true)}>지장간 반영</button>
+            </div>
             <div className="saju-elements">
               {ELEMENTS.map((e) => {
-                const n = r.elementCount[e];
+                const n = withHidden ? r.elementPower[e] : r.elementCount[e];
                 const total = r.pillars.length * 2;
                 return (
                   <div key={e} className="saju-el-row">
@@ -148,7 +159,9 @@ export default function SajuCalculator() {
               })}
             </div>
             <p className="saju-summary">
-              {summary(r.elementCount)}
+              {withHidden
+                ? "지지 하나를 1로 보고 지장간이 맡은 일수(30일 중) 비율로 나눠 더한 값입니다. 겉으로 보이는 글자 수보다 실제 기운의 세기에 가깝습니다."
+                : summary(r.elementCount)}
             </p>
 
             <Reading r={r} />
@@ -198,8 +211,20 @@ function Reading({ r }: { r: SajuResult }) {
           <p key={e}><b>{e}({ELEMENT_TEXT[e].trait}) 기운이 많음 · {r.elementCount[e]}개</b><br />{ELEMENT_TEXT[e].many}</p>
         ))}
         {noneEl.map((e) => (
-          <p key={e}><b>{e}({ELEMENT_TEXT[e].trait}) 기운이 없음</b><br />{ELEMENT_TEXT[e].none}</p>
+          <p key={e}><b>{e}({ELEMENT_TEXT[e].trait}) 기운이 없음</b><br />{ELEMENT_TEXT[e].none}{r.elementPower[e] > 0 && ` ${HIDDEN_ONLY}`}</p>
         ))}
+      </section>
+
+      <section className="saju-card">
+        <h4>지장간으로 본 뿌리와 드러난 기운</h4>
+        <p>
+          <b>{r.roots.length ? `통근 · ${r.roots.join(", ")}` : "통근 없음"}</b><br />
+          {r.roots.length ? ROOT_TEXT.rooted : ROOT_TEXT.none}
+        </p>
+        <p>
+          <b>{r.revealed.length ? `투출 · ${r.revealed.map((x) => `${x.stem}(${x.places.join("·")})`).join(", ")}` : "투출 없음"}</b><br />
+          {r.revealed.length ? REVEAL_TEXT.some : REVEAL_TEXT.none}
+        </p>
       </section>
 
       <section className="saju-card">

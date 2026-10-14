@@ -246,3 +246,32 @@ describe("신살", () => {
     expect(findShinsal(withPair, "세운").find((x) => x.name === "원진살")!.places).toEqual(["일지", "세운 지지"]);
   });
 });
+
+describe("지장간", () => {
+  // 2000-01-01 12시: 己卯 丙子 戊午 戊午, 일간 戊
+  const r = ok({});
+  it("지지마다 여기·중기·정기와 십신", () => {
+    expect(r.pillars.map((p) => p.hidden.map((h) => h.stem).join(""))).toEqual(["甲乙", "壬癸", "丙己丁", "丙己丁"]);
+    expect(r.pillars[2].hidden.map((h) => h.tenGod)).toEqual(["편인", "겁재", "정인"]);
+    expect(r.pillars.every((p) => p.hidden.reduce((a, h) => a + h.days, 0) === 30)).toBe(true);
+  });
+  it("지장간을 일수 비율로 반영한 오행 세력", () => {
+    // 천간 토3·화1, 卯 목1, 子 수1, 午 두 개 → 화 21/30·토 9/30씩
+    expect(r.elementPower).toEqual({ 목: 1, 화: 2.4, 토: 3.6, 금: 0, 수: 1 });
+  });
+  it("통근과 투출", () => {
+    expect(r.roots).toEqual(["일지", "시지"]); // 戊토가 午 속 己토에 뿌리
+    expect(r.revealed).toEqual([{ stem: "己", places: ["연간"] }, { stem: "丙", places: ["월간"] }]);
+  });
+  it("12지지 모두 일수 합계가 30일이고 마지막(정기)이 본기", () => {
+    const seen = new Set<string>();
+    for (let d = 1; d <= 12; d++) {
+      for (const p of ok({ year: 2000, month: 3, day: d }).pillars) {
+        expect(p.hidden.reduce((a, h) => a + h.days, 0)).toBe(30);
+        expect(p.hidden.at(-1)!.tenGod).toBe(p.branchTenGod);
+        seen.add(p.branch);
+      }
+    }
+    expect(seen.size).toBe(12);
+  });
+});
