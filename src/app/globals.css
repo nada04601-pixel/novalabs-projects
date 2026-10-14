@@ -318,3 +318,7 @@ table.stores tbody th a:hover{text-decoration:underline}
 .compare-before img{display:block;height:100%;max-width:none;object-fit:contain;object-position:left}
 .compare-label{position:absolute;top:8px;font-size:12px;font-weight:700;color:#fff;background:rgba(0,0,0,.55);padding:2px 8px;border-radius:999px}
 .compare-label.l{left:8px}.compare-label.r{right:8px}
+/* 언어 전환 */
+.top-right{display:flex;align-items:center;gap:8px}
+.lang-switch{font-size:13px;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--bg)}
+.lang-switch:hover{border-color:var(--acc)}

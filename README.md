@@ -21,6 +21,13 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - `src/app/moim/` 모임 정산 계산기. 입력 상태를 공유 링크(`#d=…`)에 담아 서버 없이 동작 (`src/lib/moimState.ts`, `src/lib/calculators/settlement.ts`)
 - 로또: `/tools/lotto-simulator`(번호 생성 + 매주 샀다면? 시뮬레이션), `/lotto`(당첨번호 조회: 최신 회차·1등 배출점·전체 회차 검색·출현 통계), `/lotto/[회차]`(회차별 상세). 예전 `/tools/lotto`는 `public/_redirects`로 시뮬레이터로 옮김. 당첨 결과는 `src/data/lotto/draws.json`에 저장하고 빌드 때 정적 HTML로 들어감
 
+## 영어 페이지 (/en)
+- 해외에서도 쓸 수 있는 디지털 도구 14개만 영어 버전이 있습니다. 목록은 `src/lib/i18n.ts`의 `EN_TOOLS`(한글 타자 연습, 나이스 바이트 글자수 세기, 한국 기준 계산기는 한국어만).
+- 주소: `/en`(영어 홈), `/en/tools/[slug]`. 한국어 주소는 그대로이고, 두 페이지는 hreflang(`alternates.languages`)과 사이트맵으로 서로 연결됩니다.
+- 영어 제목·설명·사용법·FAQ: `src/data/tools.en.ts`. 화면 문구는 각 컴포넌트에서 `useT()`로 `t("한국어", "English")`처럼 나란히 적고, 경로가 `/en`이면 영어를 고릅니다(`src/lib/useT.ts`). 라이브러리의 오류 문구·파일 이름은 `lang` 인자(기본 `ko`)로 바꿉니다.
+- 헤더의 언어 전환 링크는 같은 도구의 다른 언어 페이지로, 영어 버전이 없는 페이지에서는 영어 홈으로 갑니다.
+- 새 도구에 영어 버전을 추가하려면: `EN_TOOLS`에 슬러그 추가 → `tools.en.ts`에 내용 추가 → 컴포넌트 문구를 `t()`로 감싸기 → `src/app/en/tools/[slug]/page.tsx`의 `components`에 연결.
+
 ## 이미지 업스케일 AI 모델
 - `/tools/image-upscaler`의 AI 모드는 UpscalerJS(`upscaler`)와 ESRGAN Medium 모델(`@upscalerjs/esrgan-medium`, MIT)을 TensorFlow.js(`@tensorflow/tfjs` 4.11, upscaler가 요구하는 버전)로 브라우저에서 실행합니다.
 - 모델 파일(2배·4배, 각 약 2.8MB)은 저장소에 넣지 않고 `npm run dev`/`npm run build` 직전에 `scripts/copy-models.mjs`가 `node_modules`에서 `public/models/esrgan-medium/`으로 복사합니다(`.gitignore`). 외부 CDN에서 받지 않습니다.

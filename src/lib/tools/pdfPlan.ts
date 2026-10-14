@@ -1,4 +1,5 @@
 // PDF 합치기·나누기·페이지 정리의 쪽 번호 계산과 파일 이름 등 pdf-lib 없이 쓰는 공통 로직
+import { pick, type Lang } from "../i18n";
 
 export const PDF_MAX_BYTES = 200 * 1024 * 1024;
 
@@ -8,34 +9,34 @@ export const isEncryptedError = (e: unknown) => {
   return n === "PasswordException" || /encrypt/i.test(n + m);
 };
 
-export const pdfErrorMessage = (e: unknown) =>
+export const pdfErrorMessage = (e: unknown, lang: Lang = "ko") =>
   isEncryptedError(e)
-    ? "암호가 걸린 PDF는 처리할 수 없습니다. 암호를 해제한 파일로 다시 시도해 주세요."
-    : "PDF를 처리하지 못했습니다. 손상된 파일이거나 이 브라우저에서 열 수 없는 형식일 수 있습니다.";
+    ? pick(lang, "암호가 걸린 PDF는 처리할 수 없습니다. 암호를 해제한 파일로 다시 시도해 주세요.", "Password-protected PDFs can't be processed. Remove the password and try again.")
+    : pick(lang, "PDF를 처리하지 못했습니다. 손상된 파일이거나 이 브라우저에서 열 수 없는 형식일 수 있습니다.", "Couldn't process this PDF. The file may be damaged or in a format this browser can't open.");
 
-const baseName = (name: string) => name.replace(/\.pdf$/i, "") || "문서";
+const baseName = (name: string, lang: Lang = "ko") => name.replace(/\.pdf$/i, "") || pick(lang, "문서", "document");
 
 // 보고서.pdf + "1-3쪽" → 보고서-1-3쪽.pdf
-export const pdfName = (name: string, suffix: string) => `${baseName(name)}-${suffix}.pdf`;
+export const pdfName = (name: string, suffix: string, lang: Lang = "ko") => `${baseName(name, lang)}-${suffix}.pdf`;
 
 // 보고서.pdf를 나눈 파일 묶음 → 보고서-나눈파일.zip
-export const splitZipName = (name: string) => `${baseName(name)}-나눈파일.zip`;
+export const splitZipName = (name: string, lang: Lang = "ko") => `${baseName(name, lang)}-${pick(lang, "나눈파일", "split")}.zip`;
 
 export type PageRangeResult = { ok: true; groups: number[][] } | { ok: false; error: string };
 
 // "1-3, 5, 8-" 같은 입력을 쪽 번호(1부터) 묶음으로 바꿉니다. 쉼표로 나눈 묶음마다 결과 파일 하나가 됩니다.
 // "8-"은 8쪽부터 끝까지, "-3"은 처음부터 3쪽까지입니다. 거꾸로 쓴 범위(5-3)는 역순으로 뽑습니다.
-export function parsePageRanges(input: string, total: number): PageRangeResult {
+export function parsePageRanges(input: string, total: number, lang: Lang = "ko"): PageRangeResult {
   const parts = input.replace(/[~–—]/g, "-").split(/[,，]/).map((s) => s.replace(/\s+/g, "")).filter(Boolean);
-  if (parts.length === 0) return { ok: false, error: "쪽 번호를 입력하세요. 예: 1-3, 5, 8-" };
+  if (parts.length === 0) return { ok: false, error: pick(lang, "쪽 번호를 입력하세요. 예: 1-3, 5, 8-", "Enter page numbers, e.g. 1-3, 5, 8-") };
   const groups: number[][] = [];
   for (const part of parts) {
     const m = part.match(/^(\d*)(-?)(\d*)$/);
-    if (!m || (!m[1] && !m[3])) return { ok: false, error: `'${part}'은(는) 쪽 번호 형식이 아닙니다. 예: 1-3, 5, 8-` };
+    if (!m || (!m[1] && !m[3])) return { ok: false, error: pick(lang, `'${part}'은(는) 쪽 번호 형식이 아닙니다. 예: 1-3, 5, 8-`, `'${part}' isn't a valid page range. e.g. 1-3, 5, 8-`) };
     const from = m[1] ? Number(m[1]) : 1;
     const to = m[2] ? (m[3] ? Number(m[3]) : total) : from;
     for (const v of [from, to]) {
-      if (v < 1 || v > total) return { ok: false, error: `${v}쪽은 없습니다. 이 파일은 1~${total}쪽입니다.` };
+      if (v < 1 || v > total) return { ok: false, error: pick(lang, `${v}쪽은 없습니다. 이 파일은 1~${total}쪽입니다.`, `There is no page ${v}. This file has pages 1-${total}.`) };
     }
     const step = from <= to ? 1 : -1;
     const g: number[] = [];
@@ -54,10 +55,12 @@ export function chunkPages(total: number, size: number): number[][] {
 }
 
 // 묶음의 이름표: [1,2,3] → "1-3쪽", [5] → "5쪽", [1,3] → "1,3쪽"
-export function groupLabel(g: number[]): string {
-  if (g.length === 1) return `${g[0]}쪽`;
+export function groupLabel(g: number[], lang: Lang = "ko"): string {
+  // 한국어는 "1-3쪽", 영어는 파일 이름에 쓰기 좋게 "p1-3"
+  const label = (s: string) => pick(lang, `${s}쪽`, `p${s}`);
+  if (g.length === 1) return label(String(g[0]));
   const consecutive = g.every((v, i) => i === 0 || v === g[i - 1] + 1);
-  return consecutive ? `${g[0]}-${g[g.length - 1]}쪽` : `${g.join(",")}쪽`;
+  return label(consecutive ? `${g[0]}-${g[g.length - 1]}` : g.join(","));
 }
 
 // 페이지 정리: 원본 쪽 번호(0부터)와 추가로 돌릴 각도를 받은 순서대로 새 PDF를 만듭니다. 빠진 쪽은 삭제됩니다.

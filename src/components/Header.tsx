@@ -3,18 +3,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { navGroups } from "@/data/nav";
+import { enGroups } from "@/data/tools.en";
+import { langOf, switchPath } from "@/lib/i18n";
 import DisplaySettings from "@/components/DisplaySettings";
 import Logo from "@/components/Logo";
 
-const MENU = [
-  { href: "/", label: "홈" },
-  { href: "/about", label: "소개" },
-];
+const MENU = {
+  ko: [
+    { href: "/", label: "홈" },
+    { href: "/about", label: "소개" },
+  ],
+  en: [{ href: "/en", label: "Home" }],
+};
 
 export default function Header() {
   const pathname = usePathname();
+  const lang = langOf(pathname);
+  const en = lang === "en";
+  // 영어 페이지는 영어 버전이 있는 도구만 보여 줍니다.
+  const groups = en ? enGroups : navGroups;
   const [open, setOpen] = useState(false);
-  const current = navGroups.findIndex((g) => g.items.some((i) => i.href === pathname));
+  const current = groups.findIndex((g) => g.items.some((i) => i.href === pathname));
   const [active, setActive] = useState(Math.max(current, 0));
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -34,18 +43,23 @@ export default function Header() {
     };
   }, [open]);
 
-  const isTools = pathname.startsWith("/tools") || pathname === "/moim";
-  const group = navGroups[active];
+  const isTools = pathname.startsWith("/tools") || pathname.startsWith("/en/tools") || pathname === "/moim";
+  const group = groups[active] ?? groups[0];
 
   return (
     <header>
       <div className="w wide top">
-        <Logo />
-        <DisplaySettings />
+        <Logo lang={lang} />
+        <div className="top-right">
+          <Link className="lang-switch" href={switchPath(pathname, en ? "ko" : "en")} hrefLang={en ? "ko" : "en"} lang={en ? "ko" : "en"}>
+            {en ? "한국어" : "English"}
+          </Link>
+          <DisplaySettings />
+        </div>
       </div>
       <div className="w wide menu" ref={wrap}>
-        <nav aria-label="주 메뉴">
-          {MENU.map((m) => (
+        <nav aria-label={en ? "Main menu" : "주 메뉴"}>
+          {MENU[lang].map((m) => (
             <Link key={m.href} href={m.href} className={pathname === m.href ? "on" : ""}>{m.label}</Link>
           ))}
           <button
@@ -55,15 +69,15 @@ export default function Header() {
             aria-controls="tools-menu"
             onClick={() => setOpen((v) => !v)}
           >
-            도구함 <span aria-hidden="true">{open ? "▴" : "▾"}</span>
+            {en ? "Tools" : "도구함"} <span aria-hidden="true">{open ? "▴" : "▾"}</span>
           </button>
-          <Link href="/guides" className={pathname.startsWith("/guides") ? "on" : ""}>가이드</Link>
+          {!en && <Link href="/guides" className={pathname.startsWith("/guides") ? "on" : ""}>가이드</Link>}
         </nav>
 
         {open && (
           <div id="tools-menu" className="mega">
             <ul className="mega-cats">
-              {navGroups.map((g, i) => (
+              {groups.map((g, i) => (
                 <li key={g.category}>
                   <button
                     type="button"
@@ -76,7 +90,7 @@ export default function Header() {
                   </button>
                 </li>
               ))}
-              <li><Link href="/tools" className="all">전체 도구 보기</Link></li>
+              <li><Link href={en ? "/en" : "/tools"} className="all">{en ? "All tools" : "전체 도구 보기"}</Link></li>
             </ul>
             <div className="mega-items">
               <p className="mega-title">{group.category}</p>

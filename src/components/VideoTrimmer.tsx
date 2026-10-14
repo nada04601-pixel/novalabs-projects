@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/lib/useT";
 import { useEffect, useRef, useState } from "react";
 import { formatBytes } from "@/lib/tools/fileSize";
 import { editedName, formatTime, parseTime, trimError, VIDEO_MAX_BYTES } from "@/lib/tools/videoEdit";
@@ -8,6 +9,7 @@ type Mode = "fast" | "exact";
 type Output = { url: string; name: string; size: number };
 
 export default function VideoTrimmer() {
+  const t = useT();
   const [file, setFile] = useState<File | null>(null);
   const [info, setInfo] = useState<VideoInfo | null>(null);
   const [src, setSrc] = useState("");
@@ -32,7 +34,7 @@ export default function VideoTrimmer() {
 
   const start = parseTime(startText);
   const end = parseTime(endText);
-  const problem = info ? trimError(start, end, info.duration) : null;
+  const problem = info ? trimError(start, end, info.duration, t.lang) : null;
 
   const clearOutput = () => {
     cancelRef.current?.();
@@ -47,10 +49,10 @@ export default function VideoTrimmer() {
     setSrc("");
     if (!f) return;
     if (f.size > VIDEO_MAX_BYTES) {
-      setError(`파일이 너무 큽니다. ${formatBytes(VIDEO_MAX_BYTES)} 이하의 동영상만 처리할 수 있습니다.`);
+      setError(t(`파일이 너무 큽니다. ${formatBytes(VIDEO_MAX_BYTES)} 이하의 동영상만 처리할 수 있습니다.`, `The file is too large. Videos up to ${formatBytes(VIDEO_MAX_BYTES)} are supported.`));
       return;
     }
-    setBusy("동영상 정보를 읽는 중…");
+    setBusy(t("동영상 정보를 읽는 중…", "Reading video info…"));
     try {
       const { probe } = await import("@/lib/tools/videoConvert");
       const i = await probe(f);
@@ -61,7 +63,7 @@ export default function VideoTrimmer() {
       setEndText(formatTime(i.duration));
     } catch (e) {
       const { convertErrorMessage } = await import("@/lib/tools/videoConvert");
-      setError(convertErrorMessage(e) || "동영상을 읽지 못했습니다.");
+      setError(convertErrorMessage(e, t.lang) || t("동영상을 읽지 못했습니다.", "Couldn't read the video."));
     } finally {
       setBusy("");
     }
@@ -91,7 +93,7 @@ export default function VideoTrimmer() {
     if (!file || !info || problem || start === null || end === null) return;
     clearOutput();
     setError("");
-    setBusy(mode === "fast" ? "자르는 중…" : "다시 인코딩하며 자르는 중… 영상이 길면 시간이 걸립니다.");
+    setBusy(mode === "fast" ? t("자르는 중…", "Trimming…") : t("다시 인코딩하며 자르는 중… 영상이 길면 시간이 걸립니다.", "Re-encoding and trimming… Long videos take a while."));
     setProgress(0);
     try {
       const { convert } = await import("@/lib/tools/videoConvert");
@@ -105,11 +107,11 @@ export default function VideoTrimmer() {
       }, setProgress);
       cancelRef.current = job.cancel;
       const r = await job.done;
-      setOutput({ url: URL.createObjectURL(r.blob), name: editedName(file.name, "자름", r.ext), size: r.blob.size });
+      setOutput({ url: URL.createObjectURL(r.blob), name: editedName(file.name, t("자름", "trimmed"), r.ext, t.lang), size: r.blob.size });
     } catch (e) {
       const { convertErrorMessage } = await import("@/lib/tools/videoConvert");
-      const m = convertErrorMessage(e);
-      setError(m || "자르기를 멈췄습니다.");
+      const m = convertErrorMessage(e, t.lang);
+      setError(m || t("자르기를 멈췄습니다.", "Trimming stopped."));
     } finally {
       cancelRef.current = null;
       setBusy("");
@@ -124,7 +126,7 @@ export default function VideoTrimmer() {
         <span>
           {file && info
             ? `${file.name} (${formatBytes(file.size)} · ${info.width}×${info.height} · ${formatTime(info.duration)})`
-            : "자를 동영상 파일을 고르세요"}
+            : t("자를 동영상 파일을 고르세요", "Choose a video to trim")}
         </span>
       </label>
 
@@ -132,44 +134,44 @@ export default function VideoTrimmer() {
         <>
           <video ref={player} className="wm-canvas" src={src} controls playsInline preload="metadata" onTimeUpdate={onTime} />
 
-          <h3 className="sub">남길 구간</h3>
+          <h3 className="sub">{t("남길 구간", "Segment to keep")}</h3>
           <div className="fields">
             <label>
-              시작
+              {t("시작", "Start")}
               <input value={startText} inputMode="decimal" placeholder="0:00.0" onChange={(e) => { setStartText(e.target.value); clearOutput(); }} />
             </label>
             <label>
-              끝
+              {t("끝", "End")}
               <input value={endText} inputMode="decimal" placeholder="1:23.5" onChange={(e) => { setEndText(e.target.value); clearOutput(); }} />
             </label>
           </div>
           <div className="actions">
-            <button type="button" className="btn sm ghost" onClick={setStartNow}>지금 장면을 시작으로</button>
-            <button type="button" className="btn sm ghost" onClick={setEndNow}>지금 장면을 끝으로</button>
-            <button type="button" className="btn sm ghost" disabled={!!problem} onClick={playRange}>구간 재생</button>
+            <button type="button" className="btn sm ghost" onClick={setStartNow}>{t("지금 장면을 시작으로", "Set start here")}</button>
+            <button type="button" className="btn sm ghost" onClick={setEndNow}>{t("지금 장면을 끝으로", "Set end here")}</button>
+            <button type="button" className="btn sm ghost" disabled={!!problem} onClick={playRange}>{t("구간 재생", "Play selection")}</button>
           </div>
           <p className="note-sm">
-            {problem ?? `${formatTime(end! - start!)} 길이의 영상이 만들어집니다.`}
+            {problem ?? t(`${formatTime(end! - start!)} 길이의 영상이 만들어집니다.`, `A ${formatTime(end! - start!)} video will be created.`)}
           </p>
 
-          <h3 className="sub">자르는 방식</h3>
-          <div className="seg" role="group" aria-label="자르는 방식">
-            <button type="button" aria-pressed={mode === "fast"} onClick={() => { setMode("fast"); clearOutput(); }}>빠르게 (화질 그대로)</button>
-            <button type="button" aria-pressed={mode === "exact"} disabled={!canExact} onClick={() => { setMode("exact"); clearOutput(); }}>정확하게 (다시 인코딩)</button>
+          <h3 className="sub">{t("자르는 방식", "Method")}</h3>
+          <div className="seg" role="group" aria-label={t("자르는 방식", "Method")}>
+            <button type="button" aria-pressed={mode === "fast"} onClick={() => { setMode("fast"); clearOutput(); }}>{t("빠르게 (화질 그대로)", "Fast (original quality)")}</button>
+            <button type="button" aria-pressed={mode === "exact"} disabled={!canExact} onClick={() => { setMode("exact"); clearOutput(); }}>{t("정확하게 (다시 인코딩)", "Exact (re-encode)")}</button>
           </div>
           <p className="note-sm">
             {mode === "fast"
-              ? "다시 인코딩하지 않아 몇 초 만에 끝나고 화질이 그대로입니다. 시작 앞의 키프레임까지 함께 담고 재생 시작점을 표시하는 방식이라, 일부 오래된 플레이어에서는 고른 시간보다 조금 앞부분이 보일 수 있습니다."
-              : "고른 시간에 정확히 맞춰 자릅니다. 영상을 다시 인코딩하므로 시간이 더 걸리고 화질이 아주 약간 떨어질 수 있습니다."}
-            {!canExact && " 이 브라우저는 다시 인코딩을 지원하지 않아 '빠르게'만 쓸 수 있습니다."}
+              ? t("다시 인코딩하지 않아 몇 초 만에 끝나고 화질이 그대로입니다. 시작 앞의 키프레임까지 함께 담고 재생 시작점을 표시하는 방식이라, 일부 오래된 플레이어에서는 고른 시간보다 조금 앞부분이 보일 수 있습니다.", "No re-encoding, so it finishes in seconds at original quality. The keyframe before your start is included and the playback start is marked, so some older players may show a little extra at the beginning.")
+              : t("고른 시간에 정확히 맞춰 자릅니다. 영상을 다시 인코딩하므로 시간이 더 걸리고 화질이 아주 약간 떨어질 수 있습니다.", "Cuts exactly at your chosen times. The video is re-encoded, so it takes longer and quality may drop very slightly.")}
+            {!canExact && t(" 이 브라우저는 다시 인코딩을 지원하지 않아 '빠르게'만 쓸 수 있습니다.", " This browser can't re-encode video, so only 'Fast' is available.")}
           </p>
         </>
       )}
 
       <div className="actions">
         {busy && progress !== null
-          ? <button type="button" className="btn sm" onClick={() => cancelRef.current?.()}>멈추기</button>
-          : <button type="button" className="btn sm" disabled={!info || !!problem || !!busy} onClick={run}>{busy ? "처리 중…" : "자르기"}</button>}
+          ? <button type="button" className="btn sm" onClick={() => cancelRef.current?.()}>{t("멈추기", "Stop")}</button>
+          : <button type="button" className="btn sm" disabled={!info || !!problem || !!busy} onClick={run}>{busy ? t("처리 중…", "Working…") : t("자르기", "Trim")}</button>}
       </div>
 
       <div className="result" aria-live="polite">
@@ -180,11 +182,11 @@ export default function VideoTrimmer() {
           <>
             <video className="wm-canvas" src={output.url} controls playsInline />
             <div className="actions">
-              <a className="btn sm" href={output.url} download={output.name}>내려받기 ({formatBytes(output.size)})</a>
+              <a className="btn sm" href={output.url} download={output.name}>{t("내려받기", "Download")} ({formatBytes(output.size)})</a>
             </div>
           </>
         )}
-        <p className="note">파일은 서버로 올라가지 않고 이 브라우저 안에서만 처리됩니다.</p>
+        <p className="note">{t("파일은 서버로 올라가지 않고 이 브라우저 안에서만 처리됩니다.", "Files are processed only in this browser and never uploaded.")}</p>
       </div>
     </div>
   );

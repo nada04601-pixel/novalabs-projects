@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/lib/useT";
 import { useEffect, useState } from "react";
 import { loadPdfjs } from "@/lib/tools/pdfjs";
 import { compressedName, formatBytes, PDF_PRESETS, reduction, renderScale, type PdfPreset } from "@/lib/tools/fileSize";
@@ -61,6 +62,7 @@ async function clean(data: ArrayBuffer) {
 }
 
 export default function PdfCompressor() {
+  const t = useT();
   const [file, setFile] = useState<File | null>(null);
   const [mode, setMode] = useState<Mode>("image");
   const [preset, setPreset] = useState<PdfPreset>("medium");
@@ -75,18 +77,18 @@ export default function PdfCompressor() {
     if (!file) return;
     setError("");
     setResult(null);
-    setBusy("파일을 읽는 중…");
+    setBusy(t("파일을 읽는 중…", "Reading the file…"));
     try {
       const data = await file.arrayBuffer();
       const r = mode === "image"
-        ? await rasterize(data, preset, (n, t) => setBusy(`${t}쪽 중 ${n}쪽 처리 중…`))
-        : (setBusy("구조를 정리하는 중…"), await clean(data));
+        ? await rasterize(data, preset, (n, total) => setBusy(t(`${total}쪽 중 ${n}쪽 처리 중…`, `Processing page ${n} of ${total}…`)))
+        : (setBusy(t("구조를 정리하는 중…", "Optimizing structure…")), await clean(data));
       const blob = new Blob([r.bytes as Uint8Array<ArrayBuffer>], { type: "application/pdf" });
-      setResult({ url: URL.createObjectURL(blob), name: compressedName(file.name), before: file.size, after: blob.size, pages: r.pages });
+      setResult({ url: URL.createObjectURL(blob), name: compressedName(file.name, t.lang), before: file.size, after: blob.size, pages: r.pages });
     } catch (e) {
       setError(encrypted(e)
-        ? "암호가 걸린 PDF는 압축할 수 없습니다. 암호를 해제한 파일로 다시 시도해 주세요."
-        : "PDF를 처리하지 못했습니다. 손상된 파일이거나 이 브라우저에서 열 수 없는 형식일 수 있습니다.");
+        ? t("암호가 걸린 PDF는 압축할 수 없습니다. 암호를 해제한 파일로 다시 시도해 주세요.", "Password-protected PDFs can't be compressed. Remove the password and try again.")
+        : t("PDF를 처리하지 못했습니다. 손상된 파일이거나 이 브라우저에서 열 수 없는 형식일 수 있습니다.", "Couldn't process this PDF. The file may be damaged or in a format this browser can't open."));
     } finally {
       setBusy("");
     }
@@ -97,7 +99,7 @@ export default function PdfCompressor() {
     setError("");
     if (f && f.size > MAX_BYTES) {
       setFile(null);
-      setError(`파일이 너무 큽니다. ${formatBytes(MAX_BYTES)} 이하의 PDF만 처리할 수 있습니다.`);
+      setError(t(`파일이 너무 큽니다. ${formatBytes(MAX_BYTES)} 이하의 PDF만 처리할 수 있습니다.`, `The file is too large. Only PDFs up to ${formatBytes(MAX_BYTES)} can be processed.`));
       return;
     }
     setFile(f);
@@ -109,31 +111,31 @@ export default function PdfCompressor() {
     <div className="calc">
       <label className="drop">
         <input type="file" accept="application/pdf,.pdf" onChange={(e) => pick(e.target.files?.[0] ?? null)} />
-        <span>{file ? `${file.name} (${formatBytes(file.size)})` : "PDF 파일을 고르세요"}</span>
+        <span>{file ? `${file.name} (${formatBytes(file.size)})` : t("PDF 파일을 고르세요", "Choose a PDF file")}</span>
       </label>
 
-      <h3 className="sub">압축 방식</h3>
-      <div className="seg" role="group" aria-label="압축 방식">
-        <button type="button" aria-pressed={mode === "image"} onClick={() => { setMode("image"); setResult(null); }}>강하게 (쪽을 이미지로)</button>
-        <button type="button" aria-pressed={mode === "clean"} onClick={() => { setMode("clean"); setResult(null); }}>가볍게 (글자 유지)</button>
+      <h3 className="sub">{t("압축 방식", "Method")}</h3>
+      <div className="seg" role="group" aria-label={t("압축 방식", "Method")}>
+        <button type="button" aria-pressed={mode === "image"} onClick={() => { setMode("image"); setResult(null); }}>{t("강하게 (쪽을 이미지로)", "Strong (pages as images)")}</button>
+        <button type="button" aria-pressed={mode === "clean"} onClick={() => { setMode("clean"); setResult(null); }}>{t("가볍게 (글자 유지)", "Light (keep text)")}</button>
       </div>
       {mode === "image" ? (
         <>
-          <div className="seg" role="group" aria-label="화질">
+          <div className="seg" role="group" aria-label={t("화질", "Quality")}>
             {(Object.keys(PDF_PRESETS) as PdfPreset[]).map((k) => (
               <button key={k} type="button" aria-pressed={preset === k} onClick={() => { setPreset(k); setResult(null); }}>
-                {PDF_PRESETS[k].label} · {PDF_PRESETS[k].dpi}dpi
+                {t(PDF_PRESETS[k].label, PDF_PRESETS[k].labelEn)} · {PDF_PRESETS[k].dpi}dpi
               </button>
             ))}
           </div>
-          <p className="note">스캔본이나 사진이 많은 PDF에 효과가 큽니다. 대신 결과 파일에서는 글자를 선택·검색할 수 없고 링크가 사라집니다.</p>
+          <p className="note">{t("스캔본이나 사진이 많은 PDF에 효과가 큽니다. 대신 결과 파일에서는 글자를 선택·검색할 수 없고 링크가 사라집니다.", "Works best on scans and photo-heavy PDFs. Text in the result can no longer be selected or searched, and links are removed.")}</p>
         </>
       ) : (
-        <p className="note">글자와 링크를 그대로 두고 파일 구조만 정리합니다. 줄어드는 폭은 작거나 없을 수 있습니다.</p>
+        <p className="note">{t("글자와 링크를 그대로 두고 파일 구조만 정리합니다. 줄어드는 폭은 작거나 없을 수 있습니다.", "Keeps text and links and only optimizes the file structure. The size may shrink only a little, or not at all.")}</p>
       )}
 
       <div className="actions">
-        <button type="button" className="btn sm" disabled={!file || !!busy} onClick={run}>{busy ? "처리 중…" : "압축하기"}</button>
+        <button type="button" className="btn sm" disabled={!file || !!busy} onClick={run}>{busy ? t("처리 중…", "Working…") : t("압축하기", "Compress")}</button>
       </div>
 
       <div className="result" aria-live="polite">
@@ -142,23 +144,24 @@ export default function PdfCompressor() {
         {result && (
           <>
             <div className="big">
-              <span>{saved > 0 ? "줄어든 용량" : "용량 변화"}</span>
-              <strong>{saved > 0 ? `${Math.round(saved * 100)}% 감소` : "줄지 않음"}</strong>
-              <small>{formatBytes(result.before)} → {formatBytes(result.after)} · {result.pages}쪽</small>
+              <span>{saved > 0 ? t("줄어든 용량", "Size reduced by") : t("용량 변화", "Size change")}</span>
+              <strong>{saved > 0 ? t(`${Math.round(saved * 100)}% 감소`, `${Math.round(saved * 100)}%`) : t("줄지 않음", "No reduction")}</strong>
+              <small>{formatBytes(result.before)} → {formatBytes(result.after)} · {result.pages}{t("쪽", " pages")}</small>
             </div>
             {saved <= 0 ? (
               <p className="warn">
-                이 파일은 이미 잘 압축되어 있어 {mode === "image" ? "이미지로 바꾸면 오히려 커집니다" : "더 줄지 않았습니다"}. 원본을 그대로 쓰거나{" "}
-                {mode === "image" ? "'가볍게' 방식이나 더 낮은 화질" : "'강하게' 방식"}로 다시 시도해 보세요.
+                {t.lang === "en"
+                  ? `This file is already well compressed, so ${mode === "image" ? "turning pages into images makes it bigger" : "it didn't get any smaller"}. Keep the original, or try again with ${mode === "image" ? "'Light' or a lower quality" : "'Strong'"}.`
+                  : `이 파일은 이미 잘 압축되어 있어 ${mode === "image" ? "이미지로 바꾸면 오히려 커집니다" : "더 줄지 않았습니다"}. 원본을 그대로 쓰거나 ${mode === "image" ? "'가볍게' 방식이나 더 낮은 화질" : "'강하게' 방식"}로 다시 시도해 보세요.`}
               </p>
             ) : (
               <div className="actions">
-                <a className="btn sm" href={result.url} download={result.name}>압축한 PDF 내려받기</a>
+                <a className="btn sm" href={result.url} download={result.name}>{t("압축한 PDF 내려받기", "Download compressed PDF")}</a>
               </div>
             )}
           </>
         )}
-        <p className="note">파일은 서버로 올라가지 않고 이 브라우저 안에서만 처리됩니다. 쪽수가 많거나 용량이 큰 파일은 휴대폰에서 시간이 오래 걸릴 수 있습니다.</p>
+        <p className="note">{t("파일은 서버로 올라가지 않고 이 브라우저 안에서만 처리됩니다. 쪽수가 많거나 용량이 큰 파일은 휴대폰에서 시간이 오래 걸릴 수 있습니다.", "Files are processed only in this browser and never uploaded. Large or long files can take a while on phones.")}</p>
       </div>
     </div>
   );

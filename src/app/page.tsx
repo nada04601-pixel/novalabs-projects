@@ -5,7 +5,7 @@ import { site } from "@/data/site";
 import ToolBrowser from "@/components/ToolBrowser";
 import HeroArt from "@/components/HeroArt";
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = { alternates: { canonical: "/", languages: { ko: "/", en: "/en", "x-default": "/" } } };
 
 export default function Home() {
   return (

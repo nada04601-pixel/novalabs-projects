@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/lib/useT";
 import { useEffect, useRef, useState } from "react";
 import { formatBytes, reduction } from "@/lib/tools/fileSize";
 import {
@@ -9,6 +10,7 @@ import type { VideoInfo } from "@/lib/tools/videoConvert";
 type Output = { url: string; name: string; size: number };
 
 export default function VideoCompressor() {
+  const t = useT();
   const [file, setFile] = useState<File | null>(null);
   const [info, setInfo] = useState<VideoInfo | null>(null);
   const [preset, setPreset] = useState<CompressPreset>("medium");
@@ -48,17 +50,17 @@ export default function VideoCompressor() {
     setInfo(null);
     if (!f) return;
     if (f.size > VIDEO_MAX_BYTES) {
-      setError(`파일이 너무 큽니다. ${formatBytes(VIDEO_MAX_BYTES)} 이하의 동영상만 처리할 수 있습니다.`);
+      setError(t(`파일이 너무 큽니다. ${formatBytes(VIDEO_MAX_BYTES)} 이하의 동영상만 처리할 수 있습니다.`, `The file is too large. Videos up to ${formatBytes(VIDEO_MAX_BYTES)} are supported.`));
       return;
     }
-    setBusy("동영상 정보를 읽는 중…");
+    setBusy(t("동영상 정보를 읽는 중…", "Reading video info…"));
     try {
       const { probe } = await import("@/lib/tools/videoConvert");
       setInfo(await probe(f));
       setFile(f);
     } catch (e) {
       const { convertErrorMessage } = await import("@/lib/tools/videoConvert");
-      setError(convertErrorMessage(e) || "동영상을 읽지 못했습니다.");
+      setError(convertErrorMessage(e, t.lang) || t("동영상을 읽지 못했습니다.", "Couldn't read the video."));
     } finally {
       setBusy("");
     }
@@ -68,7 +70,7 @@ export default function VideoCompressor() {
     if (!file || !info || !plan) return;
     clearOutput();
     setError("");
-    setBusy("용량을 줄이는 중… 영상이 길면 시간이 걸리니 이 탭을 열어 두세요.");
+    setBusy(t("용량을 줄이는 중… 영상이 길면 시간이 걸리니 이 탭을 열어 두세요.", "Compressing… Long videos take a while, so keep this tab open."));
     setProgress(0);
     try {
       const { convert } = await import("@/lib/tools/videoConvert");
@@ -77,10 +79,10 @@ export default function VideoCompressor() {
       }, setProgress);
       cancelRef.current = job.cancel;
       const r = await job.done;
-      setOutput({ url: URL.createObjectURL(r.blob), name: editedName(file.name, "압축", r.ext), size: r.blob.size });
+      setOutput({ url: URL.createObjectURL(r.blob), name: editedName(file.name, t("압축", "compressed"), r.ext, t.lang), size: r.blob.size });
     } catch (e) {
       const { convertErrorMessage } = await import("@/lib/tools/videoConvert");
-      setError(convertErrorMessage(e) || "용량 줄이기를 멈췄습니다.");
+      setError(convertErrorMessage(e, t.lang) || t("용량 줄이기를 멈췄습니다.", "Compression stopped."));
     } finally {
       cancelRef.current = null;
       setBusy("");
@@ -94,47 +96,47 @@ export default function VideoCompressor() {
     <div className="calc">
       <label className="drop">
         <input type="file" accept="video/*,.mkv" onChange={(e) => pick(e.target.files?.[0] ?? null)} />
-        <span>{file ? `${file.name} (${formatBytes(file.size)})` : "용량을 줄일 동영상 파일을 고르세요"}</span>
+        <span>{file ? `${file.name} (${formatBytes(file.size)})` : t("용량을 줄일 동영상 파일을 고르세요", "Choose a video to compress")}</span>
       </label>
 
       {!supported && (
-        <p className="warn">이 브라우저는 동영상 인코딩(WebCodecs)을 지원하지 않습니다. 최신 크롬·엣지·사파리(16.4 이상)에서 열어 주세요.</p>
+        <p className="warn">{t("이 브라우저는 동영상 인코딩(WebCodecs)을 지원하지 않습니다. 최신 크롬·엣지·사파리(16.4 이상)에서 열어 주세요.", "This browser doesn't support video encoding (WebCodecs). Please open this page in the latest Chrome, Edge or Safari (16.4+).")}</p>
       )}
 
       {info && plan && (
         <>
           <p className="note-sm">
-            원본: {info.width}×{info.height} · {formatTime(info.duration)}
-            {info.videoBitrate ? ` · 영상 ${(info.videoBitrate / 1e6).toFixed(1)}Mbps` : ""}
-            {info.hasAudio ? "" : " · 소리 없음"}
+            {t("원본", "Original")}: {info.width}×{info.height} · {formatTime(info.duration)}
+            {info.videoBitrate ? t(` · 영상 ${(info.videoBitrate / 1e6).toFixed(1)}Mbps`, ` · video ${(info.videoBitrate / 1e6).toFixed(1)} Mbps`) : ""}
+            {info.hasAudio ? "" : t(" · 소리 없음", " · no audio")}
           </p>
 
-          <h3 className="sub">줄이는 정도</h3>
-          <div className="seg" role="group" aria-label="줄이는 정도">
+          <h3 className="sub">{t("줄이는 정도", "Compression level")}</h3>
+          <div className="seg" role="group" aria-label={t("줄이는 정도", "Compression level")}>
             {(Object.keys(COMPRESS_PRESETS) as CompressPreset[]).map((k) => (
               <button key={k} type="button" aria-pressed={preset === k} onClick={() => { setPreset(k); clearOutput(); }}>
-                {COMPRESS_PRESETS[k].label} · {COMPRESS_PRESETS[k].desc}
+                {t(COMPRESS_PRESETS[k].label, COMPRESS_PRESETS[k].labelEn)} · {COMPRESS_PRESETS[k].desc}
               </button>
             ))}
           </div>
           {info.hasAudio && (
             <label className="inline">
               <input type="checkbox" checked={dropAudio} onChange={(e) => { setDropAudio(e.target.checked); clearOutput(); }} />
-              소리 빼기
+              {t("소리 빼기", "Remove audio")}
             </label>
           )}
           <p className="note-sm">
-            {plan.w}×{plan.h} · 영상 {(plan.vbr / 1e6).toFixed(1)}Mbps로 다시 인코딩합니다.
-            예상 크기 약 {formatBytes(plan.estimate)}
-            {file && ` (원본 대비 ${Math.max(0, Math.round(reduction(file.size, plan.estimate) * 100))}% 감소)`}
+            {t(`${plan.w}×${plan.h} · 영상 ${(plan.vbr / 1e6).toFixed(1)}Mbps로 다시 인코딩합니다.`, `Re-encodes at ${plan.w}×${plan.h}, video ${(plan.vbr / 1e6).toFixed(1)} Mbps.`)}{" "}
+            {t("예상 크기 약", "Estimated size about")} {formatBytes(plan.estimate)}
+            {file && t(` (원본 대비 ${Math.max(0, Math.round(reduction(file.size, plan.estimate) * 100))}% 감소)`, ` (${Math.max(0, Math.round(reduction(file.size, plan.estimate) * 100))}% smaller than the original)`)}
           </p>
         </>
       )}
 
       <div className="actions">
         {busy && progress !== null
-          ? <button type="button" className="btn sm" onClick={() => cancelRef.current?.()}>멈추기</button>
-          : <button type="button" className="btn sm" disabled={!info || !supported || !!busy} onClick={run}>{busy ? "처리 중…" : "용량 줄이기"}</button>}
+          ? <button type="button" className="btn sm" onClick={() => cancelRef.current?.()}>{t("멈추기", "Stop")}</button>
+          : <button type="button" className="btn sm" disabled={!info || !supported || !!busy} onClick={run}>{busy ? t("처리 중…", "Working…") : t("용량 줄이기", "Compress")}</button>}
       </div>
 
       <div className="result" aria-live="polite">
@@ -144,15 +146,15 @@ export default function VideoCompressor() {
         {output && file && (
           <>
             {saved > 0
-              ? <p className="big"><strong>{Math.round(saved * 100)}% 줄었습니다</strong> {formatBytes(file.size)} → {formatBytes(output.size)}</p>
-              : <p className="warn">원본보다 작아지지 않았습니다({formatBytes(file.size)} → {formatBytes(output.size)}). 이미 잘 압축된 영상이니 원본을 그대로 쓰거나 &apos;많이 줄이기&apos;를 골라 보세요.</p>}
+              ? <p className="big"><strong>{t(`${Math.round(saved * 100)}% 줄었습니다`, `${Math.round(saved * 100)}% smaller`)}</strong> {formatBytes(file.size)} → {formatBytes(output.size)}</p>
+              : <p className="warn">{t(`원본보다 작아지지 않았습니다(${formatBytes(file.size)} → ${formatBytes(output.size)}). 이미 잘 압축된 영상이니 원본을 그대로 쓰거나 '많이 줄이기'를 골라 보세요.`, `It didn't get smaller than the original (${formatBytes(file.size)} → ${formatBytes(output.size)}). The video is already well compressed - keep the original or choose 'Smallest'.`)}</p>}
             <video className="wm-canvas" src={output.url} controls playsInline />
             <div className="actions">
-              <a className="btn sm" href={output.url} download={output.name}>내려받기 ({formatBytes(output.size)})</a>
+              <a className="btn sm" href={output.url} download={output.name}>{t("내려받기", "Download")} ({formatBytes(output.size)})</a>
             </div>
           </>
         )}
-        <p className="note">파일은 서버로 올라가지 않고 이 브라우저 안에서만 처리됩니다.</p>
+        <p className="note">{t("파일은 서버로 올라가지 않고 이 브라우저 안에서만 처리됩니다.", "Files are processed only in this browser and never uploaded.")}</p>
       </div>
     </div>
   );

@@ -1,5 +1,9 @@
 export const site = {
   name: "노바랩 공작소",
+  // 영어 페이지(/en)에서 쓰는 이름과 소개
+  nameEn: "NovaLabs",
+  descriptionEn:
+    "Free online tools that run right in your browser: compress, merge and split PDFs, upscale images with AI, trim and compress videos, and more. Files are never uploaded.",
   domain: "novalabs.co.kr",
   url: "https://novalabs.co.kr",
   tagline: "계산부터 문서까지, 자주 쓰는 도구를 한곳에",

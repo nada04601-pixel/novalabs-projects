@@ -1,4 +1,5 @@
 // 비밀번호 생성기. 브라우저의 암호학적 난수(crypto.getRandomValues)로 글자를 고릅니다.
+import { pick, type Lang } from "../i18n";
 
 export const CHARSETS = {
   lower: "abcdefghijklmnopqrstuvwxyz",
@@ -55,9 +56,9 @@ export function entropyBits(opts: PasswordOptions): number {
   return size > 1 ? Math.max(opts.length, pools(opts).length) * Math.log2(size) : 0;
 }
 
-export function strength(bits: number): { label: string; level: 0 | 1 | 2 | 3 } {
-  if (bits < 40) return { label: "약함", level: 0 };
-  if (bits < 60) return { label: "보통", level: 1 };
-  if (bits < 80) return { label: "강함", level: 2 };
-  return { label: "매우 강함", level: 3 };
+export function strength(bits: number, lang: Lang = "ko"): { label: string; level: 0 | 1 | 2 | 3 } {
+  if (bits < 40) return { label: pick(lang, "약함", "Weak"), level: 0 };
+  if (bits < 60) return { label: pick(lang, "보통", "Fair"), level: 1 };
+  if (bits < 80) return { label: pick(lang, "강함", "Strong"), level: 2 };
+  return { label: pick(lang, "매우 강함", "Very strong"), level: 3 };
 }
