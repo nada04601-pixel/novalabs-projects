@@ -50,7 +50,6 @@ import TypingTest from "@/components/TypingTest";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
 import CharacterCounter from "@/components/CharacterCounter";
-import LottoTool from "@/components/LottoTool";
 import LottoSimulatorTool from "@/components/LottoSimulatorTool";
 import ShareButtons from "@/components/ShareButtons";
 
@@ -116,7 +115,6 @@ const calculators: Record<string, React.ReactNode> = {
   "password-generator": <PasswordGenerator />,
   "qr-code": <QrCodeGenerator />,
   "character-counter": <CharacterCounter />,
-  lotto: <LottoTool />,
   "lotto-simulator": <LottoSimulatorTool />,
 };
 

@@ -52,8 +52,8 @@ export function storeRegions(stores: Store[]): [string, number][] {
   return [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ko"));
 }
 
-// 화면으로 보내는 가벼운 형식: [회차, 추첨일, 번호 6개, 보너스]
-export type DrawLite = [number, string, number[], number];
+// 화면으로 보내는 가벼운 형식: [회차, 추첨일, 번호 6개, 보너스]. 시뮬레이터 형식(SimDraw)처럼 뒤에 값이 더 붙어도 됩니다.
+export type DrawLite = [number, string, number[], number, ...unknown[]];
 export const lite = (d: Draw): DrawLite => [d.no, d.date, d.nums, d.bonus];
 
 // 동행복권 공 색상 구간: 1~10 노랑, 11~20 파랑, 21~30 빨강, 31~40 회색, 41~45 초록

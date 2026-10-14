@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   drawsSince, generateGame, parseNumbers, parseSimHash, PICK, RANK_RULES, savingsValue, SIM_YEARS, simHash, simulate, TICKET,
@@ -14,8 +14,16 @@ const pct = (v: number) => v.toLocaleString("ko-KR", { maximumFractionDigits: 1 
 const yearLabel = (y: number) => (y ? `최근 ${y}년` : "1회부터 전체");
 
 // "지난 N년간 매주 이 번호로 샀다면?" 회차별 실제 당첨금으로 계산하고, 결과를 링크로 공유합니다.
-export default function LottoSimulator({ draws }: { draws: SimDraw[] }) {
+// picked: 위쪽 번호 생성기에서 "이 번호로 시뮬레이션"을 누르면 들어오는 번호(누를 때마다 key가 바뀜)
+export default function LottoSimulator({ draws, picked }: { draws: SimDraw[]; picked?: { nums: number[]; key: number } }) {
   const [text, setText] = useState("");
+  const box = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!picked) return;
+    setText(picked.nums.join(", "));
+    box.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [picked]);
   const [years, setYears] = useState(10);
   const [tickets, setTickets] = useState(1);
   const [shared, setShared] = useState<"" | "link" | "text">("");
@@ -64,7 +72,7 @@ export default function LottoSimulator({ draws }: { draws: SimDraw[] }) {
   const nativeShare = () => navigator.share?.({ title: "로또 시뮬레이터", text: shareText, url: shareUrl }).catch(() => {});
 
   return (
-    <div className="calc">
+    <div className="calc" ref={box} id="simulator">
       <label>내 번호 6개 (쉼표나 띄어쓰기로 구분)
         <div className="row">
           <input inputMode="numeric" placeholder="예: 3, 11, 17, 25, 34, 42" value={text} onChange={(e) => setText(e.target.value)} />
