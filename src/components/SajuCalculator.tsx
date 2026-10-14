@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { todayKST } from "@/lib/calculators/date";
-import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, formatUsedTime, groupOf, type Element, type LuckPillar, type SajuResult, type TenGod } from "@/lib/calculators/saju";
-import { DAY_MASTER, ELEMENT_TEXT, LUCK_TEXT, MANY, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
+import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, findRelations, natalSlots, formatUsedTime, groupOf, type Element, type LuckPillar, type Relation, type SajuResult, type TenGod } from "@/lib/calculators/saju";
+import { DAY_MASTER, ELEMENT_TEXT, LUCK_TEXT, MANY, PLACE_MEANING, RELATION_TEXT, SPOUSE_CLASH, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -174,6 +174,7 @@ function Reading({ r }: { r: SajuResult }) {
   const manyEl = ELEMENTS.filter((e) => r.elementCount[e] >= MANY);
   const noneEl = ELEMENTS.filter((e) => r.elementCount[e] === 0);
   const total = Object.values(r.tenGodCount).reduce((a, b) => a + b, 0);
+  const natalRel = findRelations(natalSlots(r));
   const gods = [...new Set(r.pillars.flatMap((p) => [p.stemTenGod, p.branchTenGod]).filter((g): g is TenGod => !!g))];
 
   return (
@@ -229,7 +230,16 @@ function Reading({ r }: { r: SajuResult }) {
         </details>
       </section>
 
-      <p className="saju-muted">타고난 성향 풀이는 일간·오행·십신의 일반적인 의미를 풀어 쓴 것으로, 글자 사이의 합·충은 반영하지 않았습니다. 재미와 참고용으로 봐 주세요.</p>
+      <section className="saju-card">
+        <h4>합과 충</h4>
+        {natalRel.length ? (
+          <Relations list={natalRel} />
+        ) : (
+          <p>팔자 안에 서로 묶이거나(합) 부딪히는(충) 글자가 없습니다. 크게 흔들림이 없는 비교적 안정된 구성입니다.</p>
+        )}
+      </section>
+
+      <p className="saju-muted">풀이는 일간·오행·십신과 합·충의 일반적인 의미를 풀어 쓴 것으로, 형·파·해와 신살은 반영하지 않았습니다. 재미와 참고용으로 봐 주세요.</p>
     </div>
   );
 }
@@ -259,13 +269,15 @@ function LuckRow({ items, selected, onSelect, caption }: { items: LuckPillar[]; 
   );
 }
 
-function LuckDetail({ r, p, title }: { r: SajuResult; p: LuckPillar; title: string }) {
+function LuckDetail({ r, p, title, name }: { r: SajuResult; p: LuckPillar; title: string; name: "대운" | "세운" }) {
+  const rel = findRelations([...natalSlots(r), { name, stem: p.stem, branch: p.branch }], name);
   return (
     <div className="saju-luck-detail">
       <h4>{title}</h4>
       <p><b>{p.stem}({p.stemKo}{p.stemElement}) · {p.stemTenGod}</b><br />{LUCK_TEXT[p.stemTenGod!]}</p>
       <p><b>{p.branch}({p.branchKo}{p.branchElement}) · {p.branchTenGod}</b><br />{LUCK_TEXT[p.branchTenGod]}</p>
       {elementNotes(r, p).map((n) => <p key={n}>{n}</p>)}
+      {rel.length > 0 && <Relations list={rel} />}
     </div>
   );
 }
@@ -290,12 +302,28 @@ function Luck({ r, gender, today }: { r: SajuResult; gender: "male" | "female"; 
         {!r.usedTime && " 태어난 시각을 모르면 시작 시점이 몇 달 어긋날 수 있습니다."}
       </p>
       <LuckRow items={l.daeun} selected={di} onSelect={setDSel} caption={(p) => `만 ${p.age}세`} />
-      <LuckDetail r={r} p={d} title={`${d.year}년 ${d.month}월부터 10년 (만 ${d.age}~${d.age + 9}세)`} />
+      <LuckDetail r={r} p={d} name="대운" title={`${d.year}년 ${d.month}월부터 10년 (만 ${d.age}~${d.age + 9}세)`} />
 
       <h3>세운 (해마다 바뀌는 흐름)</h3>
       <LuckRow items={l.seun} selected={si} onSelect={setSSel} caption={(p) => `${p.year}`} />
-      <LuckDetail r={r} p={s} title={`${s.year}년 ${s.stemKo}${s.branchKo}년${s.age >= 0 ? ` (생일 지나면 만 ${s.age}세)` : ""}`} />
+      <LuckDetail r={r} p={s} name="세운" title={`${s.year}년 ${s.stemKo}${s.branchKo}년${s.age >= 0 ? ` (생일 지나면 만 ${s.age}세)` : ""}`} />
       <p className="saju-muted">대운의 천간은 앞 5년, 지지는 뒤 5년에 더 크게 작용한다고 봅니다. 세운은 입춘(2월 4일 무렵)에 바뀝니다. 합·충 같은 글자 사이의 작용은 반영하지 않은 간단한 풀이입니다.</p>
     </div>
+  );
+}
+
+function Relations({ list }: { list: Relation[] }) {
+  return (
+    <ul className="saju-rel">
+      {list.map((x) => (
+        <li key={x.kind + x.places.join()}>
+          <b>{x.chars} {x.kind}{x.element ? `(${x.element})` : ""}</b>
+          <span className="saju-muted"> · {x.places.map((p) => (PLACE_MEANING[p] ? `${p}(${PLACE_MEANING[p]})` : p)).join(" – ")}</span>
+          <br />
+          {RELATION_TEXT[x.kind](x.element)}
+          {x.kind === "지지충" && x.places.includes("일지") && ` ${SPOUSE_CLASH}`}
+        </li>
+      ))}
+    </ul>
   );
 }

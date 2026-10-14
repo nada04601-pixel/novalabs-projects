@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DAY_MASTER } from "../../data/sajuReading";
-import { calcLuck, calcSaju, lunarToSolar, seoulClockToUtc, seoulOffsetMinutes, tenGod, type SajuInput, type SajuResult } from "./saju";
+import { calcLuck, calcSaju, findRelations, natalSlots, lunarToSolar, seoulClockToUtc, seoulOffsetMinutes, tenGod, type SajuInput, type SajuResult } from "./saju";
 
 const base: SajuInput = { calendar: "solar", year: 2000, month: 1, day: 1, time: { hour: 12, minute: 0 }, longitude: null, dayChange: "23" };
 const ok = (input: Partial<SajuInput>) => {
@@ -146,5 +146,37 @@ describe("대운·세운", () => {
     expect(y2026.stem + y2026.branch).toBe("丙午");
     expect(y2026.age).toBe(36);
     expect(l.seun[0].stem + l.seun[0].branch).toBe("甲辰");
+  });
+});
+
+describe("합·충", () => {
+  const slot = (name: string, gz: string) => ({ name, stem: gz[0], branch: gz[1] });
+  it("천간합·천간충·육합·지지충", () => {
+    const rel = findRelations([slot("연", "甲子"), slot("월", "己丑"), slot("일", "庚午")]);
+    expect(rel).toContainEqual({ kind: "천간합", chars: "甲己", places: ["연간", "월간"], element: "토" });
+    expect(rel).toContainEqual({ kind: "천간충", chars: "甲庚", places: ["연간", "일간"] });
+    expect(rel).toContainEqual({ kind: "육합", chars: "子丑", places: ["연지", "월지"], element: "토" });
+    expect(rel).toContainEqual({ kind: "지지충", chars: "子午", places: ["연지", "일지"] });
+    expect(rel).toHaveLength(4);
+  });
+  it("삼합·반합·방합", () => {
+    expect(findRelations([slot("연", "甲申"), slot("월", "丙子"), slot("일", "戊辰")])).toContainEqual({ kind: "삼합", chars: "申子辰", places: ["연지", "월지", "일지"], element: "수" });
+    expect(findRelations([slot("연", "甲子"), slot("월", "丙辰")])).toEqual([{ kind: "반합", chars: "子辰", places: ["연지", "월지"], element: "수" }]);
+    // 왕지(子)가 없는 申辰은 반합으로 보지 않음
+    expect(findRelations([slot("연", "甲申"), slot("월", "丙辰")])).toEqual([]);
+    expect(findRelations([slot("연", "甲寅"), slot("월", "丁卯"), slot("일", "戊辰")])).toContainEqual({ kind: "방합", chars: "寅卯辰", places: ["연지", "월지", "일지"], element: "목" });
+  });
+  it("원국의 충과, 운이 끼어 있는 관계만 고르기", () => {
+    // 2000-01-01 12시: 己卯 丙子 戊午 戊午 → 월지 子와 일지·시지 午가 충
+    const natal = natalSlots(ok({}));
+    expect(findRelations(natal)).toEqual([
+      { kind: "지지충", chars: "子午", places: ["월지", "일지"] },
+      { kind: "지지충", chars: "子午", places: ["월지", "시지"] },
+    ]);
+    // 甲申 세운: 연간 己와 천간합, 월지 子(왕지)와 반합. 원국끼리의 충은 빠짐
+    const withYear = findRelations([...natal, slot("세운", "甲申")], "세운");
+    expect(withYear).toContainEqual({ kind: "천간합", chars: "己甲", places: ["연간", "세운 천간"], element: "토" });
+    expect(withYear).toContainEqual({ kind: "반합", chars: "申子", places: ["월지", "세운 지지"], element: "수" });
+    expect(withYear.some((r) => r.kind === "지지충")).toBe(false);
   });
 });

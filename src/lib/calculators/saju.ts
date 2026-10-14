@@ -335,3 +335,62 @@ export const groupOf = (god: TenGod): TenGodGroup => TEN_GOD_GROUPS[TEN_GODS.fin
 
 export const formatUsedTime = (t: NonNullable<SajuResult["usedTime"]>) =>
   `${t.year}-${pad(t.month)}-${pad(t.day)} ${pad(t.hour)}:${pad(t.minute)}`;
+
+// ---- 합과 충 ----
+export type RelationKind = "천간합" | "천간충" | "육합" | "삼합" | "반합" | "방합" | "지지충";
+export type Relation = {
+  kind: RelationKind;
+  chars: string; // 관계를 이루는 글자들(예: 子午)
+  places: string[]; // 자리 이름(예: 월지, 일지, 대운 지지)
+  element?: Element; // 합으로 만들어지는 오행
+};
+// 자리 하나. name은 "연"·"월"·"일"·"시" 또는 "대운"·"세운"
+export type Slot = { name: string; stem: string; branch: string };
+
+const STEM_COMBINE_ELEMENT: Element[] = ["토", "금", "수", "목", "화"]; // 甲己 乙庚 丙辛 丁壬 戊癸
+const SIX_COMBINE_ELEMENT: Record<number, Element> = { 0: "토", 2: "목", 3: "화", 4: "금", 5: "수", 6: "화" }; // 子丑 寅亥 卯戌 辰酉 巳申 午未
+// 삼합: [생지, 왕지, 고지]와 만들어지는 오행. 왕지가 끼어 있어야 반합으로 봅니다.
+const THREE_COMBINE: [number[], Element][] = [[[8, 0, 4], "수"], [[11, 3, 7], "목"], [[2, 6, 10], "화"], [[5, 9, 1], "금"]];
+const DIRECTION_COMBINE: [number[], Element][] = [[[2, 3, 4], "목"], [[5, 6, 7], "화"], [[8, 9, 10], "금"], [[11, 0, 1], "수"]];
+
+const stemPlace = (n: string) => (n.length === 1 ? `${n}간` : `${n} 천간`);
+const branchPlace = (n: string) => (n.length === 1 ? `${n}지` : `${n} 지지`);
+
+// 자리들 사이의 합·충을 찾습니다. must를 주면 그 자리가 끼어 있는 관계만 돌려줍니다(운과 원국 사이를 볼 때).
+export function findRelations(slots: Slot[], must?: string): Relation[] {
+  const out: Relation[] = [];
+  for (let i = 0; i < slots.length; i++) {
+    for (let j = i + 1; j < slots.length; j++) {
+      const a = slots[i];
+      const b = slots[j];
+      const sa = STEMS.indexOf(a.stem);
+      const sb = STEMS.indexOf(b.stem);
+      const sp = [stemPlace(a.name), stemPlace(b.name)];
+      if (Math.abs(sa - sb) === 5) out.push({ kind: "천간합", chars: a.stem + b.stem, places: sp, element: STEM_COMBINE_ELEMENT[Math.min(sa, sb)] });
+      if (Math.abs(sa - sb) === 6) out.push({ kind: "천간충", chars: a.stem + b.stem, places: sp });
+      const ba = BRANCHES.indexOf(a.branch);
+      const bb = BRANCHES.indexOf(b.branch);
+      const bp = [branchPlace(a.name), branchPlace(b.name)];
+      if ((ba + bb) % 12 === 1) out.push({ kind: "육합", chars: a.branch + b.branch, places: bp, element: SIX_COMBINE_ELEMENT[Math.min(ba, bb)] });
+      if (Math.abs(ba - bb) === 6) out.push({ kind: "지지충", chars: a.branch + b.branch, places: bp });
+    }
+  }
+  const groups = (list: [number[], Element][], full: RelationKind, half?: RelationKind) => {
+    for (const [members, element] of list) {
+      const inGroup = slots.filter((s) => members.includes(BRANCHES.indexOf(s.branch)));
+      const present = members.filter((m) => inGroup.some((s) => BRANCHES.indexOf(s.branch) === m));
+      const places = inGroup.map((s) => branchPlace(s.name));
+      const chars = present.map((m) => BRANCHES[m]).join("");
+      if (present.length === 3) out.push({ kind: full, chars, places, element });
+      else if (half && present.length === 2 && present.includes(members[1])) out.push({ kind: half, chars, places, element });
+    }
+  };
+  groups(THREE_COMBINE, "삼합", "반합");
+  groups(DIRECTION_COMBINE, "방합");
+  if (!must) return out;
+  const mp = [stemPlace(must), branchPlace(must)];
+  return out.filter((r) => r.places.some((p) => mp.includes(p)));
+}
+
+const NATAL_NAMES = ["연", "월", "일", "시"];
+export const natalSlots = (r: SajuResult): Slot[] => r.pillars.map((p, i) => ({ name: NATAL_NAMES[i], stem: p.stem, branch: p.branch }));
