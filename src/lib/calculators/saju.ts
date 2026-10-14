@@ -415,3 +415,80 @@ export function findRelations(slots: Slot[], must?: string): Relation[] {
 
 const NATAL_NAMES = ["연", "월", "일", "시"];
 export const natalSlots = (r: SajuResult): Slot[] => r.pillars.map((p, i) => ({ name: NATAL_NAMES[i], stem: p.stem, branch: p.branch }));
+
+// ---- 신살 ----
+export type ShinsalName =
+  | "천을귀인" | "문창귀인" | "도화살" | "역마살" | "화개살" | "홍염살"
+  | "양인살" | "백호살" | "괴강살" | "원진살" | "공망";
+export type Shinsal = { name: ShinsalName; places: string[] };
+
+// 일간 기준으로 찾는 지지(천간 순서 甲乙丙丁戊己庚辛壬癸). 학파마다 조금씩 다르며, 국내 만세력에서 흔히 쓰는 표를 따릅니다.
+const HEAVENLY_NOBLE = ["丑未", "子申", "亥酉", "亥酉", "丑未", "子申", "丑未", "寅午", "巳卯", "巳卯"];
+const LITERARY = "巳午申酉申酉亥子寅卯";
+const RED_FLAME = "午午寅未辰辰戌酉子申";
+const BLADE: Record<string, string> = { 甲: "卯", 丙: "午", 戊: "午", 庚: "酉", 壬: "子" }; // 양간만 봅니다
+// 연지·일지가 속한 삼합(申子辰 寅午戌 巳酉丑 亥卯未)마다 도화·역마·화개가 되는 지지
+const GROUP_OF = (b: number) => [8, 0, 4].includes(b) ? 0 : [2, 6, 10].includes(b) ? 1 : [5, 9, 1].includes(b) ? 2 : 3;
+const PEACH = "酉卯午子";
+const HORSE = "寅申亥巳";
+const CANOPY = "辰戌丑未";
+const WHITE_TIGER = ["甲辰", "乙未", "丙戌", "丁丑", "戊辰", "壬戌", "癸丑"];
+const KUIGANG = ["庚辰", "庚戌", "壬辰", "壬戌", "戊戌"];
+const RESENTMENT = [[0, 7], [1, 6], [2, 9], [3, 8], [4, 11], [5, 10]]; // 子未 丑午 寅酉 卯申 辰亥 巳戌
+
+const pillarPlace = (n: string) => (n.length === 1 ? `${n}주` : n);
+
+// 자리들에서 신살을 찾습니다. 일간·연지·일지·일주(공망)를 기준으로 삼으므로 slots에는 "연"과 "일"이 있어야 합니다.
+// must를 주면 그 자리(대운·세운)에 걸린 신살만 돌려줍니다.
+export function findShinsal(slots: Slot[], must?: string): Shinsal[] {
+  const day = slots.find((s) => s.name === "일")!;
+  const dayStem = STEMS.indexOf(day.stem);
+  const hits = new Map<ShinsalName, string[]>();
+  const add = (name: ShinsalName, place: string) => {
+    const list = hits.get(name) ?? [];
+    if (!list.includes(place)) list.push(place);
+    hits.set(name, list);
+  };
+
+  for (const s of slots) {
+    const p = branchPlace(s.name);
+    if (HEAVENLY_NOBLE[dayStem].includes(s.branch)) add("천을귀인", p);
+    if (LITERARY[dayStem] === s.branch) add("문창귀인", p);
+    if (RED_FLAME[dayStem] === s.branch) add("홍염살", p);
+    if (BLADE[day.stem] === s.branch) add("양인살", p);
+    if (WHITE_TIGER.includes(s.stem + s.branch)) add("백호살", pillarPlace(s.name));
+    if (KUIGANG.includes(s.stem + s.branch)) add("괴강살", pillarPlace(s.name));
+  }
+  // 도화·역마·화개는 연지와 일지를 기준으로, 기준 자리를 뺀 나머지에서 찾습니다.
+  for (const base of slots.filter((s) => s.name === "연" || s.name === "일")) {
+    const g = GROUP_OF(BRANCHES.indexOf(base.branch));
+    for (const s of slots) {
+      if (s === base) continue;
+      if (PEACH[g] === s.branch) add("도화살", branchPlace(s.name));
+      if (HORSE[g] === s.branch) add("역마살", branchPlace(s.name));
+      if (CANOPY[g] === s.branch) add("화개살", branchPlace(s.name));
+    }
+  }
+  for (let i = 0; i < slots.length; i++) {
+    for (let j = i + 1; j < slots.length; j++) {
+      if (must && slots[i].name !== must && slots[j].name !== must) continue; // 운을 볼 때는 운이 낀 쌍만
+      const a = BRANCHES.indexOf(slots[i].branch);
+      const b = BRANCHES.indexOf(slots[j].branch);
+      if (RESENTMENT.some((pair) => samePair(a, b, pair))) {
+        add("원진살", branchPlace(slots[i].name));
+        add("원진살", branchPlace(slots[j].name));
+      }
+    }
+  }
+  // 공망: 일주가 속한 순(旬)에서 짝이 없는 두 지지가 일주 밖의 자리에 있으면
+  const k = sexagenaryIndex(dayStem, BRANCHES.indexOf(day.branch));
+  const xun = k - (k % 10);
+  const empty = [BRANCHES[(xun + 10) % 12], BRANCHES[(xun + 11) % 12]];
+  for (const s of slots) if (s !== day && empty.includes(s.branch)) add("공망", branchPlace(s.name));
+
+  const order: ShinsalName[] = ["천을귀인", "문창귀인", "도화살", "역마살", "화개살", "홍염살", "괴강살", "공망", "양인살", "백호살", "원진살"];
+  const out = order.filter((n) => hits.has(n)).map((name) => ({ name, places: hits.get(name)! }));
+  if (!must) return out;
+  const mine = [branchPlace(must), pillarPlace(must)];
+  return out.filter((x) => x.places.some((p) => mine.includes(p))).map((x) => ({ ...x, places: x.places.filter((p) => mine.includes(p) || x.name === "원진살") }));
+}

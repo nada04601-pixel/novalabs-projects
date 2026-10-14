@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { todayKST } from "@/lib/calculators/date";
-import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, findRelations, natalSlots, formatUsedTime, groupOf, type Element, type LuckPillar, type Relation, type SajuResult, type TenGod } from "@/lib/calculators/saju";
-import { DAY_MASTER, ELEMENT_TEXT, LUCK_TEXT, MANY, PLACE_MEANING, RELATION_TEXT, SPOUSE_CLASH, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
+import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, findRelations, findShinsal, natalSlots, formatUsedTime, groupOf, type Element, type LuckPillar, type Relation, type SajuResult, type Shinsal, type TenGod } from "@/lib/calculators/saju";
+import { DAY_MASTER, ELEMENT_TEXT, LUCK_TEXT, MANY, PLACE_MEANING, RELATION_TEXT, SHINSAL_TEXT, SPOUSE_CLASH, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -175,6 +175,7 @@ function Reading({ r }: { r: SajuResult }) {
   const noneEl = ELEMENTS.filter((e) => r.elementCount[e] === 0);
   const total = Object.values(r.tenGodCount).reduce((a, b) => a + b, 0);
   const natalRel = findRelations(natalSlots(r));
+  const natalShinsal = findShinsal(natalSlots(r));
   const gods = [...new Set(r.pillars.flatMap((p) => [p.stemTenGod, p.branchTenGod]).filter((g): g is TenGod => !!g))];
 
   return (
@@ -239,7 +240,16 @@ function Reading({ r }: { r: SajuResult }) {
         )}
       </section>
 
-      <p className="saju-muted">풀이는 일간·오행·십신과 합·충·형·파·해의 일반적인 의미를 풀어 쓴 것으로, 신살은 반영하지 않았습니다. 재미와 참고용으로 봐 주세요.</p>
+      <section className="saju-card">
+        <h4>신살</h4>
+        {natalShinsal.length ? (
+          <ShinsalList list={natalShinsal} />
+        ) : (
+          <p>흔히 보는 신살 가운데 팔자에 걸린 것이 없습니다.</p>
+        )}
+      </section>
+
+      <p className="saju-muted">풀이는 일간·오행·십신, 합·충·형·파·해, 신살의 일반적인 의미를 풀어 쓴 것입니다. 신살은 학파마다 기준이 조금씩 달라 다른 만세력과 결과가 다를 수 있습니다. 재미와 참고용으로 봐 주세요.</p>
     </div>
   );
 }
@@ -270,7 +280,9 @@ function LuckRow({ items, selected, onSelect, caption }: { items: LuckPillar[]; 
 }
 
 function LuckDetail({ r, p, title, name }: { r: SajuResult; p: LuckPillar; title: string; name: "대운" | "세운" }) {
-  const rel = findRelations([...natalSlots(r), { name, stem: p.stem, branch: p.branch }], name);
+  const slots = [...natalSlots(r), { name, stem: p.stem, branch: p.branch }];
+  const rel = findRelations(slots, name);
+  const shinsal = findShinsal(slots, name);
   return (
     <div className="saju-luck-detail">
       <h4>{title}</h4>
@@ -278,6 +290,7 @@ function LuckDetail({ r, p, title, name }: { r: SajuResult; p: LuckPillar; title
       <p><b>{p.branch}({p.branchKo}{p.branchElement}) · {p.branchTenGod}</b><br />{LUCK_TEXT[p.branchTenGod]}</p>
       {elementNotes(r, p).map((n) => <p key={n}>{n}</p>)}
       {rel.length > 0 && <Relations list={rel} />}
+      {shinsal.length > 0 && <ShinsalList list={shinsal} />}
     </div>
   );
 }
@@ -324,6 +337,26 @@ function Relations({ list }: { list: Relation[] }) {
           {x.kind === "지지충" && x.places.includes("일지") && ` ${SPOUSE_CLASH}`}
         </li>
       ))}
+    </ul>
+  );
+}
+
+const TONE_CLASS = { 길: "good", 흉: "bad", 양면: "mixed" } as const;
+
+function ShinsalList({ list }: { list: Shinsal[] }) {
+  return (
+    <ul className="saju-rel">
+      {list.map((x) => {
+        const t = SHINSAL_TEXT[x.name];
+        return (
+          <li key={x.name}>
+            <b>{x.name}</b> <span className={`saju-tone ${TONE_CLASS[t.tone]}`}>{t.tone === "양면" ? "양면" : t.tone === "길" ? "길신" : "흉신"}</span>
+            <span className="saju-muted"> · {x.places.map((p) => (PLACE_MEANING[p] ? `${p}(${PLACE_MEANING[p]})` : p)).join(", ")}</span>
+            <br />
+            {t.text}
+          </li>
+        );
+      })}
     </ul>
   );
 }

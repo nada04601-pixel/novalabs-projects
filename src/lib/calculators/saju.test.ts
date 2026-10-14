@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DAY_MASTER } from "../../data/sajuReading";
-import { calcLuck, calcSaju, findRelations, natalSlots, lunarToSolar, seoulClockToUtc, seoulOffsetMinutes, tenGod, type SajuInput, type SajuResult } from "./saju";
+import { calcLuck, calcSaju, findRelations, findShinsal, natalSlots, lunarToSolar, seoulClockToUtc, seoulOffsetMinutes, tenGod, type SajuInput, type SajuResult } from "./saju";
 
 const base: SajuInput = { calendar: "solar", year: 2000, month: 1, day: 1, time: { hour: 12, minute: 0 }, longitude: null, dayChange: "23" };
 const ok = (input: Partial<SajuInput>) => {
@@ -208,5 +208,41 @@ describe("형·파·해", () => {
     expect(kinds(["甲子", "乙未"])).toEqual(["子未해"]);
     expect(kinds(["甲申", "乙亥"])).toEqual(["申亥해"]);
     expect(kinds(["乙未", "甲戌"])).toEqual(["未戌형지세지형", "未戌파"]);
+  });
+});
+
+describe("신살", () => {
+  const slot = (name: string, gz: string) => ({ name, stem: gz[0], branch: gz[1] });
+  it("2000-01-01 12시(己卯 丙子 戊午 戊午)", () => {
+    // 일간 戊: 양인 午. 연지 卯(亥卯未)의 도화 子, 일지 午(寅午戌)의 도화 卯. 일주 戊午는 甲寅순이라 子丑 공망
+    expect(findShinsal(natalSlots(ok({})))).toEqual([
+      { name: "도화살", places: ["월지", "연지"] },
+      { name: "공망", places: ["월지"] },
+      { name: "양인살", places: ["일지", "시지"] },
+    ]);
+  });
+  it("일간 기준 귀인·홍염과 기둥 기준 백호·괴강, 원진", () => {
+    const r = findShinsal([slot("연", "甲辰"), slot("월", "丙寅"), slot("일", "庚戌"), slot("시", "乙酉")]);
+    const names = r.map((x) => x.name);
+    // 일간 庚: 천을귀인 丑未(없음), 문창 亥(없음), 홍염 戌(일지)
+    expect(names).not.toContain("천을귀인");
+    expect(r).toContainEqual({ name: "홍염살", places: ["일지"] });
+    expect(r).toContainEqual({ name: "백호살", places: ["연주"] });
+    expect(r).toContainEqual({ name: "괴강살", places: ["일주"] });
+    expect(r).toContainEqual({ name: "원진살", places: ["월지", "시지"] }); // 寅酉
+    // 연지 辰(申子辰): 화개 辰은 기준 자리라 제외, 일지 戌(寅午戌): 도화 卯·역마 申·화개 戌 없음
+    expect(names).not.toContain("화개살");
+  });
+  it("운에 걸린 신살만 고르기", () => {
+    const natal = natalSlots(ok({}));
+    // 2025 乙巳 세운: 일간 戊 기준 천을귀인 丑未 아님, 연지 卯의 역마 巳
+    expect(findShinsal([...natal, slot("세운", "乙巳")], "세운")).toEqual([{ name: "역마살", places: ["세운 지지"] }]);
+    // 丑 세운은 공망이자 원진(일지·시지 午와 丑午)
+    const ox = findShinsal([...natal, slot("세운", "辛丑")], "세운");
+    expect(ox.map((x) => x.name)).toEqual(["천을귀인", "공망", "원진살"]);
+    expect(ox.find((x) => x.name === "원진살")!.places).toEqual(["일지", "세운 지지", "시지"]);
+    // 원국끼리의 원진(寅酉)은 운 쪽 목록에 섞이지 않음
+    const withPair = [slot("연", "甲寅"), slot("월", "乙酉"), slot("일", "戊午"), slot("세운", "辛丑")];
+    expect(findShinsal(withPair, "세운").find((x) => x.name === "원진살")!.places).toEqual(["일지", "세운 지지"]);
   });
 });

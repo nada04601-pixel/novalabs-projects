@@ -362,3 +362,6 @@ table.stores tbody th a:hover{text-decoration:underline}
 .saju-rel li{font-size:15px;line-height:1.65;padding:10px 0;border-top:1px solid var(--line)}
 .saju-rel li:first-child{border-top:0;padding-top:0}
 .saju-luck-detail .saju-rel{margin-top:4px;border-top:1px solid var(--line);padding-top:10px}
+.saju-tone{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;vertical-align:1px}
+.saju-tone.good{background:#dcfce7;color:#166534}.saju-tone.bad{background:#fee2e2;color:#991b1b}.saju-tone.mixed{background:#fef3c7;color:#92400e}
+.saju-luck-detail .saju-rel+.saju-rel{border-top:1px solid var(--line);margin-top:10px}
