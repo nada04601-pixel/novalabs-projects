@@ -109,11 +109,82 @@ export async function convert(
   return { cancel: () => { conversion.cancel(); }, done };
 }
 
+// 소리만 MP3로 뽑습니다. 브라우저에는 MP3 인코더가 없어서 필요할 때만 WebAssembly 인코더(LAME)를 불러와 씁니다.
+export async function extractMp3(
+  file: File,
+  opts: { bitrate: number; trim?: { start: number; end: number } },
+  onProgress: (p: number) => void,
+): Promise<{ cancel: () => void; done: Promise<Blob> }> {
+  const mb = await load();
+  if (!(await mb.canEncodeAudio("mp3"))) {
+    const { registerMp3Encoder } = await import("@mediabunny/mp3-encoder");
+    registerMp3Encoder();
+  }
+  const input = new mb.Input({ source: new mb.BlobSource(file), formats: mb.ALL_FORMATS });
+  const target = new mb.BufferTarget();
+  const output = new mb.Output({ format: new mb.Mp3OutputFormat(), target });
+  const conversion = await mb.Conversion.init({
+    input,
+    output,
+    trim: opts.trim,
+    video: { discard: true },
+    audio: { codec: "mp3", quality: new mb.Quality({ bitrate: opts.bitrate }), forceTranscode: true },
+    showWarnings: false,
+  });
+  if (!conversion.isValid || !conversion.utilizedTracks.some((t) => t.isAudioTrack())) {
+    input.dispose();
+    throw new Error("no-audio");
+  }
+  conversion.onProgress = (p) => onProgress(Math.min(1, Math.max(0, p)));
+  const done = conversion.execute().then(() => {
+    if (!target.buffer) throw new Error("empty");
+    return new Blob([target.buffer], { type: "audio/mpeg" });
+  }).finally(() => input.dispose());
+  return { cancel: () => { conversion.cancel(); }, done };
+}
+
+// 고른 시각들의 장면을 뽑아 GIF로 묶습니다. 프레임마다 256색 팔레트를 따로 만들어 색이 덜 뭉개지게 합니다.
+export async function makeGif(
+  file: File,
+  opts: { times: number[]; width: number; height: number; delay: number },
+  onProgress: (p: number) => void,
+): Promise<{ cancel: () => void; done: Promise<Blob> }> {
+  const mb = await load();
+  const { GIFEncoder, quantize, applyPalette } = await import("gifenc");
+  const input = new mb.Input({ source: new mb.BlobSource(file), formats: mb.ALL_FORMATS });
+  const video = await input.getPrimaryVideoTrack();
+  if (!video) { input.dispose(); throw new Error("no-video"); }
+  if (!(await video.canDecode())) { input.dispose(); throw new Error("invalid"); }
+  let canceled = false;
+  const run = async () => {
+    const sink = new mb.CanvasSink(video, { width: opts.width, height: opts.height, fit: "fill", poolSize: 2 });
+    const gif = GIFEncoder();
+    let k = 0;
+    for await (const frame of sink.canvasesAtTimestamps(opts.times)) {
+      if (canceled) throw new Error("cancel");
+      k++;
+      if (!frame) continue; // 영상 첫 장면보다 앞선 시각
+      const ctx = frame.canvas.getContext("2d") as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+      const { data } = ctx.getImageData(0, 0, opts.width, opts.height);
+      const palette = quantize(data, 256);
+      gif.writeFrame(applyPalette(data, palette), opts.width, opts.height, { palette, delay: opts.delay, repeat: 0 });
+      onProgress(k / opts.times.length);
+      // 색 줄이기는 무거운 계산이라 몇 장마다 화면이 멈추지 않게 숨을 돌립니다.
+      if (k % 3 === 0) await new Promise((r) => setTimeout(r, 0));
+    }
+    gif.finish();
+    return new Blob([gif.bytes()], { type: "image/gif" });
+  };
+  const done = run().finally(() => input.dispose());
+  return { cancel: () => { canceled = true; }, done };
+}
+
 // 오류를 안내 문구로 바꿉니다. 사용자가 멈춘 경우는 빈 문자열입니다.
 export function convertErrorMessage(e: unknown): string {
   const name = e instanceof Error ? e.name : "";
   const msg = e instanceof Error ? e.message : "";
   if (name === "ConversionCanceledError" || /cancel/i.test(msg)) return "";
+  if (msg === "no-audio") return "이 동영상에는 소리가 없거나, 이 브라우저가 읽을 수 없는 소리 형식입니다.";
   if (msg === "no-video") return "동영상 트랙을 찾지 못했습니다. 소리만 있는 파일이거나 손상된 파일일 수 있습니다.";
   if (msg === "no-encoder") return "이 브라우저는 동영상 인코딩을 지원하지 않습니다. 최신 크롬·엣지·사파리에서 다시 시도해 주세요.";
   if (msg === "invalid") return "이 동영상의 코덱은 이 브라우저에서 변환할 수 없습니다. 다른 브라우저(크롬·엣지)에서 시도해 보세요.";
