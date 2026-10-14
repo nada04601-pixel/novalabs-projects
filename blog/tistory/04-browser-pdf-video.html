@@ -1,0 +1,133 @@
+<!--
+  티스토리 HTML 모드용 (원본: 같은 이름의 .md 파일, md-to-html.mjs로 생성)
+  사용법: 글쓰기 → 오른쪽 위 '기본모드'를 'HTML'로 바꾼 뒤, 아래 <div>부터 끝까지 전부 붙여넣기
+  제목: 프로그램 설치 없이 PDF·동영상 정리하기: 서류 제출부터 블로그 움짤까지 상황별 정리
+  카테고리: IT·생활 꿀팁
+  태그: PDF용량줄이기, PDF합치기, PDF나누기, 사진PDF변환, 동영상용량줄이기, 동영상GIF변환, 움짤만들기, MP3추출, 무료PDF도구
+  올리는 시기: 바로 가능 (연말정산 서류 제출, 입사·입학 서류 철에 다시 공유하면 좋음)
+  스킨에 상관없이 모양이 유지되도록 <style> 없이 인라인 스타일만 썼습니다.
+-->
+<div style="line-height:1.8; font-size:16px; word-break:keep-all;">
+
+<p>서류를 내려고 하면 꼭 이런 일이 생깁니다.</p>
+
+<ul>
+
+  <li>"첨부 파일은 10MB 이하로 올려 주세요" → 스캔한 PDF가 25MB</li>
+
+  <li>"서류는 하나의 PDF로 합쳐서 제출" → 파일이 다섯 개</li>
+
+  <li>"회의 녹화본 공유해 주세요" → 메신저가 용량 초과로 안 보내짐</li>
+
+</ul>
+
+<p>이럴 때 프로그램을 설치하거나, 계약서·증명서 같은 서류를 정체 모를 사이트에 올리기는 꺼려지죠.
+그래서 제가 만든 사이트 <b>노바랩 공작소</b>에는 <b>파일을 서버로 보내지 않고 지금 쓰는 브라우저 안에서만 처리하는</b> 도구들을 모아 두었습니다.
+페이지를 닫으면 파일은 브라우저 메모리에서도 사라지고, 회원가입도 필요 없습니다.</p>
+
+<p>상황별로 어떤 도구를 어떤 순서로 쓰면 되는지 정리해 볼게요.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">상황 1. 서류 여러 장을 PDF 하나로 제출해야 할 때</h2>
+
+<p>입사 서류, 장학금 신청, 연말정산 증빙처럼 <b>"한 파일로"</b> 내라는 경우가 많습니다. 이 순서로 하면 깔끔합니다.</p>
+
+<ol>
+
+  <li><b>종이 서류 사진 → PDF</b>: 휴대폰으로 찍은 사진을 <a href="https://novalabs.co.kr/tools/jpg-to-pdf" target="_blank" rel="noopener">이미지를 PDF로</a>에서 한 파일로 묶습니다.</li>
+
+  <li><b>PDF 여러 개 → 하나로</b>: 받은 PDF들과 1번 파일을 <a href="https://novalabs.co.kr/tools/pdf-merge" target="_blank" rel="noopener">PDF 합치기</a>에서 제출 순서대로 합칩니다.</li>
+
+  <li><b>거꾸로 들어간 쪽, 빈 쪽 정리</b>: <a href="https://novalabs.co.kr/tools/pdf-organize" target="_blank" rel="noopener">PDF 페이지 정리</a>에서 미리보기를 보며 회전·순서 변경·삭제를 합니다.</li>
+
+  <li><b>용량 제한 맞추기</b>: 마지막으로 <a href="https://novalabs.co.kr/tools/pdf-compress" target="_blank" rel="noopener">PDF 용량 줄이기</a>로 압축합니다.</li>
+
+</ol>
+
+<p>순서가 중요한 이유가 있어요. 합치기는 원본을 그대로 이어 붙이기 때문에 <b>용량이 줄지 않습니다.</b> 그래서 압축은 맨 마지막에 한 번만 하는 게 좋습니다.</p>
+
+<p>사진을 찍을 때는 그림자가 지지 않게 밝은 곳에서, 서류가 화면을 꽉 채우게 찍으면 PDF로 바꿨을 때 글자가 훨씬 잘 보입니다.
+사진·PDF 변환 때 알아 둘 점은 <a href="https://novalabs.co.kr/guides/jpg-pdf-conversion-guide" target="_blank" rel="noopener">사진을 PDF로, PDF를 사진으로</a> 글에 정리해 두었습니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">상황 2. PDF가 너무 커서 첨부가 안 될 때</h2>
+
+<p>PDF가 큰 이유는 대부분 <b>안에 들어 있는 이미지</b> 때문입니다. 스캔본이나 사진을 묶은 PDF는 쪽마다 고해상도 사진이 들어 있어서 금방 수십 MB가 됩니다.</p>
+
+<ul>
+
+  <li>스캔·사진 위주 PDF → 압축 효과가 큽니다.</li>
+
+  <li>워드·한글에서 바로 저장한 글자 위주 PDF → 이미 작아서 압축해도 별로 줄지 않거나 오히려 커질 수 있습니다. 이럴 땐 '가볍게'를 쓰거나 원본을 그대로 내세요.</li>
+
+  <li><b>전자서명이 들어간 PDF는 압축하면 서명이 무효가 됩니다.</b> 서명된 문서는 원본을 제출하세요.</li>
+
+</ul>
+
+<p>그래도 용량을 못 맞추면 <a href="https://novalabs.co.kr/tools/pdf-split" target="_blank" rel="noopener">PDF 나누기</a>로 파일을 두세 개로 나눠 보내는 방법도 있습니다.
+PDF가 커지는 원리는 <a href="https://novalabs.co.kr/guides/how-to-reduce-pdf-size" target="_blank" rel="noopener">PDF 용량 줄이는 방법</a> 글에 더 자세히 적어 두었습니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">상황 3. 두꺼운 PDF에서 몇 쪽만 보내고 싶을 때</h2>
+
+<p>100쪽짜리 자료에서 5~7쪽만 필요할 때는 <a href="https://novalabs.co.kr/tools/pdf-split" target="_blank" rel="noopener">PDF 나누기·페이지 추출</a>에 <code style="padding:1px 6px; background:#f0f2f6; border-radius:4px; color:#1f2a44; font-family:monospace;">5-7</code>처럼 쪽 범위만 넣으면 됩니다.
+반대로 PDF의 한 쪽을 단톡방이나 SNS에 이미지로 올리고 싶다면 <a href="https://novalabs.co.kr/tools/pdf-to-jpg" target="_blank" rel="noopener">PDF를 이미지로</a>를 쓰세요. 쪽마다 JPG·PNG로 바뀝니다.</p>
+
+<p>합치기·나누기·정리를 언제 무엇으로 하면 되는지는 <a href="https://novalabs.co.kr/guides/pdf-merge-split-organize" target="_blank" rel="noopener">PDF 합치기·나누기·페이지 정리 상황별 정리</a>에서 한 번에 볼 수 있습니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">상황 4. 동영상이 메신저로 안 보내질 때</h2>
+
+<p>휴대폰으로 찍은 영상은 1분만 넘어도 수백 MB가 되곤 합니다.</p>
+
+<ul>
+
+  <li><b>필요한 부분만</b>: <a href="https://novalabs.co.kr/tools/video-trim" target="_blank" rel="noopener">동영상 자르기</a>로 앞뒤를 잘라 길이부터 줄입니다.</li>
+
+  <li><b>용량 줄이기</b>: <a href="https://novalabs.co.kr/tools/video-compress" target="_blank" rel="noopener">동영상 용량 줄이기</a>로 해상도와 비트레이트를 낮춥니다. 휴대폰 화면으로 볼 영상이라면 화질 차이가 거의 느껴지지 않습니다.</li>
+
+  <li><b>소리만 필요할 때</b>: 강의·회의 녹화본은 <a href="https://novalabs.co.kr/tools/video-to-mp3" target="_blank" rel="noopener">동영상 MP3 추출</a>로 음성만 뽑아 두면 출퇴근길에 듣기 좋습니다.</li>
+
+</ul>
+
+<p>자르기 → 압축 순서로 하면 처리 시간도 짧아집니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">상황 5. 블로그에 넣을 움짤(GIF)을 만들 때</h2>
+
+<p>블로그를 하다 보면 앱 사용법이나 요리 과정처럼 <b>짧게 반복되는 장면</b>을 보여 주고 싶을 때가 있습니다.
+<a href="https://novalabs.co.kr/tools/video-to-gif" target="_blank" rel="noopener">동영상 GIF 변환</a>에서 3~5초 구간을 골라 GIF로 만들면 됩니다.</p>
+
+<p>GIF는 용량이 금방 커지니 이렇게 줄여 보세요.</p>
+
+<ul>
+
+  <li>구간을 짧게 (가장 효과가 큼)</li>
+
+  <li>가로 크기를 480px → 320px로 (용량이 절반 아래로)</li>
+
+  <li>초당 프레임(fps)을 낮게</li>
+
+</ul>
+
+<p>서비스마다 GIF 용량 제한이 있어서, 넘으면 움직이지 않는 첫 장면만 보이기도 합니다. 보통 10MB 아래로 만들면 안전합니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">꼭 지켜 주세요</h2>
+
+<p>다른 사람이 만든 사진·영상·음악은 사용 권한이 있을 때만 편집하고 올려 주세요. 특히 워터마크는 저작권자 표시라서, 권한 없이 지우고 쓰면 저작권 침해가 될 수 있습니다.
+사이트의 워터마크 지우기 도구도 <b>직접 찍은 사진의 날짜 도장이나 내 영상에 넣었던 로고</b>를 지우는 용도로 만들었습니다.</p>
+
+<div style="margin:40px 0 20px; padding:20px 24px; background:#f5f7fb; border:1px solid #d0d7e2; border-radius:10px; color:#1f2a44;">
+
+<p style="margin:0 0 10px; font-weight:bold; font-size:17px;">함께 보면 좋은 도구 <span style="font-weight:normal; font-size:14px; color:#5b6478;">(노바랩 공작소, 무료·설치 없음·파일 업로드 없음)</span></p>
+
+<ul style="margin:0; padding-left:20px;">
+
+  <li>PDF: <a href="https://novalabs.co.kr/tools/pdf-compress" target="_blank" rel="noopener" style="color:#1d4ed8;">용량 줄이기</a> · <a href="https://novalabs.co.kr/tools/pdf-merge" target="_blank" rel="noopener" style="color:#1d4ed8;">합치기</a> · <a href="https://novalabs.co.kr/tools/pdf-split" target="_blank" rel="noopener" style="color:#1d4ed8;">나누기</a> · <a href="https://novalabs.co.kr/tools/pdf-organize" target="_blank" rel="noopener" style="color:#1d4ed8;">페이지 정리</a></li>
+
+  <li>변환: <a href="https://novalabs.co.kr/tools/jpg-to-pdf" target="_blank" rel="noopener" style="color:#1d4ed8;">이미지 → PDF</a> · <a href="https://novalabs.co.kr/tools/pdf-to-jpg" target="_blank" rel="noopener" style="color:#1d4ed8;">PDF → 이미지</a></li>
+
+  <li>동영상: <a href="https://novalabs.co.kr/tools/video-trim" target="_blank" rel="noopener" style="color:#1d4ed8;">자르기</a> · <a href="https://novalabs.co.kr/tools/video-compress" target="_blank" rel="noopener" style="color:#1d4ed8;">용량 줄이기</a> · <a href="https://novalabs.co.kr/tools/video-to-gif" target="_blank" rel="noopener" style="color:#1d4ed8;">GIF 변환</a> · <a href="https://novalabs.co.kr/tools/video-to-mp3" target="_blank" rel="noopener" style="color:#1d4ed8;">MP3 추출</a></li>
+
+</ul>
+
+</div>
+
+<p style="font-size:14px; color:#6b7280;">※ 큰 동영상은 컴퓨터에서 처리하는 편이 빠르고 안정적입니다. 휴대폰에서는 처리 중에 화면이 꺼지거나 다른 앱으로 넘어가면 멈출 수 있어요.</p>
+
+</div>
