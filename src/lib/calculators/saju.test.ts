@@ -157,7 +157,8 @@ describe("합·충", () => {
     expect(rel).toContainEqual({ kind: "천간충", chars: "甲庚", places: ["연간", "일간"] });
     expect(rel).toContainEqual({ kind: "육합", chars: "子丑", places: ["연지", "월지"], element: "토" });
     expect(rel).toContainEqual({ kind: "지지충", chars: "子午", places: ["연지", "일지"] });
-    expect(rel).toHaveLength(4);
+    expect(rel).toContainEqual({ kind: "해", chars: "丑午", places: ["월지", "일지"] });
+    expect(rel).toHaveLength(5);
   });
   it("삼합·반합·방합", () => {
     expect(findRelations([slot("연", "甲申"), slot("월", "丙子"), slot("일", "戊辰")])).toContainEqual({ kind: "삼합", chars: "申子辰", places: ["연지", "월지", "일지"], element: "수" });
@@ -169,14 +170,43 @@ describe("합·충", () => {
   it("원국의 충과, 운이 끼어 있는 관계만 고르기", () => {
     // 2000-01-01 12시: 己卯 丙子 戊午 戊午 → 월지 子와 일지·시지 午가 충
     const natal = natalSlots(ok({}));
+    // 卯子午午: 子卯 형, 卯午 파 둘, 子午 충 둘, 午午 자형
     expect(findRelations(natal)).toEqual([
+      { kind: "형", chars: "卯子", places: ["연지", "월지"], name: "무례지형" },
+      { kind: "파", chars: "卯午", places: ["연지", "일지"] },
+      { kind: "파", chars: "卯午", places: ["연지", "시지"] },
       { kind: "지지충", chars: "子午", places: ["월지", "일지"] },
       { kind: "지지충", chars: "子午", places: ["월지", "시지"] },
+      { kind: "자형", chars: "午午", places: ["일지", "시지"] },
     ]);
     // 甲申 세운: 연간 己와 천간합, 월지 子(왕지)와 반합. 원국끼리의 충은 빠짐
     const withYear = findRelations([...natal, slot("세운", "甲申")], "세운");
     expect(withYear).toContainEqual({ kind: "천간합", chars: "己甲", places: ["연간", "세운 천간"], element: "토" });
     expect(withYear).toContainEqual({ kind: "반합", chars: "申子", places: ["월지", "세운 지지"], element: "수" });
     expect(withYear.some((r) => r.kind === "지지충")).toBe(false);
+  });
+});
+
+describe("형·파·해", () => {
+  const slot = (name: string, gz: string) => ({ name, stem: gz[0], branch: gz[1] });
+  const kinds = (gzs: string[]) => findRelations(gzs.map((g, i) => slot("연월일시"[i], g))).map((r) => `${r.chars}${r.kind}${r.name ?? ""}`);
+  it("삼형이 다 모이면 두 글자 형 대신 삼형 하나", () => {
+    const k = kinds(["甲寅", "乙巳", "庚申"]);
+    expect(k).toContain("寅巳申삼형무은지형");
+    expect(k.filter((x) => x.includes("형") && !x.includes("삼형"))).toEqual([]);
+    expect(k).toContain("寅申지지충");
+    expect(kinds(["丁丑", "戊戌", "己未"])).toContain("丑戌未삼형지세지형");
+  });
+  it("두 글자 형과 상형·자형", () => {
+    expect(kinds(["甲寅", "乙巳"])).toEqual(["寅巳형무은지형", "寅巳해"]);
+    expect(kinds(["甲子", "乙卯"])).toEqual(["子卯형무례지형"]);
+    expect(kinds(["甲辰", "丙辰"])).toEqual(["辰辰자형"]);
+    expect(kinds(["甲子", "丙子"])).toEqual([]);
+  });
+  it("파와 해", () => {
+    expect(kinds(["甲子", "乙酉"])).toEqual(["子酉파"]);
+    expect(kinds(["甲子", "乙未"])).toEqual(["子未해"]);
+    expect(kinds(["甲申", "乙亥"])).toEqual(["申亥해"]);
+    expect(kinds(["乙未", "甲戌"])).toEqual(["未戌형지세지형", "未戌파"]);
   });
 });

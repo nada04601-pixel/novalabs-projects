@@ -336,13 +336,14 @@ export const groupOf = (god: TenGod): TenGodGroup => TEN_GOD_GROUPS[TEN_GODS.fin
 export const formatUsedTime = (t: NonNullable<SajuResult["usedTime"]>) =>
   `${t.year}-${pad(t.month)}-${pad(t.day)} ${pad(t.hour)}:${pad(t.minute)}`;
 
-// ---- 합과 충 ----
-export type RelationKind = "천간합" | "천간충" | "육합" | "삼합" | "반합" | "방합" | "지지충";
+// ---- 합·충·형·파·해 ----
+export type RelationKind = "천간합" | "천간충" | "육합" | "삼합" | "반합" | "방합" | "지지충" | "삼형" | "형" | "자형" | "파" | "해";
 export type Relation = {
   kind: RelationKind;
   chars: string; // 관계를 이루는 글자들(예: 子午)
   places: string[]; // 자리 이름(예: 월지, 일지, 대운 지지)
   element?: Element; // 합으로 만들어지는 오행
+  name?: string; // 형의 이름(무은지형·지세지형·무례지형)
 };
 // 자리 하나. name은 "연"·"월"·"일"·"시" 또는 "대운"·"세운"
 export type Slot = { name: string; stem: string; branch: string };
@@ -352,6 +353,13 @@ const SIX_COMBINE_ELEMENT: Record<number, Element> = { 0: "토", 2: "목", 3: "�
 // 삼합: [생지, 왕지, 고지]와 만들어지는 오행. 왕지가 끼어 있어야 반합으로 봅니다.
 const THREE_COMBINE: [number[], Element][] = [[[8, 0, 4], "수"], [[11, 3, 7], "목"], [[2, 6, 10], "화"], [[5, 9, 1], "금"]];
 const DIRECTION_COMBINE: [number[], Element][] = [[[2, 3, 4], "목"], [[5, 6, 7], "화"], [[8, 9, 10], "금"], [[11, 0, 1], "수"]];
+
+// 형: 寅巳申(무은지형)·丑戌未(지세지형) 삼형과 그 두 글자, 子卯(무례지형). 寅申·丑未는 충으로 따로 잡히므로 형으로 다시 세지 않습니다.
+const THREE_PUNISH: [number[], string][] = [[[2, 5, 8], "무은지형"], [[1, 10, 7], "지세지형"]];
+const PAIR_PUNISH: [number, number, string][] = [[2, 5, "무은지형"], [5, 8, "무은지형"], [1, 10, "지세지형"], [10, 7, "지세지형"], [0, 3, "무례지형"]];
+const SELF_PUNISH = [4, 6, 9, 11]; // 辰 午 酉 亥
+const BREAK_PAIRS = [[0, 9], [1, 4], [2, 11], [3, 6], [5, 8], [7, 10]]; // 子酉 丑辰 寅亥 卯午 巳申 未戌
+const samePair = (a: number, b: number, [x, y]: number[]) => (a === x && b === y) || (a === y && b === x);
 
 const stemPlace = (n: string) => (n.length === 1 ? `${n}간` : `${n} 천간`);
 const branchPlace = (n: string) => (n.length === 1 ? `${n}지` : `${n} 지지`);
@@ -373,6 +381,11 @@ export function findRelations(slots: Slot[], must?: string): Relation[] {
       const bp = [branchPlace(a.name), branchPlace(b.name)];
       if ((ba + bb) % 12 === 1) out.push({ kind: "육합", chars: a.branch + b.branch, places: bp, element: SIX_COMBINE_ELEMENT[Math.min(ba, bb)] });
       if (Math.abs(ba - bb) === 6) out.push({ kind: "지지충", chars: a.branch + b.branch, places: bp });
+      const punish = PAIR_PUNISH.find(([x, y]) => samePair(ba, bb, [x, y]));
+      if (punish) out.push({ kind: "형", chars: a.branch + b.branch, places: bp, name: punish[2] });
+      if (ba === bb && SELF_PUNISH.includes(ba)) out.push({ kind: "자형", chars: a.branch + b.branch, places: bp });
+      if (BREAK_PAIRS.some((pair) => samePair(ba, bb, pair))) out.push({ kind: "파", chars: a.branch + b.branch, places: bp });
+      if (ba !== bb && (ba + bb) % 12 === 7) out.push({ kind: "해", chars: a.branch + b.branch, places: bp });
     }
   }
   const groups = (list: [number[], Element][], full: RelationKind, half?: RelationKind) => {
@@ -387,6 +400,14 @@ export function findRelations(slots: Slot[], must?: string): Relation[] {
   };
   groups(THREE_COMBINE, "삼합", "반합");
   groups(DIRECTION_COMBINE, "방합");
+  // 삼형이 다 모이면 그 안의 두 글자 형은 삼형 하나로 묶습니다.
+  for (const [members, name] of THREE_PUNISH) {
+    const inGroup = slots.filter((s) => members.includes(BRANCHES.indexOf(s.branch)));
+    if (members.every((m) => inGroup.some((s) => BRANCHES.indexOf(s.branch) === m))) {
+      for (let k = out.length - 1; k >= 0; k--) if (out[k].kind === "형" && out[k].name === name) out.splice(k, 1);
+      out.push({ kind: "삼형", chars: members.map((m) => BRANCHES[m]).join(""), places: inGroup.map((s) => branchPlace(s.name)), name });
+    }
+  }
   if (!must) return out;
   const mp = [stemPlace(must), branchPlace(must)];
   return out.filter((r) => r.places.some((p) => mp.includes(p)));

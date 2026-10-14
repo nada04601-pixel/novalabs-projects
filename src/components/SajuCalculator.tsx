@@ -231,15 +231,15 @@ function Reading({ r }: { r: SajuResult }) {
       </section>
 
       <section className="saju-card">
-        <h4>합과 충</h4>
+        <h4>합·충·형·파·해</h4>
         {natalRel.length ? (
           <Relations list={natalRel} />
         ) : (
-          <p>팔자 안에 서로 묶이거나(합) 부딪히는(충) 글자가 없습니다. 크게 흔들림이 없는 비교적 안정된 구성입니다.</p>
+          <p>팔자 안에 서로 묶이거나(합) 부딪히는(충·형·파·해) 글자가 없습니다. 크게 흔들림이 없는 비교적 안정된 구성입니다.</p>
         )}
       </section>
 
-      <p className="saju-muted">풀이는 일간·오행·십신과 합·충의 일반적인 의미를 풀어 쓴 것으로, 형·파·해와 신살은 반영하지 않았습니다. 재미와 참고용으로 봐 주세요.</p>
+      <p className="saju-muted">풀이는 일간·오행·십신과 합·충·형·파·해의 일반적인 의미를 풀어 쓴 것으로, 신살은 반영하지 않았습니다. 재미와 참고용으로 봐 주세요.</p>
     </div>
   );
 }
@@ -317,10 +317,10 @@ function Relations({ list }: { list: Relation[] }) {
     <ul className="saju-rel">
       {list.map((x) => (
         <li key={x.kind + x.places.join()}>
-          <b>{x.chars} {x.kind}{x.element ? `(${x.element})` : ""}</b>
+          <b>{x.chars} {x.kind}{x.element ? `(${x.element})` : ""}{x.name ? ` · ${x.name}` : ""}</b>
           <span className="saju-muted"> · {x.places.map((p) => (PLACE_MEANING[p] ? `${p}(${PLACE_MEANING[p]})` : p)).join(" – ")}</span>
           <br />
-          {RELATION_TEXT[x.kind](x.element)}
+          {RELATION_TEXT[x.kind](x.element, x.name)}
           {x.kind === "지지충" && x.places.includes("일지") && ` ${SPOUSE_CLASH}`}
         </li>
       ))}
