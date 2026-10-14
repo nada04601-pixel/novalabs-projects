@@ -36,6 +36,12 @@
 `.md`를 고쳤다면 `node blog/tistory/md-to-html.mjs blog/tistory/02-resignation-money.md`처럼 실행해 `.html`을 다시 만드세요.
 (01번 `.html`은 손으로 만든 것이라 주의 상자가 하나 더 있습니다. 01번을 다시 생성하면 그 상자는 빠집니다.)
 
+**대표 이미지(썸네일)**
+`thumbnails/` 폴더에 원고 번호와 같은 이름의 PNG(1080×1080)가 있습니다. 글쓰기 화면에서 이미지를 본문에 넣고 '대표 이미지'로 지정하세요.
+핵심 내용은 가운데에 모아 두어서, 스킨이 4:3 등으로 잘라도 제목은 보입니다(16:9로 자르는 스킨은 아래 항목이 잘릴 수 있음).
+문구를 고치려면 `thumbnails/make-thumbnails.mjs`의 `POSTS`를 고친 뒤 `node blog/tistory/thumbnails/make-thumbnails.mjs`를 실행하세요
+(번호를 붙이면 그 글만: `... make-thumbnails.mjs 05`).
+
 **마크다운 모드로 올릴 때**
 
 1. 글쓰기 → 오른쪽 위 `기본모드` 를 **`마크다운`** 으로 바꿉니다.
