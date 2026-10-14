@@ -19,6 +19,12 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - `src/app/tools/[slug]/page.tsx` 도구 페이지 (슬러그와 컴포넌트 연결)
 - `src/data/nav.ts` 메뉴·검색·사이드바가 함께 쓰는 도구 목록 (계산기 + 모임 정산). 헤더의 도구함 메뉴, 홈 검색(`ToolBrowser`), 계산기 페이지 왼쪽 메뉴(`ToolSidebar`)가 여기서 자동으로 만들어짐
 - `src/app/moim/` 모임 정산 계산기. 입력 상태를 공유 링크(`#d=…`)에 담아 서버 없이 동작 (`src/lib/moimState.ts`, `src/lib/calculators/settlement.ts`)
+- 로또: `/tools/lotto`(번호 생성·최신 회차·통계·맞춰보기), `/lotto`(전체 당첨번호), `/lotto/[회차]`(회차별 상세). 당첨 결과는 `src/data/lotto/draws.json`에 저장하고 빌드 때 정적 HTML로 들어감
+
+## 로또 당첨 결과 갱신
+- 자료: 동행복권 추첨 결과를 회차별 JSON으로 공개하는 [smok95/lotto](https://github.com/smok95/lotto) 저장소
+- 자동: `.github/workflows/update-lotto.yml`이 매주 일요일 07:00·12:00, 월요일 09:00(한국 시간)에 새 회차를 받아 `main`에 커밋 → Workers Builds가 다시 배포. `main`에 브랜치 보호가 있으면 Actions 봇의 푸시를 허용해야 합니다.
+- 수동: `node scripts/update-lotto.mjs` (빠진 회차만 추가), `--all`은 전체를 다시 받음. Actions 탭에서 "Update lotto results"를 직접 실행해도 됩니다.
 
 ## 새 계산기 추가 (3단계)
 1. `src/lib/calculators/`에 계산 함수 작성
