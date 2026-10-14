@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, calcSaju, formatUsedTime, type Element } from "@/lib/calculators/saju";
+import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcSaju, formatUsedTime, groupOf, type Element, type SajuResult, type TenGod } from "@/lib/calculators/saju";
+import { DAY_MASTER, ELEMENT_TEXT, MANY, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -88,9 +89,11 @@ export default function SajuCalculator() {
                   <span className="saju-label">{p.label}</span>
                   <span className={`saju-char ${EL_CLASS[p.stemElement]}`}>
                     <b>{p.stem}</b><small>{p.stemKo} · {p.stemElement}</small>
+                    <em className="saju-god">{p.stemTenGod ?? "일간(나)"}</em>
                   </span>
                   <span className={`saju-char ${EL_CLASS[p.branchElement]}`}>
                     <b>{p.branch}</b><small>{p.branchKo} · {p.branchElement}</small>
+                    <em className="saju-god">{p.branchTenGod}</em>
                   </span>
                 </div>
               ))}
@@ -132,6 +135,8 @@ export default function SajuCalculator() {
             <p className="saju-summary">
               {summary(r.elementCount)}
             </p>
+
+            <Reading r={r} />
           </>
         )}
       </div>
@@ -146,4 +151,69 @@ function summary(count: Record<Element, number>) {
   const parts = [`가장 많은 기운은 ${most.join("·")}(${max}개)입니다.`];
   parts.push(missing.length ? `${missing.join("·")} 기운은 팔자에 없습니다.` : "다섯 기운이 모두 있습니다.");
   return parts.join(" ");
+}
+
+function Reading({ r }: { r: SajuResult }) {
+  const dm = DAY_MASTER[r.dayMaster.stem];
+  const manyEl = ELEMENTS.filter((e) => r.elementCount[e] >= MANY);
+  const noneEl = ELEMENTS.filter((e) => r.elementCount[e] === 0);
+  const total = Object.values(r.tenGodCount).reduce((a, b) => a + b, 0);
+  const gods = [...new Set(r.pillars.flatMap((p) => [p.stemTenGod, p.branchTenGod]).filter((g): g is TenGod => !!g))];
+
+  return (
+    <div className="saju-reading">
+      <h3>사주 풀이</h3>
+
+      <section className="saju-card">
+        <h4>{r.dayMaster.stemKo}{r.dayMaster.element}({r.dayMaster.stem}{ELEMENT_HANJA[r.dayMaster.element]}) 일간 · {dm.symbol}</h4>
+        <p>{dm.summary}</p>
+        <p className="saju-tags">{dm.strengths.map((s) => <span key={s}>{s}</span>)}</p>
+        <p><b>이런 점은 조심하세요.</b> {dm.caution}</p>
+      </section>
+
+      <section className="saju-card">
+        <h4>오행의 균형</h4>
+        {manyEl.length === 0 && noneEl.length === 0 && (
+          <p>다섯 기운이 고르게 섞여 있어 어느 한쪽으로 크게 치우치지 않습니다. 상황에 맞춰 여러 모습을 꺼내 쓸 수 있는 균형 잡힌 구성입니다.</p>
+        )}
+        {manyEl.map((e) => (
+          <p key={e}><b>{e}({ELEMENT_TEXT[e].trait}) 기운이 많음 · {r.elementCount[e]}개</b><br />{ELEMENT_TEXT[e].many}</p>
+        ))}
+        {noneEl.map((e) => (
+          <p key={e}><b>{e}({ELEMENT_TEXT[e].trait}) 기운이 없음</b><br />{ELEMENT_TEXT[e].none}</p>
+        ))}
+      </section>
+
+      <section className="saju-card">
+        <h4>십신으로 본 성향</h4>
+        <p className="saju-muted">일간을 기준으로 나머지 {total}글자가 나와 어떤 관계인지 나눈 것입니다.</p>
+        <div className="saju-elements">
+          {TEN_GOD_GROUPS.map((g) => (
+            <div key={g} className="saju-el-row wide">
+              <span>{g}</span>
+              <span className="saju-bar"><i style={{ width: `${(r.tenGodCount[g] / total) * 100}%` }} /></span>
+              <strong>{r.tenGodCount[g]}</strong>
+            </div>
+          ))}
+        </div>
+        {TEN_GOD_GROUPS.filter((g) => r.tenGodCount[g] >= MANY || r.tenGodCount[g] === 0).map((g) => {
+          const t = TEN_GOD_GROUP_TEXT[g];
+          const many = r.tenGodCount[g] >= MANY;
+          return (
+            <p key={g}><b>{t.label} {many ? `많음 · ${r.tenGodCount[g]}개` : "없음"}</b> <span className="saju-muted">({t.meaning})</span><br />{many ? t.many : t.none}</p>
+          );
+        })}
+        <details>
+          <summary>내 사주에 있는 십신 뜻</summary>
+          <ul className="saju-notes">
+            {gods.sort((a, b) => TEN_GOD_GROUPS.indexOf(groupOf(a)) - TEN_GOD_GROUPS.indexOf(groupOf(b))).map((g) => (
+              <li key={g}><b>{g}</b>: {TEN_GOD_MEANING[g]}</li>
+            ))}
+          </ul>
+        </details>
+      </section>
+
+      <p className="saju-muted">풀이는 일간·오행·십신의 일반적인 의미를 풀어 쓴 것으로, 대운·세운과 글자 사이의 합·충은 반영하지 않았습니다. 재미와 참고용으로 봐 주세요.</p>
+    </div>
+  );
 }

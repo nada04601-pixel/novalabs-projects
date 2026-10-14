@@ -19,7 +19,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - `src/app/tools/[slug]/page.tsx` 도구 페이지 (슬러그와 컴포넌트 연결)
 - `src/data/nav.ts` 메뉴·검색·사이드바가 함께 쓰는 도구 목록 (계산기 + 모임 정산). 헤더의 도구함 메뉴, 홈 검색(`ToolBrowser`), 계산기 페이지 왼쪽 메뉴(`ToolSidebar`)가 여기서 자동으로 만들어짐
 - `src/app/moim/` 모임 정산 계산기. 입력 상태를 공유 링크(`#d=…`)에 담아 서버 없이 동작 (`src/lib/moimState.ts`, `src/lib/calculators/settlement.ts`)
-- 사주: `/tools/saju`. 절기·음력은 `lunar-javascript`(MIT, 중국 표준시 기준)로 계산하므로 연주·월주는 태어난 순간을 UTC+8로, 일주·시주는 경도 보정한 현지 시각으로 넘깁니다. 서머타임·UTC+8:30 시절은 브라우저의 `Asia/Seoul` 시간대 자료로 반영 (`src/lib/calculators/saju.ts`)
+- 사주: `/tools/saju`. 절기·음력은 `lunar-javascript`(MIT, 중국 표준시 기준)로 계산하므로 연주·월주는 태어난 순간을 UTC+8로, 일주·시주는 경도 보정한 현지 시각으로 넘깁니다. 서머타임·UTC+8:30 시절은 브라우저의 `Asia/Seoul` 시간대 자료로 반영 (`src/lib/calculators/saju.ts`). 풀이 문구(일간 10종, 오행·십신 그룹이 많을 때/없을 때)는 `src/data/sajuReading.ts`
 - 로또: `/tools/lotto-simulator`(번호 생성 + 매주 샀다면? 시뮬레이션), `/lotto`(당첨번호 조회: 최신 회차·1등 배출점·전체 회차 검색·출현 통계), `/lotto/[회차]`(회차별 상세). 예전 `/tools/lotto`는 `public/_redirects`로 시뮬레이터로 옮김. 당첨 결과는 `src/data/lotto/draws.json`에 저장하고 빌드 때 정적 HTML로 들어감
 
 ## 영어 페이지 (/en)

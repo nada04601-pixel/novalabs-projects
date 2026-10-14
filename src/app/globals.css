@@ -337,3 +337,15 @@ table.stores tbody th a:hover{text-decoration:underline}
 .saju-bar{height:10px;background:var(--bg);border-radius:6px;overflow:hidden}
 .saju-bar i{display:block;height:100%;background:var(--el);border-radius:6px}
 .saju-summary{font-size:14px;margin:12px 0 0}
+.saju-god{font-style:normal;font-size:12px;color:var(--fg);margin-top:4px;padding:1px 8px;border-radius:999px;background:var(--soft)}
+.saju-reading{margin-top:28px}
+.saju-card{background:var(--bg);border-radius:12px;padding:16px;margin:0 0 12px}
+.saju-card h4{margin:0 0 8px;font-size:16px}
+.saju-card p{margin:0 0 10px;font-size:15px;line-height:1.65}
+.saju-card p:last-child{margin-bottom:0}
+.saju-card details{margin-top:10px}
+.saju-tags{display:flex;flex-wrap:wrap;gap:6px}
+.saju-tags span{font-size:13px;padding:2px 10px;border-radius:999px;background:var(--soft);color:var(--acc)}
+.saju-muted{color:var(--mut);font-size:13px}
+.saju-el-row.wide i{background:var(--acc)}
+.saju-card .saju-elements{margin:0 0 12px}

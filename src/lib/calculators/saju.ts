@@ -15,6 +15,20 @@ const BRANCHES_KO = "자축인묘진사오미신유술해";
 const ANIMALS = ["쥐", "소", "호랑이", "토끼", "용", "뱀", "말", "양", "원숭이", "닭", "개", "돼지"];
 const STEM_ELEMENT: Element[] = ["목", "목", "화", "화", "토", "토", "금", "금", "수", "수"];
 const BRANCH_ELEMENT: Element[] = ["수", "토", "목", "목", "토", "화", "화", "토", "금", "금", "토", "수"];
+// 지지의 본기(가장 큰 지장간). 지지의 십신은 이 천간으로 정합니다. 子癸 丑己 寅甲 卯乙 辰戊 巳丙 午丁 未己 申庚 酉辛 戌戊 亥壬
+const BRANCH_MAIN_STEM = [9, 5, 0, 1, 4, 2, 3, 5, 6, 7, 4, 8];
+
+export type TenGod = "비견" | "겁재" | "식신" | "상관" | "편재" | "정재" | "편관" | "정관" | "편인" | "정인";
+export type TenGodGroup = "비겁" | "식상" | "재성" | "관성" | "인성";
+export const TEN_GOD_GROUPS: TenGodGroup[] = ["비겁", "식상", "재성", "관성", "인성"];
+const TEN_GODS: [TenGod, TenGod][] = [["비견", "겁재"], ["식신", "상관"], ["편재", "정재"], ["편관", "정관"], ["편인", "정인"]];
+
+// 일간(천간 번호)과 다른 천간의 관계. 오행 순서 목→화→토→금→수에서 몇 칸 떨어졌는지로
+// 같음(비겁)·내가 낳음(식상)·내가 이김(재성)·나를 이김(관성)·나를 낳음(인성)을 가리고, 음양이 같으면 앞쪽(편), 다르면 뒤쪽(정)입니다.
+export function tenGod(dayStem: number, other: number): { god: TenGod; group: TenGodGroup } {
+  const rel = (Math.floor(other / 2) - Math.floor(dayStem / 2) + 5) % 5;
+  return { god: TEN_GODS[rel][dayStem % 2 === other % 2 ? 0 : 1], group: TEN_GOD_GROUPS[rel] };
+}
 
 // 경도 보정에 쓰는 도시(동경, 도). 한국 표준시는 동경 135도 기준이라 서울은 약 32분 늦습니다.
 export const CITIES = [
@@ -58,12 +72,16 @@ export type Pillar = {
   branchKo: string;
   stemElement: Element;
   branchElement: Element;
+  stemTenGod: TenGod | null; // 일간 자리는 null
+  branchTenGod: TenGod;
 };
 
 export type SajuResult = {
   solar: { year: number; month: number; day: number };
   pillars: Pillar[]; // 시주는 시간을 모르면 빠집니다
   elementCount: Record<Element, number>;
+  // 일간을 뺀 나머지 글자(시간을 알면 7개, 모르면 5개)의 십신 그룹별 개수
+  tenGodCount: Record<TenGodGroup, number>;
   dayMaster: { stem: string; stemKo: string; element: Element; yang: boolean };
   animal: string;
   // 계산에 실제로 쓴 시각(보정 후)과 보정 내역
@@ -110,10 +128,12 @@ const eightChar = (c: ReturnType<typeof clockFields>, dayChange: SajuInput["dayC
   return ec;
 };
 
-const toPillar = (label: Pillar["label"], gz: string): Pillar => {
+const toPillar = (label: Pillar["label"], gz: string, dayStem: number): Pillar => {
   const s = STEMS.indexOf(gz[0]);
   const b = BRANCHES.indexOf(gz[1]);
   return {
+    stemTenGod: label === "일주" ? null : tenGod(dayStem, s).god,
+    branchTenGod: tenGod(dayStem, BRANCH_MAIN_STEM[b]).god,
     label,
     stem: gz[0],
     branch: gz[1],
@@ -193,11 +213,12 @@ export function calcSaju(input: SajuInput): SajuResult | SajuError {
     }
   }
 
+  const dmIndex = STEMS.indexOf(dayChar.getDay()[0]);
   const pillars = [
-    toPillar("연주", ymChar.getYear()),
-    toPillar("월주", ymChar.getMonth()),
-    toPillar("일주", dayChar.getDay()),
-    ...(time ? [toPillar("시주", dayChar.getTime())] : []),
+    toPillar("연주", ymChar.getYear(), dmIndex),
+    toPillar("월주", ymChar.getMonth(), dmIndex),
+    toPillar("일주", dayChar.getDay(), dmIndex),
+    ...(time ? [toPillar("시주", dayChar.getTime(), dmIndex)] : []),
   ];
 
   const elementCount = Object.fromEntries(ELEMENTS.map((e) => [e, 0])) as Record<Element, number>;
@@ -206,12 +227,18 @@ export function calcSaju(input: SajuInput): SajuResult | SajuError {
     elementCount[p.branchElement]++;
   }
 
+  const tenGodCount = Object.fromEntries(TEN_GOD_GROUPS.map((g) => [g, 0])) as Record<TenGodGroup, number>;
+  for (const p of pillars) {
+    if (p.stemTenGod) tenGodCount[groupOf(p.stemTenGod)]++;
+    tenGodCount[groupOf(p.branchTenGod)]++;
+  }
+
   const dm = pillars[2];
-  const dmIndex = STEMS.indexOf(dm.stem);
   return {
     solar,
     pillars,
     elementCount,
+    tenGodCount,
     dayMaster: { stem: dm.stem, stemKo: dm.stemKo, element: dm.stemElement, yang: dmIndex % 2 === 0 },
     animal: ANIMALS[BRANCHES.indexOf(pillars[0].branch)],
     usedTime,
@@ -219,6 +246,8 @@ export function calcSaju(input: SajuInput): SajuResult | SajuError {
     warnings,
   };
 }
+
+export const groupOf = (god: TenGod): TenGodGroup => TEN_GOD_GROUPS[TEN_GODS.findIndex((pair) => pair.includes(god))];
 
 export const formatUsedTime = (t: NonNullable<SajuResult["usedTime"]>) =>
   `${t.year}-${pad(t.month)}-${pad(t.day)} ${pad(t.hour)}:${pad(t.minute)}`;

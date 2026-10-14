@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { calcSaju, lunarToSolar, seoulClockToUtc, seoulOffsetMinutes, type SajuInput, type SajuResult } from "./saju";
+import { DAY_MASTER } from "../../data/sajuReading";
+import { calcSaju, lunarToSolar, seoulClockToUtc, seoulOffsetMinutes, tenGod, type SajuInput, type SajuResult } from "./saju";
 
 const base: SajuInput = { calendar: "solar", year: 2000, month: 1, day: 1, time: { hour: 12, minute: 0 }, longitude: null, dayChange: "23" };
 const ok = (input: Partial<SajuInput>) => {
@@ -77,5 +78,42 @@ describe("음력", () => {
     expect(calcSaju({ ...base, calendar: "lunar", year: 2024, month: 1, day: 30 })).toHaveProperty("error");
     expect(calcSaju({ ...base, month: 2, day: 30 })).toHaveProperty("error");
     expect(calcSaju({ ...base, year: 1899 })).toHaveProperty("error");
+  });
+});
+
+describe("십신", () => {
+  it("일간과의 오행·음양 관계로 정한다", () => {
+    // 일간 甲(0) 기준
+    expect(tenGod(0, 0).god).toBe("비견");
+    expect(tenGod(0, 1).god).toBe("겁재");
+    expect(tenGod(0, 2).god).toBe("식신");
+    expect(tenGod(0, 3).god).toBe("상관");
+    expect(tenGod(0, 4).god).toBe("편재");
+    expect(tenGod(0, 5).god).toBe("정재");
+    expect(tenGod(0, 6).god).toBe("편관");
+    expect(tenGod(0, 7).god).toBe("정관");
+    expect(tenGod(0, 8).god).toBe("편인");
+    expect(tenGod(0, 9).god).toBe("정인");
+    // 일간 癸(9) 기준: 戊는 정관, 甲은 상관
+    expect(tenGod(9, 4).god).toBe("정관");
+    expect(tenGod(9, 0).god).toBe("상관");
+  });
+  it("지지는 본기로 십신을 정하고 그룹별로 센다", () => {
+    // 2000-01-01 12시: 己卯 丙子 戊午 戊午, 일간 戊
+    const r = ok({});
+    expect(r.pillars.map((p) => [p.stemTenGod, p.branchTenGod])).toEqual([
+      ["겁재", "정관"],
+      ["편인", "정재"],
+      [null, "정인"],
+      ["비견", "정인"],
+    ]);
+    expect(r.tenGodCount).toEqual({ 비겁: 2, 식상: 0, 재성: 1, 관성: 1, 인성: 3 });
+    expect(Object.values(ok({ time: null }).tenGodCount).reduce((a, b) => a + b)).toBe(5);
+  });
+});
+
+describe("풀이 문구", () => {
+  it("일간 10가지 문구가 모두 있다", () => {
+    expect(Object.keys(DAY_MASTER).join("")).toBe("甲乙丙丁戊己庚辛壬癸");
   });
 });
