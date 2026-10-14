@@ -304,3 +304,7 @@ table.stores tbody th:nth-child(2){white-space:nowrap}
 table.stores small{display:block;color:var(--mut);font-size:12px;margin-top:2px;overflow-wrap:anywhere}
 table.stores tbody th:last-child{overflow-wrap:anywhere}
 .tag{display:inline-block;margin-left:6px;font-size:11px;font-weight:600;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:0 6px;vertical-align:1px}
+table.stores tbody th a{font-weight:600;text-decoration:none}
+table.stores tbody th a:hover{text-decoration:underline}
+.maplinks{display:flex;gap:10px;margin-top:4px;font-size:12px}
+.maplinks a{font-weight:600!important}

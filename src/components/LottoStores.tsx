@@ -1,4 +1,4 @@
-import { storeRegions, STORES_FROM, type Draw, type Store } from "@/lib/lotto";
+import { storeMapLinks, storeRegions, STORES_FROM, type Draw, type Store } from "@/lib/lotto";
 
 // 회차별 1등 배출점 목록과 지역별 개수
 export default function LottoStores({ draw, stores }: { draw: Draw; stores: Store[] | undefined }) {
@@ -20,20 +20,38 @@ export default function LottoStores({ draw, stores }: { draw: Draw; stores: Stor
             1등 {winners.toLocaleString("ko-KR")}게임 · 배출점 {stores.length}곳 ·{" "}
             {storeRegions(stores).map(([r, n]) => `${r} ${n}`).join(", ")}
           </p>
+          <p className="note-sm">상호를 누르면 카카오맵에서 위치가, 길찾기를 누르면 길 안내가 새 창으로 열립니다.</p>
           <div className="scroll">
             <table className="stores">
               <thead><tr><th>상호</th><th>구분</th><th>소재지</th></tr></thead>
               <tbody>
-                {stores.map(([name, kind, addr, old, closed], i) => (
-                  <tr key={i}>
-                    <th>{name}{closed ? <span className="tag">폐점</span> : null}</th>
-                    <th>{kind}</th>
-                    <th>
-                      {addr}
-                      {old && <small>당첨 당시: {old}</small>}
-                    </th>
-                  </tr>
-                ))}
+                {stores.map((store, i) => {
+                  const [name, kind, addr, old, closed] = store;
+                  const links = storeMapLinks(store);
+                  return (
+                    <tr key={i}>
+                      <th>
+                        {links ? (
+                          <a href={links.map} target="_blank" rel="noopener noreferrer" title={`${name} 위치를 카카오맵에서 보기`}>{name}</a>
+                        ) : (
+                          name
+                        )}
+                        {closed ? <span className="tag">폐점</span> : null}
+                      </th>
+                      <th>{kind}</th>
+                      <th>
+                        {addr}
+                        {old && <small>당첨 당시: {old}</small>}
+                        {links && (
+                          <span className="maplinks">
+                            <a href={links.route} target="_blank" rel="noopener noreferrer">길찾기</a>
+                            <a href={links.naver} target="_blank" rel="noopener noreferrer">네이버지도</a>
+                          </span>
+                        )}
+                      </th>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

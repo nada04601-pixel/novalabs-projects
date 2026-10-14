@@ -48,14 +48,15 @@ async function request(path, params) {
   }
 }
 
-// 동행복권 응답의 한 줄을 [상호, 구분, 주소, 당첨 당시 주소, 폐점 여부]로 줄입니다.
+// 동행복권 응답의 한 줄을 [상호, 구분, 주소, 당첨 당시 주소, 폐점 여부, 위도, 경도]로 줄입니다. 좌표가 없으면 0
 function convert(item) {
   const clean = (s) => (s ?? "").replace(/^\(당첨 당시 주소\)\s*/, "").replace(/\s+/g, " ").trim();
   const name = clean(item.shpNm);
   if (!name) throw new Error(`상호가 없는 판매점: ${JSON.stringify(item)}`);
   const addr = clean(item.shpAddr);
   const old = clean(item.befAddr);
-  return [name, clean(item.atmtPsvYnTxt), addr || old, old && old !== addr ? old : "", item.status === "폐점" ? 1 : 0];
+  const coord = (v) => (Number.isFinite(v) ? Math.round(v * 1e6) / 1e6 : 0);
+  return [name, clean(item.atmtPsvYnTxt), addr || old, old && old !== addr ? old : "", item.status === "폐점" ? 1 : 0, coord(item.shpLat), coord(item.shpLot)];
 }
 
 async function fetchDraw(no) {
@@ -64,6 +65,9 @@ async function fetchDraw(no) {
   if (!Array.isArray(list)) throw new Error(`${no}회: 예상과 다른 응답 ${JSON.stringify(json).slice(0, 200)}`);
   return list.filter((x) => x.wnShpRnk === 1 && x.draw === no).map(convert);
 }
+
+// 좌표까지 들어 있으면 다 받은 회차로 봅니다(예전 형식은 좌표가 없어 다시 받습니다).
+const complete = (list) => Array.isArray(list) && list.every((s) => s.length === 7);
 
 function serialize(stores) {
   const keys = Object.keys(stores).map(Number).sort((a, b) => a - b);
@@ -75,7 +79,7 @@ async function main() {
   const latest = draws.at(-1).no;
   const stores = JSON.parse(await readFile(FILE, "utf8").catch(() => "{}"));
   // 1등이 나온 회차 가운데 아직 받지 못한 회차를 최신부터 받습니다(최신 회차가 가장 먼저 필요하므로).
-  const todo = draws.filter((d) => d.no >= FIRST && d.prizes[0][1] > 0 && !stores[d.no]).map((d) => d.no).reverse();
+  const todo = draws.filter((d) => d.no >= FIRST && d.prizes[0][1] > 0 && !complete(stores[d.no])).map((d) => d.no).reverse();
   console.log(`받을 회차 ${todo.length}개`);
   if (todo.length === 0) return;
 
@@ -104,7 +108,7 @@ async function main() {
     await sleep(300);
   }
   await save();
-  const left = draws.filter((d) => d.no >= FIRST && d.prizes[0][1] > 0 && !stores[d.no]).length;
+  const left = draws.filter((d) => d.no >= FIRST && d.prizes[0][1] > 0 && !complete(stores[d.no])).length;
   console.log(`저장 ${done}개 · 실패 ${failed}개 · 남은 회차 ${left}개`);
 }
 

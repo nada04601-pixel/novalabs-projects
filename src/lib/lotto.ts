@@ -19,14 +19,34 @@ export type Draw = {
 // 동행복권이 1등 배출점을 공개하는 첫 회차
 export const STORES_FROM = 262;
 
-// 1등 배출점: [상호, 구분(자동·수동·반자동), 주소, 당첨 당시 주소(바뀐 경우만), 폐점이면 1]
-export type Store = [string, string, string, string, number];
+// 1등 배출점: [상호, 구분(자동·수동·반자동), 주소, 당첨 당시 주소(바뀐 경우만), 폐점이면 1, 위도, 경도]
+// 좌표는 나중에 추가한 값이라 예전 자료에는 없을 수 있고, 동행복권에 좌표가 없으면 0입니다.
+export type Store = [string, string, string, string, number, number?, number?];
+
+export const isOnlineStore = ([name, , addr]: Store) => /인터넷|dhlottery/.test(name + addr);
+
+// 판매점 지도·길찾기 링크. 좌표가 있으면 그 위치로, 없으면 주소 검색으로 엽니다.
+// 인터넷 판매와 폐점한 곳은 찾아갈 곳이 없어 null입니다.
+export function storeMapLinks(store: Store): { map: string; route: string; naver: string } | null {
+  const [name, , addr, , closed, lat, lng] = store;
+  if (closed || isOnlineStore(store) || !addr) return null;
+  const label = name.replace(/,/g, " ");
+  const q = encodeURIComponent(addr);
+  const naver = `https://map.naver.com/p/search/${q}`;
+  if (lat && lng) {
+    const at = `${encodeURIComponent(label)},${lat},${lng}`;
+    return { map: `https://map.kakao.com/link/map/${at}`, route: `https://map.kakao.com/link/to/${at}`, naver };
+  }
+  const search = `https://map.kakao.com/link/search/${q}`;
+  return { map: search, route: search, naver };
+}
 
 // 주소 앞부분(시·도)으로 지역별 배출점 수를 셉니다. 인터넷 판매는 따로 묶습니다.
 export function storeRegions(stores: Store[]): [string, number][] {
   const m = new Map<string, number>();
-  for (const [name, , addr, old] of stores) {
-    const region = /인터넷|dhlottery/.test(name + addr) ? "인터넷" : ((old || addr).split(" ")[0] || "기타");
+  for (const s of stores) {
+    const [, , addr, old] = s;
+    const region = isOnlineStore(s) ? "인터넷" : ((old || addr).split(" ")[0] || "기타");
     m.set(region, (m.get(region) ?? 0) + 1);
   }
   return [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ko"));

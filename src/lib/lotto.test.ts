@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { draws, getStores } from "../data/lotto";
 import stores from "../data/lotto/stores.json";
 import {
-  ballTone, checkHistory, storeRegions, STORES_FROM, frequency, generateGame, generateGames, lite, nextDrawDate, oddEven, parseNumbers, rankOf, sum, validateOptions,
+  ballTone, checkHistory, storeMapLinks, storeRegions, STORES_FROM, frequency, generateGame, generateGames, lite, nextDrawDate, oddEven, parseNumbers, rankOf, sum, validateOptions,
 } from "./lotto";
 
 const seeded = (seed = 1) => () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0);
@@ -103,6 +103,16 @@ describe("1등 배출점", () => {
       ]),
     ).toEqual([["서울", 2], ["강원", 1], ["인터넷", 1]]);
   });
+  it("판매점 지도 링크: 좌표가 있으면 위치로, 없으면 주소 검색으로", () => {
+    const withCoord = storeMapLinks(["복권, 명당", "자동", "서울 성북구 보국문로11길 30", "", 0, 37.608759, 127.00834]);
+    expect(withCoord?.map).toBe("https://map.kakao.com/link/map/%EB%B3%B5%EA%B6%8C%20%20%EB%AA%85%EB%8B%B9,37.608759,127.00834");
+    expect(withCoord?.route).toContain("https://map.kakao.com/link/to/");
+    expect(withCoord?.naver).toBe(`https://map.naver.com/p/search/${encodeURIComponent("서울 성북구 보국문로11길 30")}`);
+    const noCoord = storeMapLinks(["가", "자동", "대구 북구 동변로 82-1 1층", "", 0]);
+    expect(noCoord?.map).toBe(`https://map.kakao.com/link/search/${encodeURIComponent("대구 북구 동변로 82-1 1층")}`);
+    expect(storeMapLinks(["가", "자동", "서울 강북구 도봉로 345", "", 1, 37.6, 127.0])).toBeNull();
+    expect(storeMapLinks(["인터넷 복권판매사이트", "자동", "동행복권(dhlottery.co.kr)", "", 0, 37.4, 127.0])).toBeNull();
+  });
   it("저장된 배출점 자료는 형식이 맞고, 1등이 있던 회차에만 있다", () => {
     for (const [no, list] of Object.entries(stores as Record<string, unknown[]>)) {
       const d = draws[Number(no) - 1];
@@ -110,7 +120,7 @@ describe("1등 배출점", () => {
       expect(d.prizes[0][1]).toBeGreaterThan(0);
       expect(list.length).toBeLessThanOrEqual(d.prizes[0][1]);
       for (const s of list as unknown[][]) {
-        expect(s).toHaveLength(5);
+        expect([5, 7]).toContain(s.length);
         expect(typeof s[0]).toBe("string");
         expect((s[0] as string).length).toBeGreaterThan(0);
         expect(["자동", "수동", "반자동", ""]).toContain(s[1]);
