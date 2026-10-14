@@ -13,16 +13,12 @@ jobs:
           B=https://www.dhlottery.co.kr
           get() { for i in 1 2 3 4; do curl -sS -L -m 40 -A "$UA" -c jar -b jar "$@" && return 0; echo "retry $i" >&2; sleep 10; done; return 1; }
           get -o w.html $B/wnprchsplcsrch/home
-          echo "--- 탭 값"; grep -n -E "tagTab|map-tab-li" w.html | head -20
-          echo "--- sendHttpJson 정의"
-          get -s "$B/common/cmmUtil.js?v=20261006" > cmm.js
-          grep -n -A40 "sendHttpJson" cmm.js | head -90
-          grep -n -i -E "csrf|X-Requested|AJAX|header" cmm.js | head -20
-          grep -n -i -E "csrf" w.html | head
-          call() { echo "=== $1"; get -s -X POST "$B/wnprchsplcsrch/selectLtWnShp.do" -H "Content-Type: application/json;charset=UTF-8" -H "X-Requested-With: XMLHttpRequest" -H "Referer: $B/wnprchsplcsrch/home" -d "$1" | head -c 2500; echo; }
-          call '{"srchWnShpRnk":"1","srchLtEpsd":"1245","srchShpLctn":""}'
-          call '{"srchWnShpRnk":"all","srchLtEpsd":"1245","srchShpLctn":""}'
-          call '{"srchWnShpRnk":"rank1","srchLtEpsd":"1245","srchShpLctn":""}'
-          call '{"srchWnShpRnk":"1","srchLtEpsd":"262","srchShpLctn":""}'
-          call '{"srchWnShpRnk":"1","srchLtEpsd":"1","srchShpLctn":""}'
-          echo "=== 회차 정보"; get -s -X POST "$B/lt645/selectLtEpsdInfo.do" -H "Content-Type: application/json;charset=UTF-8" -H "X-Requested-With: XMLHttpRequest" -d '{}' | head -c 600; echo
+          H=(-H "AJAX: true" -H "requestMenuUri: /wnprchsplcsrch/home" -H "X-Requested-With: XMLHttpRequest" -H "Referer: $B/wnprchsplcsrch/home" -H "Accept: application/json")
+          call() { echo "=== $1"; get -s -G "$B/wnprchsplcsrch/selectLtWnShp.do" "${H[@]}" $2 | head -c 3000; echo; }
+          call "1245 rank1" "--data-urlencode srchWnShpRnk=1 --data-urlencode srchLtEpsd=1245 --data-urlencode srchShpLctn="
+          call "1245 all" "--data-urlencode srchWnShpRnk=all --data-urlencode srchLtEpsd=1245 --data-urlencode srchShpLctn="
+          call "600 rank1" "--data-urlencode srchWnShpRnk=1 --data-urlencode srchLtEpsd=600 --data-urlencode srchShpLctn="
+          call "262 rank1" "--data-urlencode srchWnShpRnk=1 --data-urlencode srchLtEpsd=262 --data-urlencode srchShpLctn="
+          call "1 rank1" "--data-urlencode srchWnShpRnk=1 --data-urlencode srchLtEpsd=1 --data-urlencode srchShpLctn="
+          echo "=== 회차 정보"; get -s -G "$B/lt645/selectLtEpsdInfo.do" "${H[@]}" | head -c 800; echo
+          echo "=== 건수"; get -s -G "$B/wnprchsplcsrch/selectLtWnShpCnt.do" "${H[@]}" --data-urlencode srchLtEpsd=1245 | head -c 800; echo
