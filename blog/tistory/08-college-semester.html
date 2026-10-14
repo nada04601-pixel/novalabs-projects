@@ -1,0 +1,124 @@
+<!--
+  티스토리 HTML 모드용 (원본: 같은 이름의 .md 파일, md-to-html.mjs로 생성)
+  사용법: 글쓰기 → 오른쪽 위 '기본모드'를 'HTML'로 바꾼 뒤, 아래 <div>부터 끝까지 전부 붙여넣기
+  제목: 기말고사 몇 점 받아야 A일까? 대학생 학점·출석·졸업학점 한 번에 계산하기
+  카테고리: 대학생활 / 공부
+  태그: 대학생, 기말고사, 학점계산기, 평점계산, 목표성적, 출석기준, 결석F, 졸업학점, 공강, 자소서글자수
+  올리는 시기: 2026년 11월 20일 이후 (링크한 사이트 가이드 공개일 기준), 기말 2~3주 전인 11월 말~12월 초가 가장 좋음. 6월 기말 전에 다시 공유
+  스킨에 상관없이 모양이 유지되도록 <style> 없이 인라인 스타일만 썼습니다.
+-->
+<div style="line-height:1.8; font-size:16px; word-break:keep-all;">
+
+<p>기말이 다가오면 다들 비슷한 계산을 합니다.
+"중간을 망쳤는데 기말 몇 점 받아야 B+ 나오지?", "이번 주 한 번 더 빠지면 F인가?", "4학년 되기 전에 몇 학점 더 들어야 하지?"</p>
+
+<p>이런 계산은 강의계획서랑 성적표만 있으면 몇 분이면 끝납니다. 계산 방법과 함께, 숫자만 넣으면 답이 나오는 계산기를 정리해 둘게요.
+(계산기는 제가 만든 무료 사이트 <b>노바랩 공작소</b>에 있고, 회원가입 없이 휴대폰으로 바로 쓸 수 있습니다.)</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">1. 기말고사 목표 점수: 반영 비율로 거꾸로 계산</h2>
+
+<p>강의계획서에 있는 <b>평가 비율</b>만 알면 남은 시험에서 몇 점이 필요한지 계산할 수 있습니다.</p>
+
+<p><b>예시)</b> 중간 30%, 과제 20%, 출석 10%, 기말 40% / 지금까지 중간 60점, 과제 90점, 출석 100점
+→ 지금까지 확보한 점수: 60×0.3 + 90×0.2 + 100×0.1 = <b>46점</b>
+→ 총점 80점이 목표라면 기말에서 34점(40% 중)이 필요 → 기말 <b>85점</b></p>
+
+<p>반대로 기말을 만점 받았을 때 최고 몇 점까지 가능한지도 알 수 있어서, 목표를 현실적으로 잡는 데 도움이 됩니다.
+상대평가 과목이라면 총점이 곧 등급은 아니지만, 지금 위치를 아는 것만으로도 공부 시간을 어디에 쓸지 정하기 쉬워져요.</p>
+
+<div style="margin:20px 0; padding:16px 20px; background:#eef4ff; border-left:4px solid #2f6fed; border-radius:6px; color:#1f2a44;">
+  👉 <a href="https://novalabs.co.kr/tools/target-score" target="_blank" rel="noopener" style="color:#1d4ed8; font-weight:bold;">목표 성적 계산기</a>에 평가 항목과 비율, 받은 점수를 넣으면 남은 평가에서 받아야 할 점수가 나옵니다.
+</div>
+
+<p>과목별로 공부 시간을 나누는 요령은 <a href="https://novalabs.co.kr/guides/final-exam-target-score" target="_blank" rel="noopener">기말고사 몇 점 받아야 할까</a> 글을 참고하세요.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">2. 출석: 몇 번 더 빠지면 F인지 미리 알기</h2>
+
+<p>많은 학교가 <b>수업 시간의 1/4 이상 결석하면 F</b>처럼 기준을 둡니다. 지각 몇 번을 결석 1회로 치는 경우도 많고요.</p>
+
+<p><b>예시)</b> 주 2회 × 15주 = 30회 수업, 1/4 이상 결석 시 F, 지각 3회 = 결석 1회
+→ 30 × 1/4 = 7.5이므로 <b>결석 8회부터 F</b>
+→ 지금 결석 2회 + 지각 3회(=결석 1회) = 3회로 계산
+→ F가 되기 전까지 <b>4번 더</b> 빠질 수 있음</p>
+
+<p>물론 "4번 더 빠져도 된다"가 아니라 "4번 남았으니 아껴 둬야 한다"는 뜻입니다. 결석할 때마다 출석 점수도 깎이니까요.
+비율과 지각 기준은 학교·과목마다 다르니 학칙과 강의계획서를 꼭 확인하세요.</p>
+
+<div style="margin:20px 0; padding:16px 20px; background:#eef4ff; border-left:4px solid #2f6fed; border-radius:6px; color:#1f2a44;">
+  👉 <a href="https://novalabs.co.kr/tools/attendance" target="_blank" rel="noopener" style="color:#1d4ed8; font-weight:bold;">출석 기준 계산기</a>는 F까지 남은 결석 가능 횟수와 예상 출석 점수를 함께 계산합니다.
+</div>
+
+<p>공결 받는 방법과 학교별 기준 차이는 <a href="https://novalabs.co.kr/guides/college-attendance-rules" target="_blank" rel="noopener">대학 출석 기준 정리</a>에 정리했습니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">3. 평점: 목표 학점까지 남은 학기에 평균 몇 점?</h2>
+
+<p>이번 학기 평점은 과목별 <b>(학점 × 성적 점수)의 합 ÷ 전체 학점</b>입니다. 학교에 따라 A+가 4.5인 곳과 4.3인 곳이 있으니 먼저 확인하세요.</p>
+
+<p>더 유용한 건 <b>목표 누적 평점</b>을 거꾸로 계산하는 겁니다.</p>
+
+<p><b>예시)</b> 지금까지 90학점, 누적 평점 3.6 / 졸업까지 40학점 남음 / 목표 누적 평점 3.8
+→ 필요한 총점: 3.8 × 130학점 = 494
+→ 지금까지 총점: 3.6 × 90학점 = 324
+→ 남은 40학점에서 평균 <b>4.25</b>가 필요</p>
+
+<p>학년이 올라갈수록 누적 학점이 많아서 평점을 끌어올리기 어려워집니다. 목표가 있다면 저학년 때부터 계산해 보는 게 좋아요.</p>
+
+<div style="margin:20px 0; padding:16px 20px; background:#eef4ff; border-left:4px solid #2f6fed; border-radius:6px; color:#1f2a44;">
+  👉 <a href="https://novalabs.co.kr/tools/gpa" target="_blank" rel="noopener" style="color:#1d4ed8; font-weight:bold;">학점 평균 계산기</a>는 4.5·4.3 만점을 모두 지원하고, 전공 평점과 목표 평점까지 필요한 평균도 계산합니다.
+</div>
+
+<p>4.5 만점과 4.3 만점 환산, 재수강 관리 요령은 <a href="https://novalabs.co.kr/guides/gpa-scale-and-management" target="_blank" rel="noopener">학점 4.5 만점과 4.3 만점, 평점 계산과 관리</a> 글에 있습니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">4. 졸업학점: 총 학점만 보면 안 되는 이유</h2>
+
+<p>졸업 요건은 <b>전체 학점</b>과 함께 <b>영역별 학점</b>(전공필수, 전공선택, 교양 등)을 모두 채워야 합니다.
+총 130학점을 넘겼는데 교양 한 영역이 3학점 모자라서 졸업이 미뤄지는 경우가 생각보다 많아요.</p>
+
+<div style="margin:20px 0; padding:16px 20px; background:#eef4ff; border-left:4px solid #2f6fed; border-radius:6px; color:#1f2a44;">
+  👉 <a href="https://novalabs.co.kr/tools/graduation-credits" target="_blank" rel="noopener" style="color:#1d4ed8; font-weight:bold;">졸업학점 진행도 계산기</a>에 영역별 기준과 이수 학점을 넣으면 <b>부족한 영역</b>, 남은 학점, 남은 학기마다 몇 학점씩 들어야 하는지 보여 줍니다.
+</div>
+
+<p>놓치기 쉬운 이수 요건은 <a href="https://novalabs.co.kr/guides/graduation-credits-planning" target="_blank" rel="noopener">졸업학점 계산과 학기별 수강 계획</a>에 정리했습니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">5. 다음 학기 시간표: 수강신청 전에 공강 비교</h2>
+
+<p>기말이 끝나면 곧 수강신청이죠. 시간표 후보를 미리 넣어 보면 <b>공강이 어디에 몇 시간 생기는지, 학교에 하루 몇 시간 있어야 하는지</b> 비교할 수 있습니다.
+수업 없는 날(우주공강)을 만들지, 하루에 몰아서 들을지도 숫자로 보면 결정이 쉬워요.</p>
+
+<div style="margin:20px 0; padding:16px 20px; background:#eef4ff; border-left:4px solid #2f6fed; border-radius:6px; color:#1f2a44;">
+  👉 <a href="https://novalabs.co.kr/tools/free-period" target="_blank" rel="noopener" style="color:#1d4ed8; font-weight:bold;">공강 시간 분석기</a>는 요일별 공강 시간과 겹치는 수업까지 표시해 줍니다.
+</div>
+
+<p>시간표 짜는 요령은 <a href="https://novalabs.co.kr/guides/timetable-free-periods" target="_blank" rel="noopener">대학 시간표 짜는 법</a> 글을 참고하세요.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">덤: 레포트·자소서 분량 맞추기</h2>
+
+<p>"공백 포함 1,000자 이내", "A4 2장 이상"처럼 분량 조건이 있는 과제나 자기소개서는 제출 전에 글자수를 꼭 확인하세요.
+공백 포함·제외, 바이트 기준에 따라 결과가 꽤 다릅니다.</p>
+
+<div style="margin:20px 0; padding:16px 20px; background:#eef4ff; border-left:4px solid #2f6fed; border-radius:6px; color:#1f2a44;">
+  👉 <a href="https://novalabs.co.kr/tools/character-counter" target="_blank" rel="noopener" style="color:#1d4ed8; font-weight:bold;">글자수 세기</a>에 글을 붙여 넣으면 공백 포함·제외 글자수와 바이트를 한 번에 보여 줍니다.
+자세한 차이는 <a href="https://novalabs.co.kr/guides/cover-letter-character-count" target="_blank" rel="noopener" style="color:#1d4ed8; font-weight:bold;">자기소개서 글자수 맞추는 법</a>에 있어요.
+</div>
+
+<div style="margin:40px 0 20px; padding:20px 24px; background:#f5f7fb; border:1px solid #d0d7e2; border-radius:10px; color:#1f2a44;">
+
+<p style="margin:0 0 10px; font-weight:bold; font-size:17px;">함께 보면 좋은 도구 <span style="font-weight:normal; font-size:14px; color:#5b6478;">(노바랩 공작소, 무료·회원가입 없음)</span></p>
+
+<ul style="margin:0; padding-left:20px;">
+
+  <li><a href="https://novalabs.co.kr/tools/target-score" target="_blank" rel="noopener" style="color:#1d4ed8;">목표 성적 계산기</a> · <a href="https://novalabs.co.kr/tools/attendance" target="_blank" rel="noopener" style="color:#1d4ed8;">출석 기준 계산기</a> · <a href="https://novalabs.co.kr/tools/gpa" target="_blank" rel="noopener" style="color:#1d4ed8;">학점 평균 계산기</a></li>
+
+  <li><a href="https://novalabs.co.kr/tools/graduation-credits" target="_blank" rel="noopener" style="color:#1d4ed8;">졸업학점 진행도 계산기</a> · <a href="https://novalabs.co.kr/tools/free-period" target="_blank" rel="noopener" style="color:#1d4ed8;">공강 시간 분석기</a></li>
+
+  <li><a href="https://novalabs.co.kr/tools/pomodoro" target="_blank" rel="noopener" style="color:#1d4ed8;">뽀모도로 스케줄 생성기</a>: 시험 기간 공부 시간표 만들기</li>
+
+  <li><a href="https://novalabs.co.kr/tools/pdf-merge" target="_blank" rel="noopener" style="color:#1d4ed8;">PDF 합치기</a>: 과제 파일 하나로 묶어 제출</li>
+
+</ul>
+
+</div>
+
+<p style="font-size:14px; color:#6b7280;">※ 출석·성적 기준은 학교와 과목마다 다릅니다. 최종 판단은 학칙과 강의계획서를 따르세요.</p>
+
+</div>

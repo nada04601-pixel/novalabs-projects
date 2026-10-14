@@ -1,0 +1,161 @@
+<!--
+  티스토리 HTML 모드용 (원본: 같은 이름의 .md 파일, md-to-html.mjs로 생성)
+  사용법: 글쓰기 → 오른쪽 위 '기본모드'를 'HTML'로 바꾼 뒤, 아래 <div>부터 끝까지 전부 붙여넣기
+  제목: 송년회 N빵, 2차 안 간 사람·술 안 마신 사람까지 공평하게 나누는 법
+  카테고리: 생활 꿀팁
+  태그: 송년회, 회식정산, 모임정산, N빵계산, 더치페이, 정산계산기, 술값정산, 총무, 연말모임
+  올리는 시기: 2026년 11월 17일 이후 (링크한 사이트 가이드 공개일 기준), 송년회 시즌인 12월 첫째 주가 가장 좋음
+  스킨에 상관없이 모양이 유지되도록 <style> 없이 인라인 스타일만 썼습니다.
+-->
+<div style="line-height:1.8; font-size:16px; word-break:keep-all;">
+
+<p>연말 모임에서 총무를 맡으면 가장 곤란한 순간이 계산할 때입니다.
+"나 2차는 안 갔는데", "나 술은 한 잔도 안 마셨는데"라는 말이 나오는 순간, 단순 N빵은 누군가에게 불공평해지거든요.</p>
+
+<p>그렇다고 차수마다, 사람마다 따로 계산하면 송금이 열 번 넘게 오가고요.
+이 글에서는 <b>차수별 참석과 술값까지 반영하면서도 송금 횟수는 최소로</b> 줄이는 정산 방법을 예시로 정리해 볼게요.
+마지막에 소개하는 정산 계산기는 제가 만든 무료 사이트 <b>노바랩 공작소</b>의 도구입니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">예시: 5명, 2차까지 간 송년회</h2>
+
+<table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:15px;">
+
+  <thead><tr style="background:#2f6fed; color:#ffffff;"><th style="padding:10px; border:1px solid #2f6fed; text-align:left;"></th><th style="padding:10px; border:1px solid #2f6fed; text-align:left;">장소</th><th style="padding:10px; border:1px solid #2f6fed; text-align:left;">금액</th><th style="padding:10px; border:1px solid #2f6fed; text-align:left;">결제한 사람</th><th style="padding:10px; border:1px solid #2f6fed; text-align:left;">참석자</th></tr></thead>
+
+  <tbody>
+
+    <tr><td style="padding:10px; border:1px solid #d0d7e2;">1차</td><td style="padding:10px; border:1px solid #d0d7e2;">고깃집</td><td style="padding:10px; border:1px solid #d0d7e2;">25만 원 (그중 술값 6만 원)</td><td style="padding:10px; border:1px solid #d0d7e2;">A</td><td style="padding:10px; border:1px solid #d0d7e2;">A, B, C, D, E (술은 A·B·C만)</td></tr>
+
+    <tr><td style="padding:10px; border:1px solid #d0d7e2;">2차</td><td style="padding:10px; border:1px solid #d0d7e2;">호프</td><td style="padding:10px; border:1px solid #d0d7e2;">12만 원</td><td style="padding:10px; border:1px solid #d0d7e2;">B</td><td style="padding:10px; border:1px solid #d0d7e2;">A, B, C</td></tr>
+
+  </tbody>
+</table>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">1단계: 차수별로, 술값은 마신 사람끼리 나누기</h2>
+
+<p><b>1차</b></p>
+
+<ul>
+
+  <li>술값을 뺀 19만 원 ÷ 5명 = 1인당 38,000원</li>
+
+  <li>술값 6만 원 ÷ 3명(A·B·C) = 1인당 20,000원</li>
+
+</ul>
+
+<p><b>2차</b></p>
+
+<ul>
+
+  <li>12만 원 ÷ 3명(A·B·C) = 1인당 40,000원</li>
+
+</ul>
+
+<p><b>사람별 부담액</b></p>
+
+<ul>
+
+  <li>A·B·C: 38,000 + 20,000 + 40,000 = <b>98,000원</b></li>
+
+  <li>D·E: <b>38,000원</b></li>
+
+</ul>
+
+<p>D와 E는 2차에 안 갔고 술도 안 마셨으니, 그냥 37만 원 ÷ 5 = 74,000원씩 나누는 것보다 <b>36,000원씩 덜</b> 냅니다.
+"그 정도는 그냥 넘어가자"고 하기엔 꽤 큰 차이죠.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">2단계: 낸 돈과 부담액의 차이를 구하기</h2>
+
+<table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:15px;">
+
+  <thead><tr style="background:#2f6fed; color:#ffffff;"><th style="padding:10px; border:1px solid #2f6fed; text-align:left;"></th><th style="padding:10px; border:1px solid #2f6fed; text-align:left;">낸 돈</th><th style="padding:10px; border:1px solid #2f6fed; text-align:left;">부담액</th><th style="padding:10px; border:1px solid #2f6fed; text-align:left;">차이</th></tr></thead>
+
+  <tbody>
+
+    <tr><td style="padding:10px; border:1px solid #d0d7e2;">A</td><td style="padding:10px; border:1px solid #d0d7e2;">250,000</td><td style="padding:10px; border:1px solid #d0d7e2;">98,000</td><td style="padding:10px; border:1px solid #d0d7e2;"><b>+152,000</b> (받을 돈)</td></tr>
+
+    <tr><td style="padding:10px; border:1px solid #d0d7e2;">B</td><td style="padding:10px; border:1px solid #d0d7e2;">120,000</td><td style="padding:10px; border:1px solid #d0d7e2;">98,000</td><td style="padding:10px; border:1px solid #d0d7e2;"><b>+22,000</b> (받을 돈)</td></tr>
+
+    <tr><td style="padding:10px; border:1px solid #d0d7e2;">C</td><td style="padding:10px; border:1px solid #d0d7e2;">0</td><td style="padding:10px; border:1px solid #d0d7e2;">98,000</td><td style="padding:10px; border:1px solid #d0d7e2;">−98,000</td></tr>
+
+    <tr><td style="padding:10px; border:1px solid #d0d7e2;">D</td><td style="padding:10px; border:1px solid #d0d7e2;">0</td><td style="padding:10px; border:1px solid #d0d7e2;">38,000</td><td style="padding:10px; border:1px solid #d0d7e2;">−38,000</td></tr>
+
+    <tr><td style="padding:10px; border:1px solid #d0d7e2;">E</td><td style="padding:10px; border:1px solid #d0d7e2;">0</td><td style="padding:10px; border:1px solid #d0d7e2;">38,000</td><td style="padding:10px; border:1px solid #d0d7e2;">−38,000</td></tr>
+
+  </tbody>
+</table>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">3단계: 송금 횟수 줄이기</h2>
+
+<p>차수마다 결제한 사람에게 따로 보내면 1차에 4번, 2차에 2번, <b>총 6번</b>의 송금이 필요합니다.
+하지만 위 표의 "차이"만 맞추면 되니까 이렇게 정리할 수 있어요.</p>
+
+<ul>
+
+  <li>C → A 98,000원</li>
+
+  <li>D → A 38,000원</li>
+
+  <li>E → A 16,000원</li>
+
+  <li>E → B 22,000원</li>
+
+</ul>
+
+<p><b>4번이면 끝</b>납니다. 인원이 많고 차수가 늘어날수록 이 차이는 더 커집니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">이걸 매번 손으로 하기 귀찮다면</h2>
+
+<p>위 계산을 그대로 해 주는 도구를 만들어 두었습니다.</p>
+
+<div style="margin:20px 0; padding:16px 20px; background:#eef4ff; border-left:4px solid #2f6fed; border-radius:6px; color:#1f2a44;">
+  👉 <a href="https://novalabs.co.kr/moim" target="_blank" rel="noopener" style="color:#1d4ed8; font-weight:bold;">모임 정산 계산기</a>
+</div>
+
+<ul>
+
+  <li>차수마다 금액, 결제한 사람, 참석자, 술 마신 사람을 체크하면</li>
+
+  <li>사람별 부담액과 <b>최소 송금 목록</b>이 바로 나옵니다.</li>
+
+  <li>입력한 내용이 <b>공유 링크</b>에 담겨서, 단톡방에 링크 하나만 올리면 모두가 같은 계산 결과를 볼 수 있어요. (서버에 저장하지 않고 링크 자체에 담기는 방식입니다.)</li>
+
+</ul>
+
+<p>차수와 술값을 나누는 기준을 정할 때 생기는 애매한 상황(늦게 온 사람, 음료만 시킨 사람 등)은
+<a href="https://novalabs.co.kr/guides/group-dinner-settlement-tips" target="_blank" rel="noopener">회식·모임 N빵 정산, 차수와 술값까지 깔끔하게 나누는 법</a>과
+<a href="https://novalabs.co.kr/guides/group-settlement-tips" target="_blank" rel="noopener">모임 정산 깔끔하게 하는 법</a>에 정리해 두었습니다.</p>
+
+<h2 style="margin:40px 0 16px; padding-bottom:8px; border-bottom:2px solid #2f6fed; font-size:22px;">총무를 위한 작은 팁</h2>
+
+<ul>
+
+  <li><b>결제는 한두 사람으로 몰기</b>: 결제한 사람이 적을수록 송금이 단순해집니다.</li>
+
+  <li><b>영수증은 사진으로 바로</b>: 술값을 따로 나누려면 영수증에서 술 금액을 확인해야 합니다.</li>
+
+  <li><b>자투리는 결제자가</b>: 1원 단위로 나누어떨어지지 않는 금액은 결제한 사람이 부담하는 걸로 미리 정해 두면 깔끔합니다.</li>
+
+  <li><b>정산은 그날 밤 안에</b>: 다음 날이 되면 누가 2차에 있었는지부터 기억이 흐려집니다.</li>
+
+</ul>
+
+<div style="margin:40px 0 20px; padding:20px 24px; background:#f5f7fb; border:1px solid #d0d7e2; border-radius:10px; color:#1f2a44;">
+
+<p style="margin:0 0 10px; font-weight:bold; font-size:17px;">함께 보면 좋은 도구 <span style="font-weight:normal; font-size:14px; color:#5b6478;">(노바랩 공작소, 무료·회원가입 없음)</span></p>
+
+<ul style="margin:0; padding-left:20px;">
+
+  <li><a href="https://novalabs.co.kr/moim" target="_blank" rel="noopener" style="color:#1d4ed8;">모임 정산 계산기</a>: 차수·술값·최소 송금</li>
+
+  <li><a href="https://novalabs.co.kr/tools/percent" target="_blank" rel="noopener" style="color:#1d4ed8;">퍼센트 계산기</a>: 할인·봉사료 계산</li>
+
+  <li><a href="https://novalabs.co.kr/tools/date-calculator" target="_blank" rel="noopener" style="color:#1d4ed8;">날짜 계산기 (D-day)</a>: 새해까지, 모임 날까지 남은 날</li>
+
+  <li><a href="https://novalabs.co.kr/tools/qr-code" target="_blank" rel="noopener" style="color:#1d4ed8;">QR 코드 생성기</a>: 정산 링크나 송금 안내를 QR로 띄우기</li>
+
+</ul>
+
+</div>
+
+</div>
