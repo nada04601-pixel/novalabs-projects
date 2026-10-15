@@ -229,3 +229,58 @@ export const REVEAL_TEXT = {
   none: "지지 속 기운이 천간으로 드러나지 않았습니다. 생각과 재능을 속에 담아 두는 편이라, 겉으로 꺼내 보이는 연습을 하면 숨은 힘을 더 잘 쓸 수 있습니다.",
 };
 export const HIDDEN_ONLY = "다만 지장간 속에는 이 기운이 숨어 있어, 필요할 때 꺼내 쓸 수 있는 잠재력은 있습니다.";
+
+// ---- 화면에 쓰는 이름과 풀이 묶음 (영어 페이지는 sajuReading.en.ts의 SAJU_EN) ----
+const STEMS_HANJA = "甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥";
+const STEMS_HANGUL = "갑을병정무기경신임계자축인묘진사오미신유술해";
+
+export type SajuText = {
+  DAY_MASTER: typeof DAY_MASTER;
+  ELEMENT_TEXT: typeof ELEMENT_TEXT;
+  TEN_GOD_MEANING: typeof TEN_GOD_MEANING;
+  TEN_GOD_GROUP_TEXT: typeof TEN_GOD_GROUP_TEXT;
+  LUCK_TEXT: typeof LUCK_TEXT;
+  PLACE_MEANING: typeof PLACE_MEANING;
+  RELATION_TEXT: typeof RELATION_TEXT;
+  SHINSAL_TEXT: typeof SHINSAL_TEXT;
+  ROOT_TEXT: typeof ROOT_TEXT;
+  REVEAL_TEXT: typeof REVEAL_TEXT;
+  SPOUSE_CLASH: string;
+  HIDDEN_ONLY: string;
+  el: (e: Element) => string; // 목 / Wood
+  read: (hanja: string) => string; // 천간·지지 한 글자의 읽는 소리
+  pair: (stem: string, branch: string) => string; // 갑자 / Gap-ja
+  god: (g: TenGod) => string;
+  group: (g: TenGodGroup) => string;
+  animal: (a: string) => string;
+  city: (name: string) => string;
+  pillar: (label: string) => string; // 연주 / Year
+  place: (p: string) => string; // 연지, 대운 지지, 일주…
+  relation: (k: RelationKind) => string;
+  punish: (name: string) => string;
+  shinsal: (n: ShinsalName) => string;
+  tone: (t: "길" | "흉" | "양면") => string;
+  message: (m: string) => string; // 계산 결과의 안내·오류 문구
+};
+
+const id = <T extends string>(s: T) => s;
+const readKo = (h: string) => STEMS_HANGUL[STEMS_HANJA.indexOf(h)] ?? h;
+
+export const SAJU_KO: SajuText = {
+  DAY_MASTER, ELEMENT_TEXT, TEN_GOD_MEANING, TEN_GOD_GROUP_TEXT, LUCK_TEXT, PLACE_MEANING, RELATION_TEXT, SHINSAL_TEXT, ROOT_TEXT, REVEAL_TEXT,
+  SPOUSE_CLASH, HIDDEN_ONLY,
+  el: id,
+  read: readKo,
+  pair: (s, b) => readKo(s) + readKo(b),
+  god: id,
+  group: id,
+  animal: (a) => `${a}띠`,
+  city: id,
+  pillar: id,
+  place: id,
+  relation: id,
+  punish: id,
+  shinsal: id,
+  tone: (t) => (t === "양면" ? "양면" : t === "길" ? "길신" : "흉신"),
+  message: id,
+};

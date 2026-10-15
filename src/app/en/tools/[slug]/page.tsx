@@ -20,6 +20,7 @@ import AudioExtractor from "@/components/AudioExtractor";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
 import MbtiTest from "@/components/MbtiTest";
+import SajuCalculator from "@/components/SajuCalculator";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -58,6 +59,7 @@ const components: Record<string, React.ReactNode> = {
   "password-generator": <PasswordGenerator />,
   "qr-code": <QrCodeGenerator />,
   mbti: <MbtiTest />,
+  saju: <SajuCalculator />,
 };
 
 export default async function EnToolPage({ params }: Props) {
