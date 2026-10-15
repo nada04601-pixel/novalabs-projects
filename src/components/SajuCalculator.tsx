@@ -6,6 +6,7 @@ import { todayKST } from "@/lib/calculators/date";
 import { decodeSajuLink, encodeSajuLink, type SajuLinkState } from "@/lib/sajuLink";
 import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, findRelations, findShinsal, natalSlots, formatUsedTime, groupOf, type Element, type LuckPillar, type Relation, type SajuResult, type Shinsal, type TenGod } from "@/lib/calculators/saju";
 import { DAY_MASTER, ELEMENT_TEXT, HIDDEN_ONLY, REVEAL_TEXT, ROOT_TEXT, LUCK_TEXT, MANY, PLACE_MEANING, RELATION_TEXT, SHINSAL_TEXT, SPOUSE_CLASH, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
+import DayChangeNote from "@/components/DayChangeNote";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -132,7 +133,7 @@ export default function SajuCalculator() {
           태어난 시간을 모름
         </label>
       </div>
-      <p className="note-sm">날이 바뀌는 시각은 밤 11시~자정(23시대)에 태어난 경우에만 결과를 바꿉니다. ‘23시’는 자시가 시작되는 밤 11시부터 다음 날로 보아 일주도 다음 날 것으로 잡고, ‘0시(야자시)’는 자정까지는 태어난 날의 일주를 그대로 두고 시주만 자시로 잡습니다. 학파마다 보는 방식이 달라 정답이 하나로 정해져 있지 않으니, 23시대에 태어난 게 아니라면 그대로 두면 됩니다.</p>
+      <DayChangeNote />
 
       <div className="result" aria-live="polite">
         {"error" in r ? (
