@@ -16,7 +16,7 @@ export default function EnHome() {
     <div className="w wide page" lang="en">
       <h1>Free online tools that run in your browser</h1>
       <p className="lead">
-        Compress, merge and split PDFs, upscale images with AI, trim and compress videos, and more: {toolsEn.length} free tools with no sign-up.
+        Compress, merge and split PDFs, upscale images with AI, trim and compress videos, take a personality test and more: {toolsEn.length} free tools with no sign-up.
         Everything runs on your own device, so your files are never uploaded.
       </p>
       {enGroups.map((g) => (

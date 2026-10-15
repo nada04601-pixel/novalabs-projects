@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TYPE_TEXT, TYPES } from "../../data/mbtiText";
+import { TYPE_TEXT, TYPE_TEXT_EN, TYPES } from "../../data/mbtiText";
 import { AXES, QUESTIONS, calcMbti, decodeMbtiLink, encodeMbtiLink, type Answer } from "./mbti";
 
 // 각 문항에 pole이 원하는 글자 쪽이면 "매우 그렇다", 아니면 "전혀 아니다"
@@ -17,6 +17,11 @@ describe("MBTI 문항", () => {
   it("16가지 유형 풀이가 모두 있고 잘 통하는 유형도 실제 유형", () => {
     expect(TYPES).toHaveLength(16);
     for (const t of TYPES) for (const g of TYPE_TEXT[t].good) expect(TYPES).toContain(g);
+  });
+  it("영어 문항·풀이도 빠짐없이 있고 잘 통하는 유형이 한국어와 같다", () => {
+    expect(QUESTIONS.every((q) => q.en.length > 0)).toBe(true);
+    expect(Object.keys(TYPE_TEXT_EN).sort()).toEqual([...TYPES].sort());
+    for (const t of TYPES) expect(TYPE_TEXT_EN[t].good).toEqual(TYPE_TEXT[t].good);
   });
 });
 

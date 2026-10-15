@@ -5,12 +5,13 @@ export const langOf = (path: string | null | undefined): Lang => (path === "/en"
 export const pick = (lang: Lang, ko: string, en: string) => (lang === "en" ? en : ko);
 export const locale = (lang: Lang) => (lang === "en" ? "en-US" : "ko-KR");
 
-// 영어 버전이 있는 도구(해외에서도 쓸 수 있는 PDF·이미지·동영상·유틸리티 도구). 한글 타자 연습·나이스 바이트 글자수 세기는 한국어만 둡니다.
+// 영어 버전이 있는 도구(해외에서도 쓸 수 있는 PDF·이미지·동영상·유틸리티 도구와 MBTI 테스트). 한글 타자 연습·나이스 바이트 글자수 세기는 한국어만 둡니다.
 export const EN_TOOLS = [
   "pdf-compress", "pdf-merge", "pdf-split", "pdf-organize", "jpg-to-pdf", "pdf-to-jpg",
   "image-upscaler", "watermark-remover",
   "video-trim", "video-compress", "video-to-gif", "video-to-mp3",
   "password-generator", "qr-code",
+  "mbti",
 ] as const;
 export type EnTool = (typeof EN_TOOLS)[number];
 export const hasEn = (slug: string): slug is EnTool => (EN_TOOLS as readonly string[]).includes(slug);

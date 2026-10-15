@@ -19,6 +19,7 @@ import VideoToGif from "@/components/VideoToGif";
 import AudioExtractor from "@/components/AudioExtractor";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
+import MbtiTest from "@/components/MbtiTest";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -56,6 +57,7 @@ const components: Record<string, React.ReactNode> = {
   "video-to-mp3": <AudioExtractor />,
   "password-generator": <PasswordGenerator />,
   "qr-code": <QrCodeGenerator />,
+  mbti: <MbtiTest />,
 };
 
 export default async function EnToolPage({ params }: Props) {
@@ -90,7 +92,7 @@ export default async function EnToolPage({ params }: Props) {
         </section>
 
         <ShareButtons title={tool.title} path={`/en/tools/${tool.slug}`} />
-        <p className="note">Everything runs inside your browser. Files and text you use with this tool are never uploaded or stored on a server.</p>
+        <p className="note">{tool.note ?? "Everything runs inside your browser. Files and text you use with this tool are never uploaded or stored on a server."}</p>
 
         <script
           type="application/ld+json"
