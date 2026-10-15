@@ -275,3 +275,33 @@ describe("지장간", () => {
     expect(seen.size).toBe(12);
   });
 });
+
+describe("사주 영어 문구", async () => {
+  const { SAJU_EN } = await import("../../data/sajuReading.en");
+  const { SAJU_KO } = await import("../../data/sajuReading");
+  it("한국어 풀이의 모든 항목에 영어 풀이가 있다", () => {
+    for (const k of ["DAY_MASTER", "ELEMENT_TEXT", "TEN_GOD_MEANING", "TEN_GOD_GROUP_TEXT", "LUCK_TEXT", "PLACE_MEANING", "RELATION_TEXT", "SHINSAL_TEXT"] as const) {
+      expect(Object.keys(SAJU_EN[k]).sort()).toEqual(Object.keys(SAJU_KO[k]).sort());
+    }
+  });
+  it("자리 이름과 읽는 소리", () => {
+    expect(SAJU_EN.place("연지")).toBe("Year branch");
+    expect(SAJU_EN.place("일주")).toBe("Day pillar");
+    expect(SAJU_EN.place("대운 천간")).toBe("Decade luck stem");
+    expect(SAJU_EN.place("세운")).toBe("Annual luck");
+    expect(SAJU_EN.pair("甲", "子")).toBe("Gap-ja");
+    expect(SAJU_KO.pair("甲", "子")).toBe("갑자");
+    expect(SAJU_EN.pillar("시주")).toBe("Hour");
+  });
+  it("계산 결과의 안내 문구를 모두 영어로 바꾼다", () => {
+    const msgs = [
+      calcSaju({ calendar: "solar", year: 1800, month: 1, day: 1, time: null, longitude: null, dayChange: "23" }),
+      calcSaju({ calendar: "solar", year: 1990, month: 2, day: 30, time: null, longitude: null, dayChange: "23" }),
+      calcSaju({ calendar: "lunar", year: 1990, month: 1, day: 30, leapMonth: true, time: null, longitude: null, dayChange: "23" }),
+      calcSaju({ calendar: "solar", year: 1988, month: 7, day: 1, time: { hour: 12, minute: 0 }, longitude: 126.98, dayChange: "23" }),
+      calcSaju({ calendar: "solar", year: 1955, month: 2, day: 4, time: null, longitude: null, dayChange: "23" }),
+    ].flatMap((r) => ("error" in r ? [r.error] : [...r.adjustments, ...r.warnings]));
+    expect(msgs.length).toBeGreaterThan(4);
+    for (const m of msgs) expect(SAJU_EN.message(m)).not.toMatch(/[가-힣]/);
+  });
+});

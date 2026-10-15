@@ -1,7 +1,7 @@
 import type { EnTool } from "@/lib/i18n";
 
 // 영어 버전 도구(/en/tools/[slug])의 제목·설명·사용법·FAQ. 화면 문구는 각 컴포넌트에서 useT로 바꿉니다.
-export const EN_CATEGORIES = ["PDF", "Images", "Video & audio", "Utilities", "Quizzes"] as const;
+export const EN_CATEGORIES = ["PDF", "Images", "Video & audio", "Utilities", "Personality & fortune"] as const;
 export type EnCategory = (typeof EN_CATEGORIES)[number];
 
 export type EnToolInfo = {
@@ -431,8 +431,47 @@ export const toolsEn: EnToolInfo[] = [
     ],
   },
   {
+    slug: "saju",
+    category: "Personality & fortune",
+    title: "Saju Calculator (Korean Four Pillars of Destiny)",
+    short: "Enter your birth date and time to see your Korean Saju (Four Pillars) chart, Five Elements, Ten Gods and decade luck, explained in English.",
+    metaDescription:
+      "Free Korean Saju (Four Pillars of Destiny, BaZi) calculator in English. Get your Year, Month, Day and Hour pillars with hidden stems, Five Elements balance, Ten Gods, combinations and clashes, symbolic stars, and decade and annual luck from your solar or lunar birth date.",
+    intro:
+      "Saju (사주, 'four pillars') is the Korean form of the Four Pillars of Destiny. Your year, month, day and hour of birth each become a pair of characters (a heavenly stem and an earthly branch), eight in total. This calculator builds your chart from solar term times, then explains your Day Master, the balance of the Five Elements, your Ten Gods, and how your luck changes every 10 years and every year.",
+    howTo: [
+      {
+        heading: "How the chart is calculated",
+        body: "The year and month pillars change at the 24 solar terms (the year at Ipchun, around February 4), not on January 1 or the 1st of the month, and are calculated from the exact solar term times. The day pillar follows the 60-day cycle, and the hour pillar uses two-hour periods. Korea's historical daylight saving time and UTC+8:30 periods are applied, and choosing a city corrects for longitude (Seoul is about 32 minutes behind Korea Standard Time).",
+      },
+      {
+        heading: "Day Master and the Ten Gods",
+        body: "The stem of your day pillar, the Day Master, represents you. Every other character is read by its relationship to it: Companion (same element), Output (what you produce), Wealth (what you control), Power (what controls you) and Resource (what supports you), each in a yin and yang version, giving ten in total.",
+      },
+      {
+        heading: "Decade and annual luck",
+        body: "Decade luck runs forward or backward from your month pillar depending on your sex and the yin or yang of your birth year, and its starting age is based on the time between your birth and the nearest solar term (3 days = 1 year). Annual luck follows each year's pillar, changing at Ipchun.",
+      },
+    ],
+    faq: [
+      {
+        q: "I was born outside Korea. Can I still use it?",
+        a: "Yes. The calculator treats the time you enter as Korean local time, so convert your birth time to Korea Standard Time (UTC+9) first and choose 'No correction'. The chart is the same as long as the moment of birth is the same.",
+      },
+      {
+        q: "Is Saju the same as Chinese BaZi?",
+        a: "They share the same system of stems, branches and the Five Elements. This calculator uses Korean readings for the characters (for example Gap for 甲) and common Korean interpretations, so terms and emphasis may differ slightly from BaZi books.",
+      },
+      {
+        q: "What if I don't know my time of birth?",
+        a: "Check 'I don't know my time of birth' and the chart is calculated with three pillars, leaving out the hour pillar. Your Day Master, Five Elements and luck are still shown, but the start of decade luck may be off by a few months.",
+      },
+    ],
+    note: "Solar term times and lunar conversion are calculated with lunar-javascript (MIT). Your birth date is never sent to a server or stored. The reading is for entertainment and reference only.",
+  },
+  {
     slug: "mbti",
-    category: "Quizzes",
+    category: "Personality & fortune",
     title: "MBTI Personality Test",
     short: "Answer 32 questions to find your type among the 16 personalities, with percentages and a full description.",
     metaDescription:
