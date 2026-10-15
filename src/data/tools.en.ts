@@ -1,7 +1,7 @@
 import type { EnTool } from "@/lib/i18n";
 
 // 영어 버전 도구(/en/tools/[slug])의 제목·설명·사용법·FAQ. 화면 문구는 각 컴포넌트에서 useT로 바꿉니다.
-export const EN_CATEGORIES = ["PDF", "Images", "Video & audio", "Utilities"] as const;
+export const EN_CATEGORIES = ["PDF", "Images", "Video & audio", "Utilities", "Quizzes"] as const;
 export type EnCategory = (typeof EN_CATEGORIES)[number];
 
 export type EnToolInfo = {
@@ -13,6 +13,8 @@ export type EnToolInfo = {
   intro: string;
   howTo: { heading: string; body: string }[];
   faq: { q: string; a: string }[];
+  // 페이지 맨 아래 안내 문구. 비우면 "파일을 서버로 보내지 않음" 문구를 씁니다.
+  note?: string;
 };
 
 const PRIVATE = "Files never leave your device: everything runs inside your browser, and nothing is uploaded to a server.";
@@ -427,6 +429,45 @@ export const toolsEn: EnToolInfo[] = [
       { q: "Can I use them commercially?", a: "Yes. You can use the generated images freely on menus, business cards, flyers and more. QR Code is a registered trademark of DENSO WAVE." },
       { q: "Is my Wi-Fi password exposed?", a: "What you enter is turned into a QR code in your browser and never sent to a server. Anyone who scans the code can see the password, though, so a separate guest network is safer." },
     ],
+  },
+  {
+    slug: "mbti",
+    category: "Quizzes",
+    title: "MBTI Personality Test",
+    short: "Answer 32 questions to find your type among the 16 personalities, with percentages and a full description.",
+    metaDescription:
+      "Free 32-question MBTI-style personality test. See your scores on Extraversion-Introversion, Sensing-Intuition, Thinking-Feeling and Judging-Perceiving, plus strengths, weaknesses, careers, relationships and compatible types for all 16 types. No sign-up.",
+    intro:
+      "Read each statement and choose how much it sounds like you on a five-point scale. The test works out your four preferences and tells you which of the 16 personality types you are, how strongly you lean on each side, and what your type is like at work and in relationships.",
+    howTo: [
+      {
+        heading: "The four preferences",
+        body: "The test looks at where you get your energy (E Extraversion, I Introversion), how you take in information (S Sensing, N Intuition), how you make decisions (T Thinking, F Feeling) and how you approach life (J Judging, P Perceiving). The letter you lean toward on each one makes up your four-letter type, such as ENFP or ISTJ.",
+      },
+      {
+        heading: "How it is scored",
+        body: "There are 8 questions per preference, 32 in total, and half of each set describes one side and half the other. Answers from 'Strongly disagree' to 'Strongly agree' count from -2 to +2 and are turned into a percentage. An exact 50% tie goes to the first letter (E, S, T or J).",
+      },
+      {
+        heading: "Tips for answering",
+        body: "Pick the answer closest to how you usually are, not how you'd like to be. Don't overthink it: your first instinct tends to be more accurate.",
+      },
+    ],
+    faq: [
+      {
+        q: "Is this the official MBTI assessment?",
+        a: "No. The official MBTI® is a paid assessment provided by certified practitioners. This is a short quiz we wrote based on the 16 personality types theory, so results may differ.",
+      },
+      {
+        q: "Why does my result change when I retake it?",
+        a: "Preferences close to 50% can flip depending on your mood or situation that day. The result page points out which ones are close, which simply means you use both sides.",
+      },
+      {
+        q: "Are my answers saved or sent anywhere?",
+        a: "No. Everything is calculated in your browser and nothing is sent to a server or stored. If you share your result link, it only contains your type and percentages.",
+      },
+    ],
+    note: "This is a short quiz, not the official MBTI® assessment, and the result is for fun and self-reflection. Your answers are never sent to a server or stored.",
   },
 ];
 
