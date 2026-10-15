@@ -129,6 +129,7 @@ export default function SajuMatchCalculator() {
           </select>
         </label>
       </div>
+      <p className="note-sm">날이 바뀌는 시각은 밤 11시~자정(23시대)에 태어난 경우에만 결과를 바꿉니다. ‘23시’는 자시가 시작되는 밤 11시부터 다음 날로 보아 일주도 다음 날 것으로 잡고, ‘0시(야자시)’는 자정까지는 태어난 날의 일주를 그대로 두고 시주만 자시로 잡습니다. 학파마다 보는 방식이 달라 정답이 하나로 정해져 있지 않으니, 23시대에 태어난 게 아니라면 그대로 두면 됩니다.</p>
 
       <div className="result" aria-live="polite">
         {"error" in ra || "error" in rb ? (
