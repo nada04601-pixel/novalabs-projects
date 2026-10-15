@@ -8,7 +8,7 @@ import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, ca
 import { MANY, SAJU_KO, type SajuText } from "@/data/sajuReading";
 import { SAJU_EN } from "@/data/sajuReading.en";
 import { useT } from "@/lib/useT";
-import DayChangeNote from "@/components/DayChangeNote";
+import DayChangeField from "@/components/DayChangeField";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -124,12 +124,7 @@ export default function SajuCalculator() {
             <option value="male">{t("남성", "Male")}</option>
           </select>
         </label>
-        <label>{t("날이 바뀌는 시각", "When the day changes")}
-          <select value={dayChange} onChange={(e) => setDayChange(e.target.value as "23" | "00")}>
-            <option value="23">{t("23시 (자시부터 다음 날)", "11 PM (next day from Ja hour)")}</option>
-            <option value="00">{t("0시 (야자시 적용)", "Midnight (late Ja hour)")}</option>
-          </select>
-        </label>
+        <DayChangeField value={dayChange} onChange={setDayChange} />
       </div>
       <div className="checks">
         {calendar === "lunar" && (
@@ -144,7 +139,6 @@ export default function SajuCalculator() {
         </label>
       </div>
       {en && <p className="note-sm">{EN_TIME_NOTE}</p>}
-      <DayChangeNote />
 
       <div className="result" aria-live="polite">
         {"error" in r ? (

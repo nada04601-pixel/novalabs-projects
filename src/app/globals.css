@@ -36,6 +36,14 @@ h2{font-size:20px;margin:36px 0 8px;letter-spacing:-.3px}
 .calc{background:var(--card);border-radius:16px;padding:20px;margin:0 0 8px}
 .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
 label{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--mut)}
+.field{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--mut)}
+.field-head{display:flex;align-items:center;gap:6px}.field-head label{display:inline}
+.info-btn{flex:none;width:20px;height:20px;padding:0;border:1px solid var(--mut);border-radius:50%;background:none;color:var(--mut);font:inherit;font-size:12px;font-weight:700;line-height:1;cursor:pointer}
+.info-btn:hover,.info-btn:focus-visible{border-color:var(--acc);color:var(--acc)}
+.info-dialog{max-width:min(420px,calc(100vw - 32px));border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:var(--bg);color:var(--fg);font-size:15px;line-height:1.7}
+.info-dialog::backdrop{background:rgba(0,0,0,.45)}
+.info-dialog h3{margin:0 0 8px;font-size:17px}.info-dialog p,.info-dialog ul{margin:0 0 10px}.info-dialog ul{padding-left:20px}
+.info-dialog form{text-align:right;margin-top:6px}.info-dialog .btn{border:0;font:inherit;cursor:pointer;padding:8px 18px}
 input,select{font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
 input:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .result{margin-top:20px}

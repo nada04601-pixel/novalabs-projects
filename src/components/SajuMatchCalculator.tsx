@@ -6,7 +6,7 @@ import { decodeMatchLink, encodeMatchLink, type BirthLink } from "@/lib/sajuLink
 import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, calcSaju, type Element, type SajuResult } from "@/lib/calculators/saju";
 import { MAX, calcMatch } from "@/lib/calculators/sajuMatch";
 import { DAY_MASTER_REL_TEXT, GRADE_TEXT, PARTNER_GOD_TEXT, SPOUSE_REL_TEXT, ZODIAC_REL_TEXT } from "@/data/sajuMatchText";
-import DayChangeNote from "@/components/DayChangeNote";
+import DayChangeField from "@/components/DayChangeField";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -123,14 +123,8 @@ export default function SajuMatchCalculator() {
             <option value="">보정 안 함 (한국 표준시)</option>
           </select>
         </label>
-        <label>날이 바뀌는 시각
-          <select value={dayChange} onChange={(e) => setDayChange(e.target.value as "23" | "00")}>
-            <option value="23">23시 (자시부터 다음 날)</option>
-            <option value="00">0시 (야자시 적용)</option>
-          </select>
-        </label>
+        <DayChangeField value={dayChange} onChange={setDayChange} />
       </div>
-      <DayChangeNote />
 
       <div className="result" aria-live="polite">
         {"error" in ra || "error" in rb ? (
