@@ -6,6 +6,7 @@ import { decodeMatchLink, encodeMatchLink, type BirthLink } from "@/lib/sajuLink
 import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, calcSaju, type Element, type SajuResult } from "@/lib/calculators/saju";
 import { MAX, calcMatch } from "@/lib/calculators/sajuMatch";
 import { DAY_MASTER_REL_TEXT, GRADE_TEXT, PARTNER_GOD_TEXT, SPOUSE_REL_TEXT, ZODIAC_REL_TEXT } from "@/data/sajuMatchText";
+import DayChangeNote from "@/components/DayChangeNote";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -129,6 +130,7 @@ export default function SajuMatchCalculator() {
           </select>
         </label>
       </div>
+      <DayChangeNote />
 
       <div className="result" aria-live="polite">
         {"error" in ra || "error" in rb ? (

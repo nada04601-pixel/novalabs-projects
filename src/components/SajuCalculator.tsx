@@ -6,6 +6,7 @@ import { todayKST } from "@/lib/calculators/date";
 import { decodeSajuLink, encodeSajuLink, type SajuLinkState } from "@/lib/sajuLink";
 import { CITIES, ELEMENTS, ELEMENT_HANJA, MAX_YEAR, MIN_YEAR, TEN_GOD_GROUPS, calcLuck, calcSaju, findRelations, findShinsal, natalSlots, formatUsedTime, groupOf, type Element, type LuckPillar, type Relation, type SajuResult, type Shinsal, type TenGod } from "@/lib/calculators/saju";
 import { DAY_MASTER, ELEMENT_TEXT, HIDDEN_ONLY, REVEAL_TEXT, ROOT_TEXT, LUCK_TEXT, MANY, PLACE_MEANING, RELATION_TEXT, SHINSAL_TEXT, SPOUSE_CLASH, TEN_GOD_GROUP_TEXT, TEN_GOD_MEANING } from "@/data/sajuReading";
+import DayChangeNote from "@/components/DayChangeNote";
 
 const EL_CLASS: Record<Element, string> = { 목: "el-wood", 화: "el-fire", 토: "el-earth", 금: "el-metal", 수: "el-water" };
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -132,6 +133,7 @@ export default function SajuCalculator() {
           태어난 시간을 모름
         </label>
       </div>
+      <DayChangeNote />
 
       <div className="result" aria-live="polite">
         {"error" in r ? (
