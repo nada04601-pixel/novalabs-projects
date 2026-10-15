@@ -382,3 +382,26 @@ table.stores tbody th a:hover{text-decoration:underline}
 .match-bar{display:block;margin:0 0 10px}.match-bar i{background:var(--acc)}
 .match-el-row{display:grid;grid-template-columns:52px 1fr 1fr 64px;align-items:center;gap:8px;font-size:14px}
 .match-el-row strong{text-align:right;font-weight:500;font-size:13px}
+/* MBTI 성격 유형 테스트 */
+.mbti-progress{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mut);margin-bottom:6px}
+.mbti-progress .saju-bar i{background:var(--acc)}
+.mbti-questions{list-style:none;padding:0;margin:0}
+.mbti-questions li{border-bottom:1px solid var(--line);padding:18px 0}
+.mbti-questions p{margin:0 0 12px;font-size:16px;line-height:1.55;word-break:keep-all;text-align:center}
+.mbti-scale{display:flex;justify-content:center;align-items:center;gap:clamp(8px,3vw,18px)}
+.mbti-scale button{border-radius:50%;border:2px solid var(--line);background:var(--bg);cursor:pointer;padding:0;flex:none}
+.mbti-scale .v0,.mbti-scale .v4{width:42px;height:42px}.mbti-scale .v1,.mbti-scale .v3{width:34px;height:34px}.mbti-scale .v2{width:26px;height:26px}
+.mbti-scale .v0,.mbti-scale .v1{border-color:#94a3b8}.mbti-scale .v3,.mbti-scale .v4{border-color:var(--acc)}
+.mbti-scale button[aria-checked="true"]{background:var(--acc);border-color:var(--acc)}
+.mbti-scale .v0[aria-checked="true"],.mbti-scale .v1[aria-checked="true"]{background:#94a3b8;border-color:#94a3b8}
+.mbti-scale-ends{display:flex;justify-content:space-between;max-width:300px;margin:6px auto 0;font-size:12px;color:var(--mut)}
+.mbti-axis{display:grid;grid-template-columns:auto minmax(60px,1fr) auto;white-space:nowrap;align-items:center;gap:8px;font-size:13px;color:var(--mut);margin-bottom:8px}
+.mbti-axis span:last-child{text-align:right}.mbti-axis .on{color:var(--fg);font-weight:700}
+.mbti-axis-bar{height:10px;background:#cbd5e1;border-radius:6px;overflow:hidden}.mbti-axis-bar i{display:block;height:100%;background:var(--acc)}
+.saju-card ul{margin:0 0 10px;padding-left:20px;font-size:15px;line-height:1.65}
+.mbti-types{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.mbti-types button{font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);cursor:pointer;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.mbti-types small{font-size:11px;color:var(--mut);line-height:1.3;word-break:keep-all;text-align:center}
+.mbti-types .mine{border-color:var(--acc)}.mbti-types button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--accfg)}.mbti-types button[aria-pressed="true"] small{color:var(--accfg)}
+.linklike{font:inherit;background:none;border:0;padding:0;color:var(--acc);cursor:pointer;text-decoration:underline}
+.saju-card .mbti-letters{margin:12px 0 0;padding-left:0;list-style:none;font-size:14px;line-height:1.6;color:var(--mut)}.mbti-letters li{margin-bottom:4px}.mbti-letters b{color:var(--fg)}

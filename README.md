@@ -21,6 +21,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - `src/app/moim/` 모임 정산 계산기. 입력 상태를 공유 링크(`#d=…`)에 담아 서버 없이 동작 (`src/lib/moimState.ts`, `src/lib/calculators/settlement.ts`)
 - 사주: `/tools/saju`. 절기·음력은 `lunar-javascript`(MIT, 중국 표준시 기준)로 계산하므로 연주·월주는 태어난 순간을 UTC+8로, 일주·시주는 경도 보정한 현지 시각으로 넘깁니다. 서머타임·UTC+8:30 시절은 브라우저의 `Asia/Seoul` 시간대 자료로 반영 (`src/lib/calculators/saju.ts`). 풀이 문구(일간 10종, 오행·십신 그룹이 많을 때/없을 때, 대운·세운의 십신별 풀이, 합·충·형·파·해와 자리 의미, 신살 11종)는 `src/data/sajuReading.ts`. 대운은 `calcLuck`이 절입까지의 시간을 3일 = 1년으로 바꿔 시작 시점을 정하며, 만 나이와 시작 연월로 표시. 합·충은 `findRelations`(천간합·충, 육합, 삼합·반합, 방합, 지지충, 삼형·형·자형, 파, 해), 지장간은 `HIDDEN_STEMS`(월률분야 일수)로 지장간 표·오행 세력(`elementPower`)·통근·투출을 계산, 결과 공유 링크는 `src/lib/sajuLink.ts`(입력값을 `#y=…&m=…&d=…` 해시에 담음, 버튼을 눌렀을 때만 만듦), 신살은 `findShinsal`(천을귀인·문창·도화·역마·화개·홍염·괴강·공망·양인·백호·원진)
 - 사주 궁합: `/tools/saju-match`. `src/lib/calculators/sajuMatch.ts`가 두 사람의 `calcSaju` 결과로 일간 관계(30)·일지(30)·오행 보완(25)·띠(15) 점수를 내고, 풀이 문구는 `src/data/sajuMatchText.ts`. 궁합 공유 링크는 `encodeMatchLink`(`#ay=…&by=…`, 사주 링크와 같은 `src/lib/sajuLink.ts`), 공유 버튼은 두 페이지가 함께 쓰는 `ShareLinkButtons`
+- MBTI 성격 유형 테스트: `/tools/mbti`. 문항·점수 계산·공유 링크(`#r=INFP&p=…`, 지표별 E·S·T·J 비율)는 `src/lib/calculators/mbti.ts`, 16가지 유형 풀이는 `src/data/mbtiText.ts`
 - 로또: `/tools/lotto-simulator`(번호 생성 + 매주 샀다면? 시뮬레이션), `/lotto`(당첨번호 조회: 최신 회차·1등 배출점·전체 회차 검색·출현 통계), `/lotto/[회차]`(회차별 상세). 예전 `/tools/lotto`는 `public/_redirects`로 시뮬레이터로 옮김. 당첨 결과는 `src/data/lotto/draws.json`에 저장하고 빌드 때 정적 HTML로 들어감
 
 ## 영어 페이지 (/en)
