@@ -178,7 +178,7 @@ export default function SajuCalculator() {
                 {r.adjustments.map((a) => <li key={a}>{a}</li>)}
               </ul>
             )}
-            <ShareLinkButtons hash={() => encodeSajuLink(linkState)} title="사주 만세력 결과" note="링크에는 생년월일·시각이 담기니 믿을 수 있는 사람에게만 보내세요." />
+            <ShareLinkButtons hash={() => encodeSajuLink(linkState)} title="내 사주 결과" note="링크에는 생년월일·시각이 담기니 믿을 수 있는 사람에게만 보내세요." />
 
             <h3>오행 분포</h3>
             <div className="seg" role="group" aria-label="오행 세는 방식">
@@ -314,7 +314,7 @@ function Reading({ r }: { r: SajuResult }) {
         )}
       </section>
 
-      <p className="saju-muted">풀이는 일간·오행·십신, 합·충·형·파·해, 신살의 일반적인 의미를 풀어 쓴 것입니다. 신살은 학파마다 기준이 조금씩 달라 다른 만세력과 결과가 다를 수 있습니다. 재미와 참고용으로 봐 주세요. 두 사람의 궁합은 <Link href="/tools/saju-match">사주 궁합 계산기</Link>에서 볼 수 있습니다.</p>
+      <p className="saju-muted">풀이는 일간·오행·십신, 합·충·형·파·해, 신살의 일반적인 의미를 풀어 쓴 것입니다. 신살은 학파마다 기준이 조금씩 달라 다른 만세력과 결과가 다를 수 있습니다. 재미와 참고용으로 봐 주세요. 두 사람의 궁합은 <Link href="/tools/saju-match">우리 궁합 보기</Link>에서 볼 수 있습니다.</p>
     </div>
   );
 }

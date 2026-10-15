@@ -138,7 +138,7 @@ export default function SajuMatchCalculator() {
             <MatchResultView a={ra} b={rb} />
             <ShareLinkButtons
               hash={() => encodeMatchLink({ a: toLink(a), b: toLink(b), city, dayChange })}
-              title="사주 궁합 결과"
+              title="우리 궁합 결과"
               note="링크에는 두 사람의 생년월일·시각이 담기니, 두 사람 모두 괜찮을 때 믿을 수 있는 사람에게만 보내세요."
             />
           </>
@@ -202,7 +202,7 @@ function MatchResultView({ a, b }: { a: SajuResult; b: SajuResult }) {
 
         <p className="saju-muted">
           일간·일지·오행·띠의 일반적인 궁합 원리를 점수로 단순하게 옮긴 것으로, 두 사람의 관계를 결정하지 않습니다. 재미와 참고용으로 봐 주세요.
-          각자의 자세한 사주 풀이는 <Link href="/tools/saju">사주 만세력 계산기</Link>에서 볼 수 있습니다.
+          각자의 자세한 사주 풀이는 <Link href="/tools/saju">내 사주 보기</Link>에서 볼 수 있습니다.
         </p>
       </div>
     </>
