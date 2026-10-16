@@ -4,7 +4,7 @@
 > - 제목: 기말고사 몇 점 받아야 A일까? 대학생 학점·출석·졸업학점 한 번에 계산하기
 > - 카테고리: 대학생활 / 공부
 > - 태그: 대학생, 기말고사, 학점계산기, 평점계산, 목표성적, 출석기준, 결석F, 졸업학점, 공강, 자소서글자수
-> - 올리는 시기: **2026년 11월 20일 이후** (링크한 사이트 가이드 공개일 기준), 기말 2~3주 전인 11월 말~12월 초가 가장 좋음. 6월 기말 전에 다시 공유
+> - 올리는 시기: 언제든 가능 (이미 공개된 도구 페이지만 연결), 기말 2~3주 전인 11월 말~12월 초가 가장 좋음. 6월 기말 전에 다시 공유
 
 <!-- 본문 시작 -->
 
@@ -27,8 +27,6 @@
 
 👉 [목표 성적 계산기](https://novalabs.co.kr/tools/target-score)에 평가 항목과 비율, 받은 점수를 넣으면 남은 평가에서 받아야 할 점수가 나옵니다.
 
-과목별로 공부 시간을 나누는 요령은 [기말고사 몇 점 받아야 할까](https://novalabs.co.kr/guides/final-exam-target-score) 글을 참고하세요.
-
 ## 2. 출석: 몇 번 더 빠지면 F인지 미리 알기
 
 많은 학교가 **수업 시간의 1/4 이상 결석하면 F**처럼 기준을 둡니다. 지각 몇 번을 결석 1회로 치는 경우도 많고요.
@@ -42,8 +40,6 @@
 비율과 지각 기준은 학교·과목마다 다르니 학칙과 강의계획서를 꼭 확인하세요.
 
 👉 [출석 기준 계산기](https://novalabs.co.kr/tools/attendance)는 F까지 남은 결석 가능 횟수와 예상 출석 점수를 함께 계산합니다.
-
-공결 받는 방법과 학교별 기준 차이는 [대학 출석 기준 정리](https://novalabs.co.kr/guides/college-attendance-rules)에 정리했습니다.
 
 ## 3. 평점: 목표 학점까지 남은 학기에 평균 몇 점?
 
@@ -60,16 +56,12 @@
 
 👉 [학점 평균 계산기](https://novalabs.co.kr/tools/gpa)는 4.5·4.3 만점을 모두 지원하고, 전공 평점과 목표 평점까지 필요한 평균도 계산합니다.
 
-4.5 만점과 4.3 만점 환산, 재수강 관리 요령은 [학점 4.5 만점과 4.3 만점, 평점 계산과 관리](https://novalabs.co.kr/guides/gpa-scale-and-management) 글에 있습니다.
-
 ## 4. 졸업학점: 총 학점만 보면 안 되는 이유
 
 졸업 요건은 **전체 학점**과 함께 **영역별 학점**(전공필수, 전공선택, 교양 등)을 모두 채워야 합니다.
 총 130학점을 넘겼는데 교양 한 영역이 3학점 모자라서 졸업이 미뤄지는 경우가 생각보다 많아요.
 
 👉 [졸업학점 진행도 계산기](https://novalabs.co.kr/tools/graduation-credits)에 영역별 기준과 이수 학점을 넣으면 **부족한 영역**, 남은 학점, 남은 학기마다 몇 학점씩 들어야 하는지 보여 줍니다.
-
-놓치기 쉬운 이수 요건은 [졸업학점 계산과 학기별 수강 계획](https://novalabs.co.kr/guides/graduation-credits-planning)에 정리했습니다.
 
 ## 5. 다음 학기 시간표: 수강신청 전에 공강 비교
 
@@ -78,24 +70,12 @@
 
 👉 [공강 시간 분석기](https://novalabs.co.kr/tools/free-period)는 요일별 공강 시간과 겹치는 수업까지 표시해 줍니다.
 
-시간표 짜는 요령은 [대학 시간표 짜는 법](https://novalabs.co.kr/guides/timetable-free-periods) 글을 참고하세요.
-
 ## 덤: 레포트·자소서 분량 맞추기
 
 "공백 포함 1,000자 이내", "A4 2장 이상"처럼 분량 조건이 있는 과제나 자기소개서는 제출 전에 글자수를 꼭 확인하세요.
 공백 포함·제외, 바이트 기준에 따라 결과가 꽤 다릅니다.
 
 👉 [글자수 세기](https://novalabs.co.kr/tools/character-counter)에 글을 붙여 넣으면 공백 포함·제외 글자수와 바이트를 한 번에 보여 줍니다.
-자세한 차이는 [자기소개서 글자수 맞추는 법](https://novalabs.co.kr/guides/cover-letter-character-count)에 있어요.
-
----
-
-**함께 보면 좋은 도구** (노바랩 공작소, 무료·회원가입 없음)
-
-- [목표 성적 계산기](https://novalabs.co.kr/tools/target-score) · [출석 기준 계산기](https://novalabs.co.kr/tools/attendance) · [학점 평균 계산기](https://novalabs.co.kr/tools/gpa)
-- [졸업학점 진행도 계산기](https://novalabs.co.kr/tools/graduation-credits) · [공강 시간 분석기](https://novalabs.co.kr/tools/free-period)
-- [뽀모도로 스케줄 생성기](https://novalabs.co.kr/tools/pomodoro): 시험 기간 공부 시간표 만들기
-- [PDF 합치기](https://novalabs.co.kr/tools/pdf-merge): 과제 파일 하나로 묶어 제출
 
 ※ 출석·성적 기준은 학교와 과목마다 다릅니다. 최종 판단은 학칙과 강의계획서를 따르세요.
 

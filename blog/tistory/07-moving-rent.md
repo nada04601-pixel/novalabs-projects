@@ -35,8 +35,6 @@
 
 👉 [부동산 중개보수 계산기](https://novalabs.co.kr/tools/brokerage-fee)에 매매·전세·월세를 골라 금액만 넣으면 상한 금액이 바로 나옵니다.
 
-요율표 읽는 법과 아끼는 방법은 [부동산 중개보수(복비) 계산법](https://novalabs.co.kr/guides/brokerage-fee-guide) 글에 정리했습니다.
-
 ## 2. 전세 ↔ 월세 바꿀 때: 전월세 전환율
 
 "보증금을 1억 낮추는 대신 월세를 받겠다"는 제안을 받았을 때 그 월세가 적당한지 판단하는 기준이 **전월세 전환율**입니다.
@@ -53,8 +51,6 @@
 새로 계약할 때는 당사자끼리 정하므로 주변 시세와 비교해 보세요.
 
 👉 [전월세 전환 계산기](https://novalabs.co.kr/tools/rent-conversion)는 보증금 → 월세, 월세 → 보증금 두 방향을 모두 계산하고 법정 상한도 함께 보여 줍니다.
-
-전세와 월세 중 어느 쪽이 유리한지 따지는 법은 [전월세 전환율로 보증금과 월세 바꿔 계산하기](https://novalabs.co.kr/guides/jeonse-monthly-rent-conversion)에 있습니다.
 
 ## 3. "몇 평이에요?": 전용면적부터 확인하세요
 
@@ -89,16 +85,6 @@
 - [ ] 전세보증금 반환보증 가입 가능 여부
 
 항목별로 왜 중요한지는 [전월세 계약 전 꼭 확인할 7가지](https://novalabs.co.kr/guides/rental-contract-checklist)에 자세히 적어 두었습니다.
-
----
-
-**함께 보면 좋은 도구** (노바랩 공작소, 무료·회원가입 없음)
-
-- [부동산 중개보수 계산기](https://novalabs.co.kr/tools/brokerage-fee)
-- [전월세 전환 계산기](https://novalabs.co.kr/tools/rent-conversion)
-- [평수 계산기 (평 ↔ ㎡)](https://novalabs.co.kr/tools/pyeong-converter)
-- [월세 세액공제 계산기](https://novalabs.co.kr/tools/rent-tax-credit)
-- [대출이자 계산기](https://novalabs.co.kr/tools/loan-interest): 전세대출 이자 확인
 
 ※ 주택 기준 요율입니다. 오피스텔·상가는 요율이 다르며, 금액이 크거나 권리관계가 복잡하다면 전문가 상담을 권합니다.
 

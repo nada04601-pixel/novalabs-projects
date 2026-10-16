@@ -77,21 +77,13 @@
 
 | 범위 | 질문 | 도구 |
 |---|---|---|
-| 회의 1시간 | 안건마다 몇 분 쓸까? | [회의 시간 배분기](https://novalabs.co.kr/tools/meeting-agenda) |
-| 하루 | 오늘 안에 무엇이 들어가고 무엇이 안 들어갈까? | [할 일 시간 배분기](https://novalabs.co.kr/tools/task-time) |
-| 집중 시간 | 이 일을 몇 번의 집중으로 끝낼까? | [뽀모도로 스케줄 생성기](https://novalabs.co.kr/tools/pomodoro) |
-| 마감 | 늦어도 언제 시작해야 할까? | [마감 역산 체크리스트](https://novalabs.co.kr/tools/deadline-planner) |
-| 한 주 | 요일마다 얼마씩 해야 할까? | [주간 목표 분배기](https://novalabs.co.kr/tools/weekly-goal) |
+| 회의 1시간 | 안건마다 몇 분 쓸까? | 회의 시간 배분기 |
+| 하루 | 오늘 안에 무엇이 들어가고 무엇이 안 들어갈까? | 할 일 시간 배분기 |
+| 집중 시간 | 이 일을 몇 번의 집중으로 끝낼까? | 뽀모도로 스케줄 생성기 |
+| 마감 | 늦어도 언제 시작해야 할까? | 마감 역산 체크리스트 |
+| 한 주 | 요일마다 얼마씩 해야 할까? | 주간 목표 분배기 |
 
 다섯 개 모두 무료이고 회원가입 없이 바로 쓸 수 있습니다. 하나만 고르라면 **할 일 시간 배분기**부터 써 보세요.
 "오늘 못 하는 일"을 아침에 미리 아는 것만으로도 저녁의 자책이 꽤 줄어듭니다.
-
----
-
-**함께 보면 좋은 도구** (노바랩 공작소)
-
-- [날짜 계산기 (D-day)](https://novalabs.co.kr/tools/date-calculator): 프로젝트 남은 일수, 며칠 뒤 날짜 계산
-- [글자수 세기](https://novalabs.co.kr/tools/character-counter): 보고서·공지문 분량 확인
-- [QR 코드 생성기](https://novalabs.co.kr/tools/qr-code): 회의 자료·설문 링크를 QR로
 
 <!-- 본문 끝 -->

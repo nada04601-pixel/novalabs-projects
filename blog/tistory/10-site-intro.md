@@ -26,27 +26,27 @@
 ## 어떤 도구가 있나요
 
 ### 💼 급여·근로
-[연봉 실수령액](https://novalabs.co.kr/tools/net-salary) · [퇴직금](https://novalabs.co.kr/tools/severance-pay) · [주휴수당](https://novalabs.co.kr/tools/weekly-holiday-pay) · [연차](https://novalabs.co.kr/tools/annual-leave) · [연장·야간·휴일수당](https://novalabs.co.kr/tools/overtime-pay) · [시급·월급·연봉 변환](https://novalabs.co.kr/tools/wage-converter) · [실업급여](https://novalabs.co.kr/tools/unemployment-benefit)
+연봉 실수령액 · 퇴직금 · 주휴수당 · 연차 · 연장·야간·휴일수당 · 시급·월급·연봉 변환 · 실업급여
 
 ### 🏦 대출·저축
-[대출이자](https://novalabs.co.kr/tools/loan-interest) · [예금·적금 이자](https://novalabs.co.kr/tools/savings-interest) · [목표 저축](https://novalabs.co.kr/tools/savings-goal)
+대출이자 · 예금·적금 이자 · 목표 저축
 
 ### 🏠 부동산
-[중개보수(복비)](https://novalabs.co.kr/tools/brokerage-fee) · [전월세 전환](https://novalabs.co.kr/tools/rent-conversion) · [월세 세액공제](https://novalabs.co.kr/tools/rent-tax-credit) · [평수(평 ↔ ㎡)](https://novalabs.co.kr/tools/pyeong-converter)
+중개보수(복비) · 전월세 전환 · 월세 세액공제 · 평수(평 ↔ ㎡)
 
 ### 🧮 생활
-[만 나이](https://novalabs.co.kr/tools/korean-age) · [퍼센트](https://novalabs.co.kr/tools/percent) · [부가세](https://novalabs.co.kr/tools/vat) · [날짜(D-day)](https://novalabs.co.kr/tools/date-calculator) · [모임 정산](https://novalabs.co.kr/moim) · [로또 번호 생성·당첨번호 조회](https://novalabs.co.kr/tools/lotto)
+만 나이 · 퍼센트 · 부가세 · 날짜(D-day) · 모임 정산 · 로또 번호 생성·당첨번호 조회
 
 ### 🎓 학교·학업
-[학점 평균](https://novalabs.co.kr/tools/gpa) · [목표 성적](https://novalabs.co.kr/tools/target-score) · [졸업학점](https://novalabs.co.kr/tools/graduation-credits) · [출석 기준](https://novalabs.co.kr/tools/attendance) · [공강 시간 분석](https://novalabs.co.kr/tools/free-period)
+학점 평균 · 목표 성적 · 졸업학점 · 출석 기준 · 공강 시간 분석
 
 ### 🗓️ 업무·일정
-[회의 시간 배분](https://novalabs.co.kr/tools/meeting-agenda) · [할 일 시간 배분](https://novalabs.co.kr/tools/task-time) · [뽀모도로 스케줄](https://novalabs.co.kr/tools/pomodoro) · [마감 역산](https://novalabs.co.kr/tools/deadline-planner) · [주간 목표 분배](https://novalabs.co.kr/tools/weekly-goal)
+회의 시간 배분 · 할 일 시간 배분 · 뽀모도로 스케줄 · 마감 역산 · 주간 목표 분배
 
 ### 🛠️ 디지털 도구 (설치·업로드 없음)
-- PDF: [용량 줄이기](https://novalabs.co.kr/tools/pdf-compress) · [합치기](https://novalabs.co.kr/tools/pdf-merge) · [나누기](https://novalabs.co.kr/tools/pdf-split) · [페이지 정리](https://novalabs.co.kr/tools/pdf-organize) · [이미지 → PDF](https://novalabs.co.kr/tools/jpg-to-pdf) · [PDF → 이미지](https://novalabs.co.kr/tools/pdf-to-jpg)
-- 동영상: [자르기](https://novalabs.co.kr/tools/video-trim) · [용량 줄이기](https://novalabs.co.kr/tools/video-compress) · [GIF 변환](https://novalabs.co.kr/tools/video-to-gif) · [MP3 추출](https://novalabs.co.kr/tools/video-to-mp3) · [워터마크 지우기](https://novalabs.co.kr/tools/watermark-remover)
-- 기타: [글자수 세기](https://novalabs.co.kr/tools/character-counter) · [QR 코드 생성](https://novalabs.co.kr/tools/qr-code) · [비밀번호 생성](https://novalabs.co.kr/tools/password-generator) · [타자 속도 테스트](https://novalabs.co.kr/tools/typing-test)
+- PDF: 용량 줄이기 · 합치기 · 나누기 · 페이지 정리 · 이미지 → PDF · PDF → 이미지
+- 동영상: 자르기 · 용량 줄이기 · GIF 변환 · MP3 추출 · 워터마크 지우기
+- 기타: 글자수 세기 · QR 코드 생성 · 비밀번호 생성 · 타자 속도 테스트
 
 계산 전에 알아 두면 좋은 제도와 예시는 [생활 계산 가이드](https://novalabs.co.kr/guides)에 꾸준히 올리고 있습니다.
 
