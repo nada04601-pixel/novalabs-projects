@@ -23,9 +23,10 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - 사주 궁합: `/tools/saju-match`. `src/lib/calculators/sajuMatch.ts`가 두 사람의 `calcSaju` 결과로 일간 관계(30)·일지(30)·오행 보완(25)·띠(15) 점수를 내고, 풀이 문구는 `src/data/sajuMatchText.ts`. 궁합 공유 링크는 `encodeMatchLink`(`#ay=…&by=…`, 사주 링크와 같은 `src/lib/sajuLink.ts`), 공유 버튼은 두 페이지가 함께 쓰는 `ShareLinkButtons`
 - MBTI 성격 유형 테스트: `/tools/mbti`. 문항·점수 계산·공유 링크(`#r=INFP&p=…`, 지표별 E·S·T·J 비율)는 `src/lib/calculators/mbti.ts`, 16가지 유형 풀이는 `src/data/mbtiText.ts`(영어 풀이 `TYPE_TEXT_EN`도 같은 파일). 영어 페이지 `/en/tools/mbti`는 문항의 `en` 문장과 `useT()`로 같은 컴포넌트를 씁니다
 - 로또: `/tools/lotto-simulator`(번호 생성 + 매주 샀다면? 시뮬레이션), `/lotto`(당첨번호 조회: 최신 회차·1등 배출점·전체 회차 검색·출현 통계), `/lotto/[회차]`(회차별 상세). 예전 `/tools/lotto`는 `public/_redirects`로 시뮬레이터로 옮김. 당첨 결과는 `src/data/lotto/draws.json`에 저장하고 빌드 때 정적 HTML로 들어감
+- 동영상 자막 추출: `/tools/video-subtitle`. mediabunny는 입력 파일의 자막 트랙을 읽지 못해 `src/lib/tools/subtitleExtract.ts`가 MKV·WebM(EBML, zlib 압축 블록 포함)과 MP4·MOV(moov 표, tx3g·wvtt)를 직접 해석합니다. MKV는 자막 블록이 영상 사이에 흩어져 있어 파일 전체를 조각으로 읽고, 자막 트랙이 없으면 Tracks까지만 읽고 멈춥니다. SRT·VTT·ASS·TXT 변환은 `src/lib/tools/subtitles.ts`. PGS·VobSub 같은 그림 자막과 화면에 새겨진 자막은 꺼낼 수 없습니다
 
 ## 영어 페이지 (/en)
-- 해외에서도 쓸 수 있는 도구(PDF·이미지·동영상·오디오·유틸리티) 14개만 영어 버전이 있습니다. 목록은 `src/lib/i18n.ts`의 `EN_TOOLS`(한글 타자 연습, 나이스 바이트 글자수 세기, 한국 기준 계산기는 한국어만).
+- 해외에서도 쓸 수 있는 도구(PDF·이미지·동영상·오디오·유틸리티) 15개만 영어 버전이 있습니다. 목록은 `src/lib/i18n.ts`의 `EN_TOOLS`(한글 타자 연습, 나이스 바이트 글자수 세기, 한국 기준 계산기는 한국어만).
 - 주소: `/en`(영어 홈), `/en/tools/[slug]`. 한국어 주소는 그대로이고, 두 페이지는 hreflang(`alternates.languages`)과 사이트맵으로 서로 연결됩니다.
 - 영어 제목·설명·사용법·FAQ: `src/data/tools.en.ts`. 화면 문구는 각 컴포넌트에서 `useT()`로 `t("한국어", "English")`처럼 나란히 적고, 경로가 `/en`이면 영어를 고릅니다(`src/lib/useT.ts`). 라이브러리의 오류 문구·파일 이름은 `lang` 인자(기본 `ko`)로 바꿉니다.
 - 헤더의 언어 전환 링크는 같은 도구의 다른 언어 페이지로, 영어 버전이 없는 페이지에서는 영어 홈으로 갑니다.
