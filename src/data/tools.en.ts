@@ -398,6 +398,7 @@ export const toolsEn: EnToolInfo[] = [
     faq: [
       { q: "It says there are no subtitle tracks.", a: "The subtitles are probably burned into the picture, or they came as a separate file (.srt) that your player opened alongside the video. Neither is stored as text inside the video file, so there is nothing to extract." },
       { q: "Do large files take long?", a: "MP4 and MOV finish quickly because only the index is read. In MKV and WebM the subtitles are spread between the video data, so the whole file is read; a file of several GB can take tens of seconds on a computer." },
+      { q: "Can I extract and share subtitles from movies or TV shows?", a: "Use it only on videos you made or have rights to. Subtitles for movies and shows are the work of their translators or studios, so posting extracted subtitles online or sharing them with others may infringe copyright. Keep them for your own study or notes." },
       { q: "The text looks garbled.", a: "Subtitle files are saved as UTF-8 with a BOM. Very old players that can't read UTF-8 may show garbled text; try a current player or an editor that supports SRT and VTT." },
     ],
   },
