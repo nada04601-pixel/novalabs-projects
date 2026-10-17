@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@huggingface/transformers": "4.2.0",
     "@mediabunny/mp3-encoder": "1.60.0",
     "@tensorflow/tfjs": "4.11.0",
     "@upscalerjs/esrgan-medium": "1.0.0",
