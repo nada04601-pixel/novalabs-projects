@@ -6,7 +6,7 @@ export const SAMPLE_RATE = 16_000; // Whisper가 받는 소리 형식(16kHz 모�
 
 export const WHISPER_MODELS = {
   base: { id: "onnx-community/whisper-base", label: "빠르게", labelEn: "Faster", size: "약 100MB", sizeEn: "~100 MB" },
-  small: { id: "onnx-community/whisper-small", label: "정확하게", labelEn: "More accurate", size: "약 300MB", sizeEn: "~300 MB" },
+  small: { id: "onnx-community/whisper-small", label: "정확하게", labelEn: "More accurate", size: "약 350MB", sizeEn: "~350 MB" },
 } as const;
 export type WhisperModel = keyof typeof WHISPER_MODELS;
 

@@ -64,7 +64,7 @@ footer p{margin:8px 0 0}
 thead td,thead th{color:var(--mut);font-size:13px;font-weight:500}
 .scroll{overflow-x:auto;margin-top:8px}
 .scroll table{font-size:13px;min-width:480px}
-.warn{background:var(--bg);border-left:3px solid #f59e0b;padding:10px 14px;border-radius:6px;font-size:14px;margin:0 0 14px}
+.warn{background:var(--bg);border-left:3px solid #f59e0b;padding:10px 14px;border-radius:6px;font-size:14px;margin:0 0 14px;overflow-wrap:anywhere}
 .meta{color:var(--mut);font-size:14px;margin:0 0 24px}
 .related{background:var(--card);border-radius:14px;padding:18px 22px;margin-top:36px}
 .related h2{margin:0 0 6px;font-size:16px}

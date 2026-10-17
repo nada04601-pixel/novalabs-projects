@@ -23,31 +23,46 @@ env.backends.onnx.wasm!.wasmPaths = safari
 
 let loaded: { key: string; asr: AutomaticSpeechRecognitionPipeline; device: "webgpu" | "wasm" } | null = null;
 
-// WebGPU가 있으면 그래픽 카드로 훨씬 빠르게 돌리고, 없거나 실패하면 CPU(WebAssembly)로 돌립니다.
+type Attempt = { device: "webgpu" | "wasm"; options: Record<string, unknown> };
+
+// 실행 방식 후보를 순서대로 시도합니다.
+// - 4비트(q4) 디코더는 지금 쓰는 ONNX Runtime이 불러오다 실패해(TransposeDQWeightsForMatMulNBits) 쓰지 않습니다.
+// - 디코더는 어느 방식이든 같은 8비트(q8) 파일을 써서, 그래픽 카드 방식이 실패해도 다시 받지 않습니다.
+// - 마지막 후보는 그래프 최적화를 끄고 CPU로 돌려, 최적화 단계에서 나는 오류를 피합니다.
+async function attempts(): Promise<Attempt[]> {
+  const list: Attempt[] = [];
+  const gpu = (self.navigator as Navigator & { gpu?: { requestAdapter(): Promise<{ features: Set<string> } | null> } }).gpu;
+  const adapter = await gpu?.requestAdapter().catch(() => null);
+  if (adapter) {
+    // 인코더를 줄이면 인식 품질이 크게 떨어져 16·32비트로 둡니다. 인식 시간 대부분이 인코더라 여기만 그래픽 카드로 돌려도 빨라집니다.
+    const encoder = adapter.features.has("shader-f16") ? "fp16" : "fp32";
+    list.push({ device: "webgpu", options: { device: "webgpu", dtype: { encoder_model: encoder, decoder_model_merged: "q8" } } });
+  }
+  list.push({ device: "wasm", options: { device: "wasm", dtype: "q8" } });
+  list.push({ device: "wasm", options: { device: "wasm", dtype: "q8", session_options: { graphOptimizationLevel: "disabled" } } });
+  return list;
+}
+
+// 라이브러리가 모델을 처음 실행할 때에야 오류를 내는 경우가 있어, 1초짜리 무음으로 한 번 돌려 보고 통과한 방식을 씁니다.
 async function load(model: WhisperModel) {
   if (loaded?.key === model) return loaded;
   const id = WHISPER_MODELS[model].id;
   const progress_callback = (p: { status: string; loaded?: number; total?: number }) => {
     if (p.status === "progress_total") post({ type: "load", loaded: p.loaded ?? 0, total: p.total ?? 0 });
   };
-  const gpu = (self.navigator as Navigator & { gpu?: { requestAdapter(): Promise<{ features: Set<string> } | null> } }).gpu;
-  const adapter = await gpu?.requestAdapter().catch(() => null);
-  if (adapter) {
+  let lastError: unknown = null;
+  for (const a of await attempts()) {
+    let asr: AutomaticSpeechRecognitionPipeline | null = null;
     try {
-      // 인코더를 4비트로 줄이면 인식 품질이 크게 떨어져, 인코더는 16·32비트, 디코더만 4비트로 씁니다.
-      const encoder = adapter.features.has("shader-f16") ? "fp16" : "fp32";
-      const asr = (await pipeline("automatic-speech-recognition", id, {
-        device: "webgpu",
-        dtype: { encoder_model: encoder, decoder_model_merged: "q4" },
-        progress_callback,
-      })) as AutomaticSpeechRecognitionPipeline;
-      return (loaded = { key: model, asr, device: "webgpu" });
-    } catch {
-      // 아래 CPU 방식으로 다시 시도
+      asr = (await pipeline("automatic-speech-recognition", id, { ...a.options, progress_callback })) as AutomaticSpeechRecognitionPipeline;
+      await asr(new Float32Array(SAMPLE_RATE), { task: "transcribe" });
+      return (loaded = { key: model, asr, device: a.device });
+    } catch (err) {
+      lastError = err;
+      await asr?.dispose().catch(() => {});
     }
   }
-  const asr = (await pipeline("automatic-speech-recognition", id, { device: "wasm", dtype: "q8", progress_callback })) as AutomaticSpeechRecognitionPipeline;
-  return (loaded = { key: model, asr, device: "wasm" });
+  throw lastError;
 }
 
 self.onmessage = async (e: MessageEvent<WhisperRequest>) => {
