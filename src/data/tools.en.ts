@@ -392,7 +392,7 @@ export const toolsEn: EnToolInfo[] = [
       },
       {
         heading: "Creating subtitles from speech",
-        body: "If there are no subtitle tracks, choose the spoken language and a mode, then press 'Create subtitles'. OpenAI's Whisper speech recognition model runs inside your browser and transcribes the speech. The AI model (about 100 MB for Faster, 300 MB for More accurate) is downloaded once from Hugging Face and then reused from your browser's storage. In Chrome or Edge with a GPU (WebGPU) it often finishes faster than the video plays; on CPU it can take longer than the video. Up to 60 minutes can be processed at a time.",
+        body: "If there are no subtitle tracks, choose the spoken language and a mode, then press 'Create subtitles'. OpenAI's Whisper speech recognition model runs inside your browser and transcribes the speech. The AI model (about 100 MB for Faster, 350 MB for More accurate) is downloaded once from Hugging Face and then reused from your browser's storage. In Chrome or Edge with a GPU (WebGPU) it often finishes faster than the video plays; on CPU it can take longer than the video. Up to 60 minutes can be processed at a time.",
       },
       {
         heading: "File names",
