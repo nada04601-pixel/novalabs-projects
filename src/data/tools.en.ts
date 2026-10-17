@@ -373,6 +373,35 @@ export const toolsEn: EnToolInfo[] = [
     ],
   },
   {
+    slug: "video-subtitle",
+    category: "Video & audio",
+    title: "Extract Subtitles from Video",
+    short: "Save the subtitle tracks inside an MKV or MP4 video as SRT or VTT files.",
+    metaDescription:
+      "Free online tool to extract embedded subtitle tracks from MKV, MP4, MOV and WebM videos as SRT, VTT, ASS or TXT, right in your browser. No upload.",
+    intro:
+      `Save the subtitles stored inside a video file (the kind you can turn on and off) as subtitle files, to use them in another player or editor or to keep the dialogue as text. ${PRIVATE}`,
+    howTo: [
+      {
+        heading: "Which subtitles can be extracted",
+        body: "SRT, ASS, SSA and WebVTT subtitles in MKV and WebM, and text subtitles (mov_text, WebVTT) in MP4 and MOV. PGS and VobSub subtitles ripped from Blu-ray or DVD are stored as images, not text, so they can't be extracted, and neither can subtitles burned into the picture.",
+      },
+      {
+        heading: "Choosing a format",
+        body: "SRT is read by almost every player and editor. VTT is used on the web (HTML5 video) and for YouTube uploads. If the video has ASS subtitles you can also save them as ASS, keeping fonts, colors and positions. TXT collects just the dialogue without timings.",
+      },
+      {
+        heading: "File names",
+        body: "Files are named after the video with a language code, like 'movie.eng.srt'. Put the file next to the video and most players (VLC, mpv and others) load it automatically.",
+      },
+    ],
+    faq: [
+      { q: "It says there are no subtitle tracks.", a: "The subtitles are probably burned into the picture, or they came as a separate file (.srt) that your player opened alongside the video. Neither is stored as text inside the video file, so there is nothing to extract." },
+      { q: "Do large files take long?", a: "MP4 and MOV finish quickly because only the index is read. In MKV and WebM the subtitles are spread between the video data, so the whole file is read; a file of several GB can take tens of seconds on a computer." },
+      { q: "The text looks garbled.", a: "Subtitle files are saved as UTF-8 with a BOM. Very old players that can't read UTF-8 may show garbled text; try a current player or an editor that supports SRT and VTT." },
+    ],
+  },
+  {
     slug: "password-generator",
     category: "Utilities",
     title: "Password Generator",

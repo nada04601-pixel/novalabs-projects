@@ -9,7 +9,7 @@ export const locale = (lang: Lang) => (lang === "en" ? "en-US" : "ko-KR");
 export const EN_TOOLS = [
   "pdf-compress", "pdf-merge", "pdf-split", "pdf-organize", "jpg-to-pdf", "pdf-to-jpg",
   "image-upscaler", "watermark-remover",
-  "video-trim", "video-compress", "video-to-gif", "video-to-mp3",
+  "video-trim", "video-compress", "video-to-gif", "video-to-mp3", "video-subtitle",
   "password-generator", "qr-code",
   "mbti", "saju",
 ] as const;
