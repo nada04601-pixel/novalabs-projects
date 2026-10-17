@@ -376,11 +376,11 @@ export const toolsEn: EnToolInfo[] = [
     slug: "video-subtitle",
     category: "Video & audio",
     title: "Extract Subtitles from Video",
-    short: "Save the subtitle tracks inside an MKV or MP4 video as SRT or VTT files.",
+    short: "Extract the subtitles inside a video, or transcribe its speech into SRT or VTT subtitles.",
     metaDescription:
-      "Free online tool to extract embedded subtitle tracks from MKV, MP4, MOV and WebM videos as SRT, VTT, ASS or TXT, right in your browser. No upload.",
+      "Free online tool to extract embedded subtitle tracks from MKV, MP4, MOV and WebM videos as SRT, VTT, ASS or TXT, or create subtitles with AI speech recognition (Whisper) right in your browser. No upload.",
     intro:
-      `Save the subtitles stored inside a video file (the kind you can turn on and off) as subtitle files, to use them in another player or editor or to keep the dialogue as text. ${PRIVATE}`,
+      `Save the subtitles stored inside a video file (the kind you can turn on and off) as subtitle files. If a video has none, AI listens to the speech and writes subtitles for you, which is handy for turning lectures and meetings into text or captioning your own videos. ${PRIVATE}`,
     howTo: [
       {
         heading: "Which subtitles can be extracted",
@@ -391,12 +391,18 @@ export const toolsEn: EnToolInfo[] = [
         body: "SRT is read by almost every player and editor. VTT is used on the web (HTML5 video) and for YouTube uploads. If the video has ASS subtitles you can also save them as ASS, keeping fonts, colors and positions. TXT collects just the dialogue without timings.",
       },
       {
+        heading: "Creating subtitles from speech",
+        body: "If there are no subtitle tracks, choose the spoken language and a mode, then press 'Create subtitles'. OpenAI's Whisper speech recognition model runs inside your browser and transcribes the speech. The AI model (about 100 MB for Faster, 300 MB for More accurate) is downloaded once from Hugging Face and then reused from your browser's storage. In Chrome or Edge with a GPU (WebGPU) it often finishes faster than the video plays; on CPU it can take longer than the video. Up to 60 minutes can be processed at a time.",
+      },
+      {
         heading: "File names",
         body: "Files are named after the video with a language code, like 'movie.eng.srt'. Put the file next to the video and most players (VLC, mpv and others) load it automatically.",
       },
     ],
     faq: [
       { q: "It says there are no subtitle tracks.", a: "The subtitles are probably burned into the picture, or they came as a separate file (.srt) that your player opened alongside the video. Neither is stored as text inside the video file, so there is nothing to extract." },
+      { q: "The speech-recognized subtitles have mistakes.", a: "They're transcribed by AI, so names, technical terms and quiet speech can be misheard. 'More accurate' does better but is larger and slower, and choosing the language instead of auto-detect also helps. You can fix the downloaded SRT in any text or subtitle editor." },
+      { q: "Is my video sent anywhere when the AI model downloads?", a: "No. Only the model files are downloaded; the video and audio never leave your browser, and the transcription runs entirely on your device." },
       { q: "Do large files take long?", a: "MP4 and MOV finish quickly because only the index is read. In MKV and WebM the subtitles are spread between the video data, so the whole file is read; a file of several GB can take tens of seconds on a computer." },
       { q: "Can I extract and share subtitles from movies or TV shows?", a: "Use it only on videos you made or have rights to. Subtitles for movies and shows are the work of their translators or studios, so posting extracted subtitles online or sharing them with others may infringe copyright. Keep them for your own study or notes." },
       { q: "The text looks garbled.", a: "Subtitle files are saved as UTF-8 with a BOM. Very old players that can't read UTF-8 may show garbled text; try a current player or an editor that supports SRT and VTT." },
