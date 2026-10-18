@@ -17,7 +17,7 @@ async function resample(mono: Float32Array, rate: number): Promise<Float32Array>
   return (await ctx.startRendering()).getChannelData(0);
 }
 
-export async function decodeSpeechAudio(file: Blob, onProgress: (p: number) => void, signal?: AbortSignal): Promise<{ samples: Float32Array; duration: number }> {
+export async function decodeSpeechAudio(file: Blob, onProgress: (p: number) => void, signal?: AbortSignal): Promise<{ samples: Float32Array; duration: number; level: number }> {
   const mb = await import("mediabunny");
   const input = new mb.Input({ source: new mb.BlobSource(file), formats: mb.ALL_FORMATS });
   try {
@@ -64,7 +64,11 @@ export async function decodeSpeechAudio(file: Blob, onProgress: (p: number) => v
     }
     await flush();
     onProgress(1);
-    return { samples: out.subarray(0, written), duration };
+    const samples = out.subarray(0, written);
+    // 소리 크기(RMS). 0에 가까우면 무음이거나 소리를 제대로 풀지 못한 것입니다.
+    let sum = 0;
+    for (let i = 0; i < samples.length; i++) sum += samples[i] * samples[i];
+    return { samples, duration, level: samples.length ? Math.sqrt(sum / samples.length) : 0 };
   } finally {
     input.dispose();
   }
