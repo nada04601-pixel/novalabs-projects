@@ -10,7 +10,7 @@ export type WhisperMessage =
   | { type: "prepare"; device: "webgpu" | "wasm" } // 내려받기를 마치고 모델을 올려 시험 실행하는 중
   | { type: "retry"; from: "webgpu" | "wasm"; message: string } // 이 방식이 실패해 다음 방식으로 다시 시도
   | { type: "ready"; device: "webgpu" | "wasm" }
-  | { type: "chunk"; done: number; total: number; cues: SubtitleCue[] }
+  | { type: "chunk"; done: number; total: number; cues: SubtitleCue[]; raw: number } // raw: 모델이 돌려준 글자 수(다듬기 전)
   | { type: "done" }
   | { type: "error"; message: string };
 
@@ -79,16 +79,21 @@ self.onmessage = async (e: MessageEvent<WhisperRequest>) => {
     for (let i = 0; i < chunks.length; i++) {
       const [a, b] = chunks[i];
       let cues: SubtitleCue[] = [];
+      let raw = 0;
       // 0.3초보다 짧은 끝자락은 건너뜁니다(Whisper가 없는 말을 지어내기 쉬움).
       if (b - a >= 0.3 * SAMPLE_RATE) {
         const out = (await asr(samples.subarray(a, b), {
           return_timestamps: true,
           task: "transcribe",
           ...(language === "auto" ? {} : { language }),
-        })) as { chunks?: SpeechChunk[] };
-        cues = chunkCues(out.chunks ?? [], a / SAMPLE_RATE, b / SAMPLE_RATE);
+        })) as { text?: string; chunks?: SpeechChunk[] };
+        const text = out.text?.trim() ?? "";
+        raw = text.length;
+        // 시간 정보 없이 글만 돌아오면 조각 전체를 자막 하나로 둡니다.
+        const parts = out.chunks?.length ? out.chunks : text ? [{ timestamp: [0, null] as [number, null], text }] : [];
+        cues = chunkCues(parts, a / SAMPLE_RATE, b / SAMPLE_RATE);
       }
-      post({ type: "chunk", done: i + 1, total: chunks.length, cues });
+      post({ type: "chunk", done: i + 1, total: chunks.length, cues, raw });
     }
     post({ type: "done" });
   } catch (err) {

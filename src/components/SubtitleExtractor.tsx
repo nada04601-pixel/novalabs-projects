@@ -67,6 +67,7 @@ function SpeechToSubtitle({ file }: { file: File }) {
   const [result, setResult] = useState<SubtitleTrack | null>(null);
   const [error, setError] = useState("");
   const [retried, setRetried] = useState(false);
+  const [stats, setStats] = useState(""); // 결과가 비었을 때 원인을 가늠하는 정보
   const [stalled, setStalled] = useState(false);
   const worker = useRef<Worker | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -106,13 +107,15 @@ function SpeechToSubtitle({ file }: { file: File }) {
     setCues([]);
     setResult(null);
     setRetried(false);
+    setStats("");
     const ctrl = new AbortController();
     abortRef.current = ctrl;
     setState({ phase: "decode", progress: 0 });
     let samples: Float32Array;
+    let level = 0;
     try {
       const { decodeSpeechAudio } = await import("@/lib/tools/audioDecode");
-      samples = (await decodeSpeechAudio(file, (p) => setState({ phase: "decode", progress: p }), ctrl.signal)).samples;
+      ({ samples, level } = await decodeSpeechAudio(file, (p) => setState({ phase: "decode", progress: p }), ctrl.signal));
     } catch (e) {
       const msg = e instanceof Error ? e.message : "";
       if (!ctrl.signal.aborted)
@@ -126,6 +129,12 @@ function SpeechToSubtitle({ file }: { file: File }) {
       return;
     }
     if (ctrl.signal.aborted) return;
+    // 소리가 거의 없으면 모델을 받을 필요 없이 바로 알려 줍니다.
+    if (level < 1e-4) {
+      setError(t("소리가 무음으로 읽혔습니다. 소리가 없는 동영상이거나, 이 브라우저가 소리를 제대로 풀지 못했을 수 있습니다. 다른 브라우저에서 해 보세요.", "The audio came out silent. The video may have no sound, or this browser couldn't decode it properly. Try another browser."));
+      setState({ phase: "idle" });
+      return;
+    }
 
     setState({ phase: "load", loaded: 0, total: 0, device: "wasm" });
     lastMsg.current = Date.now();
@@ -133,6 +142,8 @@ function SpeechToSubtitle({ file }: { file: File }) {
     worker.current = w;
     const got: SubtitleCue[] = [];
     let device: "webgpu" | "wasm" = "wasm";
+    let raw = 0;
+    let pieces = 0;
     w.onmessage = (e: MessageEvent<WhisperMessage>) => {
       const m = e.data;
       lastMsg.current = Date.now();
@@ -145,10 +156,15 @@ function SpeechToSubtitle({ file }: { file: File }) {
         setState({ phase: "recognize", done: 0, total: 1, device });
       } else if (m.type === "chunk") {
         got.push(...m.cues);
+        raw += m.raw;
+        pieces = m.total;
         setCues([...got]);
         setState({ phase: "recognize", done: m.done, total: m.total, device });
       } else {
-        if (m.type === "done") finish(got);
+        if (m.type === "done") {
+          finish(got);
+          setStats(`${device === "webgpu" ? t("그래픽 카드", "GPU") : "CPU"} · ${t(`조각 ${pieces}개`, `${pieces} pieces`)} · ${t(`인식 글자 ${raw}자`, `${raw} characters recognized`)} · ${t("소리 크기", "audio level")} ${level.toFixed(4)}`);
+        }
         else setError(t(`음성 인식을 하지 못했습니다. 인터넷 연결을 확인하거나 다른 브라우저에서 해 보세요. (${m.message})`, `Speech recognition failed. Check your connection or try another browser. (${m.message})`));
         stop();
         setState({ phase: "idle" });
@@ -247,7 +263,11 @@ function SpeechToSubtitle({ file }: { file: File }) {
             </li>
           </ul>
         ) : (
-          <p className="warn">{t("알아들은 말이 없습니다. 말소리가 없거나 너무 작은 동영상일 수 있습니다.", "No speech was recognized. The video may have no speech, or it's too quiet.")}</p>
+          <p className="warn">
+            {t("알아들은 말이 없습니다. 말소리 없이 음악만 있거나 말소리가 너무 작은 동영상일 수 있습니다. 말하는 언어를 '자동 감지'로 바꾸거나 '정확하게'로 다시 해 보세요.", "No speech was recognized. The video may have only music, or the speech is too quiet. Try 'Auto-detect' or 'More accurate'.")}
+            <br />
+            <small>({stats})</small>
+          </p>
         )
       )}
     </>
