@@ -6,7 +6,9 @@ import type { SubtitleCue } from "./subtitles";
 
 export type WhisperRequest = { samples: Float32Array; model: WhisperModel; language: SpeechLanguage };
 export type WhisperMessage =
-  | { type: "load"; loaded: number; total: number }
+  | { type: "load"; loaded: number; total: number; device: "webgpu" | "wasm" }
+  | { type: "prepare"; device: "webgpu" | "wasm" } // 내려받기를 마치고 모델을 올려 시험 실행하는 중
+  | { type: "retry"; from: "webgpu" | "wasm"; message: string } // 이 방식이 실패해 다음 방식으로 다시 시도
   | { type: "ready"; device: "webgpu" | "wasm" }
   | { type: "chunk"; done: number; total: number; cues: SubtitleCue[] }
   | { type: "done" }
@@ -47,18 +49,21 @@ async function attempts(): Promise<Attempt[]> {
 async function load(model: WhisperModel) {
   if (loaded?.key === model) return loaded;
   const id = WHISPER_MODELS[model].id;
-  const progress_callback = (p: { status: string; loaded?: number; total?: number }) => {
-    if (p.status === "progress_total") post({ type: "load", loaded: p.loaded ?? 0, total: p.total ?? 0 });
-  };
   let lastError: unknown = null;
   for (const a of await attempts()) {
+    const progress_callback = (p: { status: string; loaded?: number; total?: number }) => {
+      if (p.status === "progress_total") post({ type: "load", loaded: p.loaded ?? 0, total: p.total ?? 0, device: a.device });
+    };
     let asr: AutomaticSpeechRecognitionPipeline | null = null;
     try {
+      post({ type: "load", loaded: 0, total: 0, device: a.device });
       asr = (await pipeline("automatic-speech-recognition", id, { ...a.options, progress_callback })) as AutomaticSpeechRecognitionPipeline;
+      post({ type: "prepare", device: a.device });
       await asr(new Float32Array(SAMPLE_RATE), { task: "transcribe" });
       return (loaded = { key: model, asr, device: a.device });
     } catch (err) {
       lastError = err;
+      post({ type: "retry", from: a.device, message: err instanceof Error ? err.message : String(err) });
       await asr?.dispose().catch(() => {});
     }
   }

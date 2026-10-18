@@ -50,8 +50,12 @@ function TrackFiles({ track, all, videoName }: { track: SubtitleTrack; all: Subt
 type SpeechState =
   | { phase: "idle" }
   | { phase: "decode"; progress: number }
-  | { phase: "load"; loaded: number; total: number }
+  | { phase: "load"; loaded: number; total: number; device: "webgpu" | "wasm" }
+  | { phase: "prepare"; device: "webgpu" | "wasm" }
   | { phase: "recognize"; done: number; total: number; device: "webgpu" | "wasm" };
+
+// 모델 받기·준비 중에 이 시간 동안 아무 소식이 없으면 멈춘 것 같다고 알려 줍니다(작업은 계속).
+const STALL_MS = 60_000;
 
 // 소리를 듣고 받아 적어 자막을 만듭니다(Whisper). 자막 트랙이 없는 동영상에도 쓸 수 있습니다.
 function SpeechToSubtitle({ file }: { file: File }) {
@@ -62,8 +66,17 @@ function SpeechToSubtitle({ file }: { file: File }) {
   const [cues, setCues] = useState<SubtitleCue[]>([]);
   const [result, setResult] = useState<SubtitleTrack | null>(null);
   const [error, setError] = useState("");
+  const [retried, setRetried] = useState(false);
+  const [stalled, setStalled] = useState(false);
   const worker = useRef<Worker | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const lastMsg = useRef(0);
+
+  useEffect(() => {
+    if (state.phase !== "load" && state.phase !== "prepare") return setStalled(false);
+    const id = setInterval(() => setStalled(Date.now() - lastMsg.current > STALL_MS), 5000);
+    return () => clearInterval(id);
+  }, [state.phase]);
 
   const stop = () => {
     abortRef.current?.abort();
@@ -92,6 +105,7 @@ function SpeechToSubtitle({ file }: { file: File }) {
     setError("");
     setCues([]);
     setResult(null);
+    setRetried(false);
     const ctrl = new AbortController();
     abortRef.current = ctrl;
     setState({ phase: "decode", progress: 0 });
@@ -113,14 +127,19 @@ function SpeechToSubtitle({ file }: { file: File }) {
     }
     if (ctrl.signal.aborted) return;
 
-    setState({ phase: "load", loaded: 0, total: 0 });
+    setState({ phase: "load", loaded: 0, total: 0, device: "wasm" });
+    lastMsg.current = Date.now();
     const w = new Worker(new URL("../lib/tools/whisper.worker.ts", import.meta.url), { type: "module" });
     worker.current = w;
     const got: SubtitleCue[] = [];
     let device: "webgpu" | "wasm" = "wasm";
     w.onmessage = (e: MessageEvent<WhisperMessage>) => {
       const m = e.data;
-      if (m.type === "load") setState({ phase: "load", loaded: m.loaded, total: m.total });
+      lastMsg.current = Date.now();
+      setStalled(false);
+      if (m.type === "load") setState({ phase: "load", loaded: m.loaded, total: m.total, device: m.device });
+      else if (m.type === "prepare") setState({ phase: "prepare", device: m.device });
+      else if (m.type === "retry") setRetried(true);
       else if (m.type === "ready") {
         device = m.device;
         setState({ phase: "recognize", done: 0, total: 1, device });
@@ -184,9 +203,26 @@ function SpeechToSubtitle({ file }: { file: File }) {
       {state.phase === "decode" && <Status text={t("소리를 꺼내는 중…", "Extracting audio…")} value={state.progress} />}
       {state.phase === "load" && (
         <Status
-          text={state.total ? `${t("AI 모델을 내려받는 중…", "Downloading the AI model…")} ${formatBytes(state.loaded)} / ${formatBytes(state.total)}` : t("AI 모델을 준비하는 중…", "Preparing the AI model…")}
+          text={state.total ? `${t("AI 모델을 내려받는 중…", "Downloading the AI model…")} ${formatBytes(state.loaded)} / ${formatBytes(state.total)}` : t("AI 모델을 내려받을 준비를 하는 중…", "Getting ready to download the AI model…")}
           value={state.total ? state.loaded / state.total : null}
         />
+      )}
+      {state.phase === "prepare" && (
+        <Status
+          text={`${t("AI 모델을 불러오는 중…", "Loading the AI model…")} (${state.device === "webgpu" ? t("그래픽 카드", "GPU") : t("CPU, 휴대폰에서는 1~2분 걸릴 수 있습니다", "CPU, may take a minute or two on phones")})`}
+          value={null}
+        />
+      )}
+      {retried && busy && (
+        <p className="note-sm">{t("그래픽 카드 방식이 이 기기에서 실패해 CPU 방식으로 다시 시도하고 있습니다.", "The GPU mode failed on this device, so it's retrying with the CPU.")}</p>
+      )}
+      {stalled && (
+        <p className="warn">
+          {t(
+            "1분 넘게 진행이 없습니다. 인터넷이 느리거나 끊겼을 수 있고, 휴대폰은 메모리가 부족해 멈출 수 있습니다. 조금 더 기다려 보거나, 멈추기를 누른 뒤 와이파이에서 다시 하거나 컴퓨터의 크롬·엣지에서 해 보세요.",
+            "No progress for over a minute. The connection may be slow or lost, or a phone may be out of memory. Wait a little longer, or stop and retry on Wi-Fi or in Chrome or Edge on a computer.",
+          )}
+        </p>
       )}
       {state.phase === "recognize" && (
         <>
