@@ -18,7 +18,11 @@ export default function LottoHistory({ draws }: { draws: DrawLite[] }) {
   const list = nums.length
     ? desc.filter(([, , ns]) => nums.every((n) => ns.includes(n)))
     : no
-      ? desc.filter(([d]) => String(d).startsWith(String(no)))
+      ? [
+          // 입력한 회차를 맨 위에, 그 번호로 시작하는 회차는 그 아래에 둡니다.
+          ...desc.filter(([d]) => d === no),
+          ...desc.filter(([d]) => d !== no && String(d).startsWith(String(no))),
+        ]
       : desc;
   const pages = Math.max(1, Math.ceil(list.length / PER_PAGE));
   const cur = Math.min(page, pages - 1);
