@@ -409,6 +409,41 @@ export const toolsEn: EnToolInfo[] = [
     ],
   },
   {
+    slug: "video-subtitle-remove",
+    category: "Video & audio",
+    title: "Remove Subtitles from Video",
+    short: "Remove a video's subtitle tracks, or erase burned-in subtitle text by filling it with surrounding colors.",
+    metaDescription:
+      "Free online tool to remove subtitle tracks from MKV, MP4, MOV and WebM without re-encoding, and erase hardcoded (burned-in) subtitles by detecting just the text and filling it in. Runs in your browser with no upload.",
+    intro:
+      `Take out subtitles you added to your own videos, or clear old subtitles before adding new ones in another language. Subtitle tracks you can turn on and off are removed without re-encoding; subtitles burned into the picture are detected and erased frame by frame. ${PRIVATE}`,
+    howTo: [
+      {
+        heading: "Choosing the subtitle type",
+        body: "When you choose a file it's first checked for subtitle tracks. If there are any, 'Subtitle tracks' is selected and 'Remove subtitles' creates a copy with the video and audio untouched and the subtitle tracks left out. Nothing is re-encoded, so quality is unchanged and it's quick. If there are no tracks but you still see subtitles, they're burned into the picture: use 'Burned-in subtitles'.",
+      },
+      {
+        heading: "Erasing burned-in subtitles",
+        body: "A band at the bottom of the frame is pre-selected. Use the slider to find a frame with subtitles and press 'Preview' to check the result. If subtitles appear elsewhere, press 'Clear all areas' and drag to select new ones (up to 3). Instead of filling the whole area, only text pixels brighter than their outline or shadow are erased, so frames without subtitles stay as they are.",
+      },
+      {
+        heading: "If subtitles aren't fully erased",
+        body: "For yellow subtitles set the color to 'Yellow', and for other colors use 'Any bright color'. If text is left behind, raise the sensitivity to 'High'; if traces remain around the letters, increase the edge padding. If bright objects that aren't subtitles get smudged, lower the sensitivity or fit the area tightly to the subtitles. Dark text, or text with no outline on a bright background, is hard to detect.",
+      },
+      {
+        heading: "Processing time and output format",
+        body: "Erasing burned-in subtitles changes and re-encodes every frame, so it takes from a few minutes to tens of minutes depending on the video length and your device. Videos larger than 1920px on the long side are scaled down to 1920px, and the output is H.264 MP4 (WEBM if the browser can't make MP4). Removing subtitle tracks keeps the original format (MP4 and MOV become MP4, MKV stays MKV, WEBM stays WEBM).",
+      },
+    ],
+    faq: [
+      { q: "The erased area looks blurry.", a: "The text is filled with surrounding colors, so subtitles over faces or detailed textures can leave a smudge. On sky, walls or dark backgrounds they disappear almost without a trace. Keeping sensitivity at 'Normal' or 'Low' erases only the text that's needed and leaves fewer marks." },
+      { q: "Things that aren't subtitles get erased too.", a: "Inside the selected area, anything about as bright as the subtitle color and standing out from its surroundings (patterns on white clothes, sign text) can be taken for subtitles. Narrow the area to the subtitle lines and set sensitivity to 'Low'." },
+      { q: "I removed the tracks but still see subtitles.", a: "They're either burned into the picture or your player is loading a .srt file from the same folder. Erase burned-in subtitles with 'Burned-in subtitles', and delete or rename the separate subtitle file." },
+      { q: "It seems stuck while processing.", a: "Burned-in subtitle removal works on every frame, so progress can be slow. It's faster in Chrome or Edge on a computer than on a phone; keep the tab open while it runs." },
+      { q: "Can I remove subtitles from other people's videos?", a: "Use it only on videos you made or have permission to edit. Removing subtitles from movies, shows or other people's videos and re-uploading or sharing them may infringe copyright." },
+    ],
+  },
+  {
     slug: "password-generator",
     category: "Utilities",
     title: "Password Generator",

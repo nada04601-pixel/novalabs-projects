@@ -110,6 +110,89 @@ export async function convert(
   return { cancel: () => { conversion.cancel(); }, done };
 }
 
+// 자막 트랙 빼기: 영상·소리 트랙만 다시 담아(인코딩 없이) 자막·부가 트랙을 뺍니다. 형식은 원본과 같게(MKV는 MKV) 둡니다.
+// mediabunny는 입력의 자막 트랙을 읽지 않으므로 그대로 옮기면 자막이 빠집니다.
+export async function dropSubtitleTracks(
+  file: File,
+  onProgress: (p: number) => void,
+): Promise<{ cancel: () => void; done: Promise<{ blob: Blob; ext: "mp4" | "webm" | "mkv" }> }> {
+  const mb = await load();
+  const input = new mb.Input({ source: new mb.BlobSource(file), formats: mb.ALL_FORMATS });
+  const mime = (await input.getFormat()).mimeType;
+  const ext: "mp4" | "webm" | "mkv" = /webm/i.test(mime) ? "webm" : /matroska/i.test(mime) ? "mkv" : "mp4";
+  const target = new mb.BufferTarget();
+  const format = ext === "mp4" ? new mb.Mp4OutputFormat({ fastStart: "in-memory" }) : ext === "webm" ? new mb.WebMOutputFormat() : new mb.MkvOutputFormat();
+  const output = new mb.Output({ format, target });
+  const conversion = await mb.Conversion.init({ input, output, showWarnings: false });
+  if (!conversion.isValid || !conversion.utilizedTracks.some((t) => t.isVideoTrack())) {
+    input.dispose();
+    throw new Error("invalid");
+  }
+  conversion.onProgress = (p) => onProgress(Math.min(1, Math.max(0, p)));
+  const type = ext === "mp4" ? "video/mp4" : ext === "webm" ? "video/webm" : "video/x-matroska";
+  const done = conversion.execute().then(() => {
+    if (!target.buffer) throw new Error("empty");
+    return { blob: new Blob([target.buffer], { type }), ext };
+  }).finally(() => input.dispose());
+  return { cancel: () => { conversion.cancel(); }, done };
+}
+
+// 프레임마다 그림을 고쳐(fix) 다시 인코딩합니다. 소리는 가능하면 그대로 옮깁니다.
+// fix는 width×height 캔버스에 그려진 프레임을 직접 고칩니다.
+export async function processFrames(
+  file: File,
+  opts: { width: number; height: number; videoBitrate: number },
+  fix: (ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D) => void,
+  onProgress: (p: number) => void,
+): Promise<{ cancel: () => void; done: Promise<ConvertResult> }> {
+  const mb = await load();
+  const { width, height, videoBitrate } = opts;
+  const can = (c: "avc" | "vp9" | "vp8") => mb.canEncodeVideo(c, { width, height, bitrate: videoBitrate });
+  const videoCodec = (await can("avc")) ? "avc" : (await can("vp9")) ? "vp9" : (await can("vp8")) ? "vp8" : null;
+  if (!videoCodec) throw new Error("no-encoder");
+  const ext = videoCodec === "avc" ? "mp4" : "webm";
+
+  const canvas = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(width, height) : Object.assign(document.createElement("canvas"), { width, height });
+  const ctx = canvas.getContext("2d", { willReadFrequently: true }) as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+  if (!ctx) throw new Error("invalid");
+
+  const input = new mb.Input({ source: new mb.BlobSource(file), formats: mb.ALL_FORMATS });
+  const target = new mb.BufferTarget();
+  const output = new mb.Output({
+    format: ext === "mp4" ? new mb.Mp4OutputFormat({ fastStart: "in-memory" }) : new mb.WebMOutputFormat(),
+    target,
+  });
+  const conversion = await mb.Conversion.init({
+    input,
+    output,
+    tracks: "primary",
+    video: {
+      codec: videoCodec,
+      width,
+      height,
+      fit: "fill",
+      quality: new mb.Quality({ bitrate: videoBitrate }),
+      forceTranscode: true,
+      process: (sample) => {
+        sample.draw(ctx, 0, 0, width, height);
+        fix(ctx);
+        return canvas;
+      },
+    },
+    showWarnings: false,
+  });
+  if (!conversion.isValid || !conversion.utilizedTracks.some((t) => t.isVideoTrack())) {
+    input.dispose();
+    throw new Error("invalid");
+  }
+  conversion.onProgress = (p) => onProgress(Math.min(1, Math.max(0, p)));
+  const done = conversion.execute().then(() => {
+    if (!target.buffer) throw new Error("empty");
+    return { blob: new Blob([target.buffer], { type: ext === "mp4" ? "video/mp4" : "video/webm" }), ext } as ConvertResult;
+  }).finally(() => input.dispose());
+  return { cancel: () => { conversion.cancel(); }, done };
+}
+
 // 소리만 MP3로 뽑습니다. 브라우저에는 MP3 인코더가 없어서 필요할 때만 WebAssembly 인코더(LAME)를 불러와 씁니다.
 export async function extractMp3(
   file: File,

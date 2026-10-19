@@ -18,6 +18,7 @@ import VideoCompressor from "@/components/VideoCompressor";
 import VideoToGif from "@/components/VideoToGif";
 import AudioExtractor from "@/components/AudioExtractor";
 import SubtitleExtractor from "@/components/SubtitleExtractor";
+import SubtitleRemover from "@/components/SubtitleRemover";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
 import MbtiTest from "@/components/MbtiTest";
@@ -58,6 +59,7 @@ const components: Record<string, React.ReactNode> = {
   "video-to-gif": <VideoToGif />,
   "video-to-mp3": <AudioExtractor />,
   "video-subtitle": <SubtitleExtractor />,
+  "video-subtitle-remove": <SubtitleRemover />,
   "password-generator": <PasswordGenerator />,
   "qr-code": <QrCodeGenerator />,
   mbti: <MbtiTest />,
