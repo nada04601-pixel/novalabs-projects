@@ -1,11 +1,15 @@
-// Cloudflare Workers 정적 자산 배포 설정. next build가 만든 out/ 폴더를 그대로 올립니다.
+// Cloudflare Workers 배포 설정. next build가 만든 out/ 폴더를 정적 자산으로 올리고,
+// /api/* 요청만 worker/index.ts가 먼저 받습니다(음성 합성 비교 페이지용). 나머지 주소는 Worker를 거치지 않습니다.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "novalabs-projects",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./out",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/api/*"]
   }
 }
