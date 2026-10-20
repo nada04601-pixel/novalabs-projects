@@ -93,6 +93,14 @@ Workers & Pages → `novalabs-projects` → Settings → Build:
 
 `main`에 푸시(또는 PR 병합)하면 자동으로 프로덕션에 배포됩니다.
 
+### 음성 합성 비교 페이지 (/lab/tts, 혼자 쓰는 용도)
+쇼핑 쇼츠 대본을 OpenAI(`gpt-4o-mini-tts`)·타입캐스트(SSFM 3.0)·ElevenLabs 목소리로 만들어 비교합니다. 메뉴·사이트맵에 넣지 않고 `noindex`입니다.
+- 브라우저 → `worker/index.ts`(`/api/tts/status`·`voices`·`speak`) → 각 서비스. `wrangler.jsonc`의 `run_worker_first`로 `/api/*`만 Worker가 받고 나머지는 정적 파일 그대로입니다. 서비스별 요청 모양·말투(쇼호스트·솔직 리뷰·고급 제품)는 `src/lib/tts.ts`
+- 사이트 전체에 광고 스크립트가 있어 API 키는 브라우저에 두지 않고 Worker **런타임** 비밀값에 둡니다. Workers & Pages → `novalabs-projects` → Settings → **Variables and Secrets**(빌드 변수 아님)에 Secret으로 추가:
+  - `TTS_PASSWORD`: 페이지에서 입력할 비밀번호(필수, 없으면 API가 동작하지 않음)
+  - `OPENAI_API_KEY`, `TYPECAST_API_KEY`, `ELEVENLABS_API_KEY`: 쓸 서비스만 넣으면 되고, 없는 서비스는 페이지에서 꺼집니다
+- `npm run dev`에는 API가 없습니다. 로컬에서는 `npm run build` 뒤 `.dev.vars`에 위 값을 적고 `npx wrangler dev`로 확인합니다(`.dev.vars`는 커밋하지 않음)
+
 ### 환경변수
 `NEXT_PUBLIC_` 값은 `next build` 때 HTML에 들어가므로 Worker 런타임 변수가 아니라 **빌드 변수**로 넣어야 합니다.
 
