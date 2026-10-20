@@ -227,6 +227,36 @@ export const toolsEn: EnToolInfo[] = [
     ],
   },
   {
+    slug: "remove-background",
+    category: "Images",
+    title: "Remove Background (AI)",
+    short: "Remove the background from photos of people or products with AI and save a transparent PNG or a white-background JPG.",
+    metaDescription:
+      "Free AI background remover that runs in your browser. Keep only people, products or pets and save a transparent PNG, a white-background JPG or any solid color, with optional crop to the subject. No sign-up, no upload.",
+    intro:
+      `Remove the background from profile photos, product shots for online stores, or portraits for slides. Choose an image and press 'Remove background': the AI finds the subject and makes the background transparent. Then switch to white or any color, or crop to the subject, while you watch the result. ${PRIVATE}`,
+    howTo: [
+      {
+        heading: "Choosing a model",
+        body: "'People (fast)' uses MODNet (Apache-2.0), tuned for photos of people: a small download that runs quickly even on phones. 'Objects & products (precise)' uses BiRefNet lite (MIT) for products, pets, objects and fine hair edges, but the model is large (about 115 MB, or about 220 MB without a GPU) and slower, so a computer is recommended. If a person is cut out awkwardly, try the precise model.",
+      },
+      {
+        heading: "Background and format",
+        body: "'Transparent' saves a PNG with no background, ready to place over other images or designs. 'White' saves a JPG suited to marketplace product photo rules, and 'Pick a color' saves a JPG with any solid background. Changing the background doesn't re-run the AI, so it updates instantly.",
+      },
+      {
+        heading: "How it works",
+        body: "The model looks at a 512–1024 px version of the image to find the subject (a mask), then the mask is scaled up so the cut-out keeps the original resolution. It runs on the GPU when WebGPU is available, otherwise on the CPU. The model is downloaded once from Hugging Face and kept in your browser for next time.",
+      },
+    ],
+    faq: [
+      { q: "Are my images uploaded?", a: "No. Background removal happens in your browser. Only the AI model file is downloaded the first time; your images are never sent anywhere." },
+      { q: "Hair and edges look rough.", a: "Try 'Objects & products (precise)'. When the subject and background have similar colors or the background is busy, edges can blur; photos taken against a plain background give the cleanest results." },
+      { q: "It freezes or fails on my phone.", a: "The precise model uses a lot of memory and can fail on phones. Choose 'People (fast)' or use Chrome or Edge on a computer. The first run downloads the model, so Wi-Fi is recommended." },
+      { q: "Can I use the results commercially?", a: "The AI models are licensed for commercial use (MODNet Apache-2.0, BiRefNet MIT). Copyright and portrait rights of the result still follow the original photo, so use photos you took or have rights to." },
+    ],
+  },
+  {
     slug: "image-compress",
     category: "Images",
     title: "Compress & Convert Images (JPG, PNG, WebP)",
