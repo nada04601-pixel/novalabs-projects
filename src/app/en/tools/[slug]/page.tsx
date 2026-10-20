@@ -12,6 +12,7 @@ import PdfOrganizer from "@/components/PdfOrganizer";
 import ImageToPdf from "@/components/ImageToPdf";
 import PdfToImage from "@/components/PdfToImage";
 import ImageUpscaler from "@/components/ImageUpscaler";
+import ImageConverter from "@/components/ImageConverter";
 import WatermarkRemover from "@/components/WatermarkRemover";
 import VideoTrimmer from "@/components/VideoTrimmer";
 import VideoCompressor from "@/components/VideoCompressor";
@@ -52,6 +53,7 @@ const components: Record<string, React.ReactNode> = {
   "pdf-organize": <PdfOrganizer />,
   "jpg-to-pdf": <ImageToPdf />,
   "pdf-to-jpg": <PdfToImage />,
+  "image-compress": <ImageConverter />,
   "image-upscaler": <ImageUpscaler />,
   "watermark-remover": <WatermarkRemover />,
   "video-trim": <VideoTrimmer />,

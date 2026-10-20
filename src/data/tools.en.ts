@@ -227,6 +227,36 @@ export const toolsEn: EnToolInfo[] = [
     ],
   },
   {
+    slug: "image-compress",
+    category: "Images",
+    title: "Compress & Convert Images (JPG, PNG, WebP)",
+    short: "Shrink image file sizes and convert between JPG, PNG and WebP, even to a target size like 200 KB.",
+    metaDescription:
+      "Free online image compressor and converter that runs in your browser. Reduce photo file size, convert to JPG, PNG or WebP, fit a target size such as 200 KB, resize, and batch convert with ZIP download. No upload.",
+    intro:
+      `Use it when a form or marketplace says your file is too large, when blog photos are too heavy, or when you need to turn a PNG into a JPG or a WebP into something that opens everywhere. Add several images, choose a format, quality and size, and see each result's size and how much it shrank. ${PRIVATE}`,
+    howTo: [
+      {
+        heading: "Choosing a format",
+        body: "JPG suits photos and opens everywhere. WebP is usually 25–35% smaller than JPG at the same quality and keeps transparency, which makes it ideal for websites. PNG is lossless and best for text and screenshots, but photos get large. When converting to JPG, transparent areas are filled with white.",
+      },
+      {
+        heading: "Fitting a target size",
+        body: "Choose 'Under a target size' and enter something like 200KB or 1MB. The tool tries several quality levels and keeps the best one that fits. If a large photo is still too big at the lowest quality, reduce its dimensions with Resize as well.",
+      },
+      {
+        heading: "Resizing",
+        body: "Scale to a percentage of the original, or set the length of the longer side in pixels. Proportions are kept and images are never enlarged. Shrinking a phone photo (around 4000 px) to 1920 px on the long side looks almost the same on screen and is usually less than a quarter of the size.",
+      },
+    ],
+    faq: [
+      { q: "Are my images uploaded?", a: "No. All conversion happens in your browser and your images are never sent anywhere." },
+      { q: "The converted file is larger than the original.", a: "Re-saving an already compressed JPG at high quality, or converting a photo to PNG, can make it bigger. If the format and dimensions are unchanged and the result is larger, the original is kept. Try 70–80% quality or WebP." },
+      { q: "Does it work with iPhone HEIC photos?", a: "Safari on iPhone and Mac can open HEIC photos and convert them to JPG. Other browsers such as Chrome can't open HEIC. Picking photos from the iPhone Photos library usually converts them to JPG automatically, and Settings > Camera > Formats > Most Compatible makes the camera save JPGs." },
+      { q: "What happens to photo metadata (EXIF)?", a: "Converted images don't keep metadata such as location, camera or date, so this is also a handy way to strip location data before sharing. Orientation is applied so the photo stays upright." },
+    ],
+  },
+  {
     slug: "watermark-remover",
     category: "Images",
     title: "Watermark Remover (Image & Video)",
