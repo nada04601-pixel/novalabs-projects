@@ -63,7 +63,8 @@ export function embedUrl(c: Cam): string | null {
 }
 
 // 영상 ID가 있을 때만 유튜브 썸네일을 씁니다(채널 ID로는 썸네일 주소를 알 수 없음).
-export const thumbnailUrl = (c: Cam) => (c.youtubeId ? `https://i.ytimg.com/vi/${encodeURIComponent(c.youtubeId)}/hqdefault_live.jpg` : null);
+// hqdefault_live.jpg는 방송 중일 때만 있어 끝난 방송이면 깨진 그림이 되므로, 늘 있는 hqdefault.jpg를 씁니다.
+export const thumbnailUrl = (c: Cam) => (c.youtubeId ? `https://i.ytimg.com/vi/${encodeURIComponent(c.youtubeId)}/hqdefault.jpg` : null);
 
 export const searchUrl = (c: Cam) => `https://www.youtube.com/results?search_query=${encodeURIComponent(c.searchQuery)}&sp=EgJAAQ%253D%253D`;
 

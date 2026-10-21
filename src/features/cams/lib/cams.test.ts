@@ -41,12 +41,19 @@ describe("실시간 CCTV 목록", () => {
     expect(r.some((c) => c.category === "beaches" && c.region !== "부산/경남")).toBe(true);
   });
 
+  it("영상이 연결된 장소는 플레이어 주소와 썸네일이 있다", () => {
+    const c = getCam("kr-busan-songjeong")!;
+    expect(c.isLive).toBe(true);
+    expect(embedUrl(c)).toContain("/embed/NBZdNZYF1gI?");
+    expect(thumbnailUrl(c)).toContain("/vi/NBZdNZYF1gI/");
+  });
+
   it("영상 주소를 만든다", () => {
     const base = getCam("kr-busan-haeundae")!;
     expect(embedUrl({ ...base, youtubeId: undefined, youtubeChannelId: undefined })).toBeNull();
     expect(embedUrl({ ...base, youtubeId: "abc" })).toMatch(/youtube-nocookie\.com\/embed\/abc\?autoplay=1&mute=1/);
     expect(embedUrl({ ...base, youtubeChannelId: "UC123" })).toMatch(/embed\/live_stream\?channel=UC123/);
-    expect(thumbnailUrl({ ...base, youtubeId: "abc" })).toBe("https://i.ytimg.com/vi/abc/hqdefault_live.jpg");
+    expect(thumbnailUrl({ ...base, youtubeId: "abc" })).toBe("https://i.ytimg.com/vi/abc/hqdefault.jpg");
   });
 
   it("날씨 코드를 읽는다", () => {
