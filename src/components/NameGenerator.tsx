@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { CHO, MAX_LENGTH, parseChoseong, randomByChoseong, randomByLength } from "@/lib/tools/hangulName";
+import { CHO, MAX_LENGTH, SURNAMES, parseChoseong, randomByChoseong, randomByLength, withSurname } from "@/lib/tools/hangulName";
 import CopyButton from "@/components/CopyButton";
 
 type Mode = "choseong" | "length";
@@ -12,6 +12,7 @@ export default function NameGenerator() {
   const [mainConsonants, setMainConsonants] = useState(true);
   const [mainVowels, setMainVowels] = useState(true);
   const [noFinal, setNoFinal] = useState(true);
+  const [surname, setSurname] = useState(""); // "" 없음, "random" 무작위, 그 밖에는 고른 성씨
   const [name, setName] = useState("");
   const [history, setHistory] = useState<string[]>([]);
 
@@ -19,10 +20,11 @@ export default function NameGenerator() {
   const generate = useCallback(() => {
     if (empty) return;
     const opts = { mainConsonants, mainVowels, noFinal };
-    const s = mode === "choseong" ? randomByChoseong(chos, opts) : randomByLength(length, opts);
+    const given = mode === "choseong" ? randomByChoseong(chos, opts) : randomByLength(length, opts);
+    const s = withSurname(given, surname);
     setName(s);
     setHistory((h) => [s, ...h].slice(0, 20));
-  }, [empty, mode, chos, length, mainConsonants, mainVowels, noFinal]);
+  }, [empty, mode, chos, length, mainConsonants, mainVowels, noFinal, surname]);
 
   // 난수는 브라우저에서만 만들도록 첫 화면이 그려진 뒤 생성합니다.
   useEffect(() => generate(), []);
@@ -71,6 +73,16 @@ export default function NameGenerator() {
         ))}
       </div>
 
+      <div className="fields">
+        <label>성씨 붙이기
+          <select value={surname} onChange={(e) => setSurname(e.target.value)}>
+            <option value="">붙이지 않음</option>
+            <option value="random">무작위 (흔한 성씨 {SURNAMES.length}개 중)</option>
+            {SURNAMES.map((x) => <option key={x} value={x}>{x}</option>)}
+          </select>
+        </label>
+      </div>
+
       <div className="checks">
         <label className="inline">
           <input type="checkbox" checked={mainConsonants} onChange={(e) => setMainConsonants(e.target.checked)} />
@@ -91,7 +103,7 @@ export default function NameGenerator() {
           <p className="warn">초성을 하나 이상 골라 주세요.</p>
         ) : (
           <div className="big namebox">
-            <span>{mode === "choseong" ? `초성 ${chos.join("")}` : `${length}글자`}</span>
+            <span>{mode === "choseong" ? `초성 ${chos.join("")}` : `${length}글자`}{surname && " + 성씨"}</span>
             <strong>{name || " "}</strong>
           </div>
         )}
