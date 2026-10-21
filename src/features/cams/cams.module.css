@@ -30,7 +30,7 @@
 /* 상세 */
 .detail{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:24px;align-items:start}
 .player{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}
-.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.player iframe,.player video{position:absolute;inset:0;width:100%;height:100%;border:0}
 .noSource{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;color:#e2e8f0;background:linear-gradient(135deg,#0f172a,#1e293b)}
 .noSource strong{font-size:18px}
 .noSource p{margin:0;color:#94a3b8;font-size:14px}

@@ -53,7 +53,10 @@ export function relatedCams(cam: Cam, list: Cam[] = cams, limit = 4): Cam[] {
   return picked;
 }
 
-export const hasSource = (c: Cam) => Boolean(c.youtubeId || c.youtubeChannelId);
+export const hasSource = (c: Cam) => Boolean(c.youtubeId || c.youtubeChannelId || c.hlsUrl || c.itsCctv);
+
+// 고정 HLS 주소. 우리 페이지가 https라 http 주소는 브라우저가 막으므로 https로 바꿉니다.
+export const hlsSrc = (c: Cam) => (c.hlsUrl ? c.hlsUrl.replace(/^http:\/\//, "https://") : null);
 
 // 영상이 연결된 곳을 앞으로 보냅니다. 같은 무리 안에서는 자료 순서를 지킵니다.
 export const sourceFirst = (list: Cam[]) => [...list].sort((a, b) => Number(hasSource(b)) - Number(hasSource(a)));
