@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Cam, CamCategory } from "../types";
-import { CATEGORIES, camHref, cams, filterCams } from "../lib/cams";
+import { CATEGORIES, camHref, cams, filterCams, sourceFirst } from "../lib/cams";
 import CamCard from "./CamCard";
 import CamMap from "./CamMap";
 import s from "../cams.module.css";
@@ -14,7 +14,7 @@ export default function CamBrowser() {
   const [query, setQuery] = useState("");
   const [hover, setHover] = useState<Cam | null>(null);
   const [view, setView] = useState<"list" | "map">("list");
-  const list = useMemo(() => filterCams(cams, category, query), [category, query]);
+  const list = useMemo(() => sourceFirst(filterCams(cams, category, query)), [category, query]);
 
   return (
     <>

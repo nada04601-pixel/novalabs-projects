@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cams, distanceKm, embedUrl, filterCams, getCam, relatedCams, thumbnailUrl, weatherLabel } from "./cams";
+import { cams, distanceKm, embedUrl, filterCams, getCam, hasSource, relatedCams, sourceFirst, thumbnailUrl, weatherLabel } from "./cams";
 
 describe("실시간 CCTV 목록", () => {
   it("자료가 올바르다", () => {
@@ -46,6 +46,15 @@ describe("실시간 CCTV 목록", () => {
     expect(c.isLive).toBe(true);
     expect(embedUrl(c)).toContain("/embed/NBZdNZYF1gI?");
     expect(thumbnailUrl(c)).toContain("/vi/NBZdNZYF1gI/");
+  });
+
+  it("영상이 연결된 곳이 앞에 온다", () => {
+    const sorted = sourceFirst(cams);
+    const n = cams.filter(hasSource).length;
+    expect(n).toBeGreaterThanOrEqual(2);
+    expect(sorted.slice(0, n).every(hasSource)).toBe(true);
+    expect(sorted.slice(0, n).map((c) => c.id)).toEqual(cams.filter(hasSource).map((c) => c.id));
+    expect(getCam("kr-busan-gwangalli")!.youtubeId).toBe("mMFgDRE6CS8");
   });
 
   it("영상 주소를 만든다", () => {
