@@ -55,6 +55,9 @@ export function relatedCams(cam: Cam, list: Cam[] = cams, limit = 4): Cam[] {
 
 export const hasSource = (c: Cam) => Boolean(c.youtubeId || c.youtubeChannelId);
 
+// 영상이 연결된 곳을 앞으로 보냅니다. 같은 무리 안에서는 자료 순서를 지킵니다.
+export const sourceFirst = (list: Cam[]) => [...list].sort((a, b) => Number(hasSource(b)) - Number(hasSource(a)));
+
 // 소리는 끈 채 자동 재생합니다(브라우저는 소리 있는 자동 재생을 막음). 채널 ID는 그 채널에서 지금 방송 중인 라이브를 띄웁니다.
 export function embedUrl(c: Cam): string | null {
   if (c.youtubeId) return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(c.youtubeId)}?autoplay=1&mute=1&playsinline=1`;
