@@ -205,6 +205,10 @@ input[type="range"]{padding:0;border:0;background:none;accent-color:var(--acc)}
 .meter{display:flex;gap:4px;max-width:220px;margin:10px auto 0}.meter i{flex:1;height:6px;border-radius:3px;background:var(--line)}
 .meter.l0 i:nth-child(-n+1){background:#ef4444}.meter.l1 i:nth-child(-n+2){background:#f59e0b}.meter.l2 i:nth-child(-n+3){background:#22c55e}.meter.l3 i{background:#16a34a}
 .pwlist{list-style:none;padding:0;margin:0}
+.keypad{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr))}
+.keypad button:disabled{opacity:.45;cursor:not-allowed}
+.namebox strong{font-size:clamp(36px,10vw,56px);letter-spacing:2px;word-break:keep-all;overflow-wrap:anywhere}
+.namechip{padding:4px 12px}
 .pwlist li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
 .pwlist code{flex:1;min-width:0;overflow-wrap:anywhere;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:16px;letter-spacing:.3px}
 .qrbox{background:var(--bg);border-radius:12px;padding:16px;text-align:center}
