@@ -1,0 +1,45 @@
+# 실시간 CCTV(/cams)에 연결한 유튜브 라이브가 아직 방송 중인지 매일 점검합니다.
+# 끊긴 영상이 있으면 이슈 하나를 열어(이미 열려 있으면 내용이 바뀔 때만 댓글로 알림) 알리고, 모두 정상으로 돌아오면 닫습니다.
+# 저장소 Settings > Secrets and variables > Actions에 YOUTUBE_API_KEY(YouTube Data API v3 키)를 넣어야 동작합니다. 설정 방법은 README 참고.
+name: Check cam streams
+
+on:
+  schedule:
+    - cron: "43 23 * * *" # 매일 08:43 (한국 시간)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Check streams
+        id: check
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node --experimental-strip-types --no-warnings src/features/cams/scripts/check-live.mjs
+      - name: Report as issue
+        if: steps.check.outputs.problems != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROBLEMS: ${{ steps.check.outputs.problems }}
+        run: |
+          title="실시간 CCTV 영상 점검"
+          num=$(gh issue list --state open --search "\"$title\" in:title" --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -n1)
+          if [ "$PROBLEMS" -gt 0 ]; then
+            if [ -z "$num" ]; then
+              gh issue create --title "$title" --body-file cams-report.md
+            elif [ "$(gh issue view "$num" --json body --jq .body)" != "$(cat cams-report.md)" ]; then
+              gh issue edit "$num" --body-file cams-report.md
+              gh issue comment "$num" --body "점검 결과가 바뀌었습니다. 본문을 확인하세요."
+            fi
+          elif [ -n "$num" ]; then
+            gh issue close "$num" --comment "연결된 영상이 모두 다시 방송 중입니다."
+          fi
