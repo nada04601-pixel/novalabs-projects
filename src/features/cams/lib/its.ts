@@ -30,11 +30,13 @@ export interface ItsItem {
   coordy: number | string;
 }
 
-// 응답에서 CCTV 목록을 꺼냅니다. 오류 응답(4001 한도 초과, 4005 인증키 오류 등)은 내용을 담아 던집니다.
+// 응답에서 CCTV 목록을 꺼냅니다. CCTV가 하나뿐이면 data가 배열이 아니라 객체 하나로 옵니다.
+// 오류 응답(4001 한도 초과, 4005 인증키 오류 등)은 내용을 담아 던집니다.
 export function parseIts(body: unknown): ItsItem[] {
   const data = (body as { response?: { data?: unknown } })?.response?.data;
-  if (!Array.isArray(data)) throw new Error(`ITS 응답 오류: ${JSON.stringify(body).slice(0, 300)}`);
-  return data as ItsItem[];
+  if (Array.isArray(data)) return data as ItsItem[];
+  if (data && typeof data === "object" && "cctvurl" in data) return [data as ItsItem];
+  throw new Error(`ITS 응답 오류: ${JSON.stringify(body).slice(0, 300)}`);
 }
 
 // 장소 ID → 영상 주소. 이름이 같은 CCTV를 고르고, 이름이 바뀌었으면 300m 안에서 가장 가까운 것을 씁니다.
