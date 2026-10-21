@@ -41,6 +41,10 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - 장소 자료: `src/features/cams/data/cams.json`. 영상 출처는 `sourceName`(필요하면 `sourceUrl`)에 넣으면 플레이어 아래와 카드에 "○○ 제공"으로 표시됩니다(없으면 "YouTube"). 영상은 `youtubeId`(라이브 영상 ID) 또는 `youtubeChannelId`(UC…, 방송이 다시 시작돼도 그 채널의 현재 라이브를 띄움) 중 하나를 넣고 `isLive`를 `true`로 바꿉니다. 비어 있으면 "영상 준비 중"과 `searchQuery`로 유튜브 라이브 검색 링크를 보여 줍니다. 퍼가기(embed)가 허용된 영상만 재생됩니다.
 - 지도는 Leaflet + OpenStreetMap(키 불필요), 날씨는 브라우저에서 Open-Meteo를 바로 부릅니다(키 불필요). 스타일은 `cams.module.css`에 두고 사이트 색 변수만 빌려 씁니다.
 - 분류·검색·추천(가까운 곳 + 같은 분류의 다른 지역)은 `src/features/cams/lib/cams.ts`, 테스트는 같은 폴더의 `cams.test.ts`.
+- 라이브 점검: 라이브는 방송이 끊겼다 다시 열리면 영상 ID가 바뀌므로 `.github/workflows/check-cams.yml`이 매일 08:43(한국 시간) 연결된 영상이 아직 방송 중인지 확인합니다(`src/features/cams/scripts/check-live.mjs`, 판단 로직은 `lib/liveCheck.ts`). 끊긴 영상이 있으면 "실시간 CCTV 영상 점검" 이슈를 열고(이미 열려 있으면 결과가 바뀔 때만 댓글), 모두 정상이 되면 닫습니다. Actions 탭에서 "Check cam streams"를 직접 실행할 수도 있습니다.
+  - 준비: [Google Cloud 콘솔](https://console.cloud.google.com/)에서 프로젝트를 만들고 "YouTube Data API v3"를 사용 설정 → 사용자 인증 정보 → API 키 만들기(키 제한에서 API를 YouTube Data API v3로만 제한 권장) → 저장소 Settings > Secrets and variables > Actions에 `YOUTUBE_API_KEY`로 저장. 키가 없으면 점검을 건너뜁니다.
+  - 비용: 무료 할당량(하루 10,000단위) 안에서 동작합니다. 영상 50개당 1단위, 채널 ID로 연결한 곳은 곳마다 100단위.
+  - 로컬 실행: `YOUTUBE_API_KEY=... node --experimental-strip-types src/features/cams/scripts/check-live.mjs` (결과는 `cams-report.md`)
 - 도메인 분리 때: `src/features/cams/`와 `src/app/cams/`를 새 Next.js 프로젝트로 옮기고 `CAMS_BASE`를 `""`로 바꾼 뒤, 이 사이트의 `public/_redirects`에 `/cams/*` → 새 도메인 301을 추가합니다.
 
 ## 이미지 업스케일 AI 모델
