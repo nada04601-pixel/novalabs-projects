@@ -38,7 +38,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 
 ## 실시간 관광지 CCTV (/cams, 시험 운영)
 - 나중에 별도 도메인으로 옮길 기능이라 코드를 `src/features/cams/` 한 곳에 모았습니다(사이트의 다른 코드를 가져다 쓰지 않음). 페이지는 `src/app/cams/`(목록·지도)와 `src/app/cams/[id]/`(상세)뿐이고, 메뉴·사이트맵에 넣지 않으며 `noindex`입니다.
-- 장소 자료: `src/features/cams/data/cams.json`. 영상은 `youtubeId`(라이브 영상 ID) 또는 `youtubeChannelId`(UC…, 방송이 다시 시작돼도 그 채널의 현재 라이브를 띄움) 중 하나를 넣고 `isLive`를 `true`로 바꿉니다. 비어 있으면 "영상 준비 중"과 `searchQuery`로 유튜브 라이브 검색 링크를 보여 줍니다. 퍼가기(embed)가 허용된 영상만 재생됩니다.
+- 장소 자료: `src/features/cams/data/cams.json`. 영상 출처는 `sourceName`(필요하면 `sourceUrl`)에 넣으면 플레이어 아래와 카드에 "○○ 제공"으로 표시됩니다(없으면 "YouTube"). 영상은 `youtubeId`(라이브 영상 ID) 또는 `youtubeChannelId`(UC…, 방송이 다시 시작돼도 그 채널의 현재 라이브를 띄움) 중 하나를 넣고 `isLive`를 `true`로 바꿉니다. 비어 있으면 "영상 준비 중"과 `searchQuery`로 유튜브 라이브 검색 링크를 보여 줍니다. 퍼가기(embed)가 허용된 영상만 재생됩니다.
 - 지도는 Leaflet + OpenStreetMap(키 불필요), 날씨는 브라우저에서 Open-Meteo를 바로 부릅니다(키 불필요). 스타일은 `cams.module.css`에 두고 사이트 색 변수만 빌려 씁니다.
 - 분류·검색·추천(가까운 곳 + 같은 분류의 다른 지역)은 `src/features/cams/lib/cams.ts`, 테스트는 같은 폴더의 `cams.test.ts`.
 - 도메인 분리 때: `src/features/cams/`와 `src/app/cams/`를 새 Next.js 프로젝트로 옮기고 `CAMS_BASE`를 `""`로 바꾼 뒤, 이 사이트의 `public/_redirects`에 `/cams/*` → 새 도메인 301을 추가합니다.
