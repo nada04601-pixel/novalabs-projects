@@ -20,6 +20,9 @@ describe("국가교통정보센터 CCTV", () => {
 
   it("응답을 읽고 오류는 알린다", () => {
     expect(parseIts({ response: { data: [], datacount: 0 } })).toEqual([]);
+    // CCTV가 하나면 배열이 아니라 객체로 온다(실제 응답 모양)
+    const one = { cctvname: "[국도35] 강릉 강릉IC", cctvurl: "https://cctvsec.ktict.co.kr/73146/x", coordx: 128.854423, coordy: 37.737599, cctvtype: 4, cctvformat: "HLS" };
+    expect(parseIts({ response: { coordtype: 1, data: one, datacount: 1 } })).toEqual([one]);
     expect(() => parseIts({ response: { resultCode: "4001", resultMsg: "사용량 제한" } })).toThrow(/4001/);
     expect(() => parseIts(null)).toThrow(/ITS 응답 오류/);
   });
