@@ -1,6 +1,7 @@
 // 음성 인식(Whisper)을 화면과 분리된 스레드에서 돌립니다. 모델은 처음 한 번 Hugging Face에서 내려받아 브라우저에 저장되고,
-// 소리는 이 브라우저 밖으로 나가지 않습니다. 실행 엔진(ONNX Runtime) 파일은 사이트에서 직접 내려줍니다(scripts/copy-models.mjs).
-import { env, pipeline, type AutomaticSpeechRecognitionPipeline } from "@huggingface/transformers";
+// 소리는 이 브라우저 밖으로 나가지 않습니다.
+import { pipeline, type AutomaticSpeechRecognitionPipeline } from "@huggingface/transformers";
+import { gpuInfo, setupOrt } from "./ortEnv";
 import { chunkCues, planChunks, SAMPLE_RATE, WHISPER_MODELS, type SpeechChunk, type SpeechLanguage, type WhisperModel } from "./transcribe";
 import type { SubtitleCue } from "./subtitles";
 
@@ -16,12 +17,7 @@ export type WhisperMessage =
 
 const post = (m: WhisperMessage) => (self as unknown as Worker).postMessage(m);
 
-const ort = `${self.location.origin}/models/ort/`;
-const safari = /^((?!chrome|android).)*safari/i.test(self.navigator.userAgent);
-env.allowLocalModels = false;
-env.backends.onnx.wasm!.wasmPaths = safari
-  ? { mjs: `${ort}ort-wasm-simd-threaded.mjs`, wasm: `${ort}ort-wasm-simd-threaded.wasm` }
-  : { mjs: `${ort}ort-wasm-simd-threaded.asyncify.mjs`, wasm: `${ort}ort-wasm-simd-threaded.asyncify.wasm` };
+setupOrt();
 
 let loaded: { key: string; asr: AutomaticSpeechRecognitionPipeline; device: "webgpu" | "wasm" } | null = null;
 
@@ -33,11 +29,10 @@ type Attempt = { device: "webgpu" | "wasm"; options: Record<string, unknown> };
 // - 마지막 후보는 그래프 최적화를 끄고 CPU로 돌려, 최적화 단계에서 나는 오류를 피합니다.
 async function attempts(): Promise<Attempt[]> {
   const list: Attempt[] = [];
-  const gpu = (self.navigator as Navigator & { gpu?: { requestAdapter(): Promise<{ features: Set<string> } | null> } }).gpu;
-  const adapter = await gpu?.requestAdapter().catch(() => null);
-  if (adapter) {
+  const gpu = await gpuInfo();
+  if (gpu) {
     // 인코더를 줄이면 인식 품질이 크게 떨어져 16·32비트로 둡니다. 인식 시간 대부분이 인코더라 여기만 그래픽 카드로 돌려도 빨라집니다.
-    const encoder = adapter.features.has("shader-f16") ? "fp16" : "fp32";
+    const encoder = gpu.f16 ? "fp16" : "fp32";
     list.push({ device: "webgpu", options: { device: "webgpu", dtype: { encoder_model: encoder, decoder_model_merged: "q8" } } });
   }
   list.push({ device: "wasm", options: { device: "wasm", dtype: "q8" } });
