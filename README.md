@@ -36,6 +36,13 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - 헤더의 언어 전환 링크는 같은 도구의 다른 언어 페이지로, 영어 버전이 없는 페이지에서는 영어 홈으로 갑니다.
 - 새 도구에 영어 버전을 추가하려면: `EN_TOOLS`에 슬러그 추가 → `tools.en.ts`에 내용 추가 → 컴포넌트 문구를 `t()`로 감싸기 → `src/app/en/tools/[slug]/page.tsx`의 `components`에 연결.
 
+## 실시간 관광지 CCTV (/cams, 시험 운영)
+- 나중에 별도 도메인으로 옮길 기능이라 코드를 `src/features/cams/` 한 곳에 모았습니다(사이트의 다른 코드를 가져다 쓰지 않음). 페이지는 `src/app/cams/`(목록·지도)와 `src/app/cams/[id]/`(상세)뿐이고, 메뉴·사이트맵에 넣지 않으며 `noindex`입니다.
+- 장소 자료: `src/features/cams/data/cams.json`. 영상은 `youtubeId`(라이브 영상 ID) 또는 `youtubeChannelId`(UC…, 방송이 다시 시작돼도 그 채널의 현재 라이브를 띄움) 중 하나를 넣고 `isLive`를 `true`로 바꿉니다. 비어 있으면 "영상 준비 중"과 `searchQuery`로 유튜브 라이브 검색 링크를 보여 줍니다. 퍼가기(embed)가 허용된 영상만 재생됩니다.
+- 지도는 Leaflet + OpenStreetMap(키 불필요), 날씨는 브라우저에서 Open-Meteo를 바로 부릅니다(키 불필요). 스타일은 `cams.module.css`에 두고 사이트 색 변수만 빌려 씁니다.
+- 분류·검색·추천(가까운 곳 + 같은 분류의 다른 지역)은 `src/features/cams/lib/cams.ts`, 테스트는 같은 폴더의 `cams.test.ts`.
+- 도메인 분리 때: `src/features/cams/`와 `src/app/cams/`를 새 Next.js 프로젝트로 옮기고 `CAMS_BASE`를 `""`로 바꾼 뒤, 이 사이트의 `public/_redirects`에 `/cams/*` → 새 도메인 301을 추가합니다.
+
 ## 이미지 업스케일 AI 모델
 - `/tools/image-upscaler`의 AI 모드는 UpscalerJS(`upscaler`)와 ESRGAN Medium 모델(`@upscalerjs/esrgan-medium`, MIT)을 TensorFlow.js(`@tensorflow/tfjs` 4.11, upscaler가 요구하는 버전)로 브라우저에서 실행합니다.
 - 모델 파일(2배·4배, 각 약 2.8MB)은 저장소에 넣지 않고 `npm run dev`/`npm run build` 직전에 `scripts/copy-models.mjs`가 `node_modules`에서 `public/models/esrgan-medium/`으로 복사합니다(`.gitignore`). 외부 CDN에서 받지 않습니다.
