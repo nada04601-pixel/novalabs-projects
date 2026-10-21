@@ -28,6 +28,7 @@ import UnemploymentCalculator from "@/components/UnemploymentCalculator";
 import SavingsGoalCalculator from "@/components/SavingsGoalCalculator";
 import AreaConverterCalculator from "@/components/AreaConverterCalculator";
 import DateCalculator from "@/components/DateCalculator";
+import BmrCalculator from "@/components/BmrCalculator";
 import GpaCalculator from "@/components/GpaCalculator";
 import TargetScoreCalculator from "@/components/TargetScoreCalculator";
 import GraduationCalculator from "@/components/GraduationCalculator";
@@ -106,6 +107,7 @@ const calculators: Record<string, React.ReactNode> = {
   "savings-goal": <SavingsGoalCalculator />,
   "pyeong-converter": <AreaConverterCalculator />,
   "date-calculator": <DateCalculator />,
+  bmr: <BmrCalculator />,
   gpa: <GpaCalculator />,
   "target-score": <TargetScoreCalculator />,
   "graduation-credits": <GraduationCalculator />,
