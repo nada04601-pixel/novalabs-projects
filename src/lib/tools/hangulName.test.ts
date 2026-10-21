@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CHO, JONG, JUNG, MAIN_VOWELS, choseongOf, compose, parseChoseong, randomByChoseong, randomByLength } from "./hangulName";
+import { CHO, JONG, JUNG, MAIN_VOWELS, SURNAMES, choseongOf, compose, parseChoseong, randomByChoseong, randomByLength, withSurname } from "./hangulName";
 
 const seeded = (seed = 1) => () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0);
 // 음절을 초성·중성·종성으로 나눕니다.
@@ -44,5 +44,16 @@ describe("이름 랜덤 생성기", () => {
     const s = randomByChoseong(["ㄱ", "ㅈ", "ㄷ"], { mainConsonants: true, mainVowels: true, noFinal: true }, seeded(7));
     expect([...s].map((ch) => split(ch)[0])).toEqual(["ㄱ", "ㅈ", "ㄷ"]);
     expect(randomByChoseong([], { mainConsonants: true, mainVowels: true, noFinal: true })).toBe("");
+  });
+  it("성씨 붙이기", () => {
+    expect(withSurname("민준", "")).toBe("민준");
+    expect(withSurname("민준", "남궁")).toBe("남궁민준");
+    expect(withSurname("", "random")).toBe("");
+    const r = seeded(13);
+    for (let i = 0; i < 50; i++) {
+      const s = withSurname("가나", "random", r);
+      expect(s.endsWith("가나")).toBe(true);
+      expect(SURNAMES).toContain(s.slice(0, -2));
+    }
   });
 });

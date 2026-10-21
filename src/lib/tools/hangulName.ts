@@ -56,3 +56,17 @@ export function randomByLength(length: number, opts: NameOptions, rand: RandomSo
 export function randomByChoseong(chos: string[], opts: NameOptions, rand: RandomSource = cryptoRandom): string {
   return chos.map((c) => randomSyllable(opts, c, rand)).join("");
 }
+
+// 흔한 한 글자 성씨 30개와 두 글자 성씨
+export const SURNAMES = [
+  "김", "이", "박", "최", "정", "강", "조", "윤", "장", "임",
+  "한", "오", "서", "신", "권", "황", "안", "송", "전", "홍",
+  "유", "고", "문", "양", "손", "배", "백", "허", "남", "심",
+  "남궁", "황보", "제갈", "선우", "독고",
+];
+
+// surname이 "random"이면 목록에서 무작위로, 빈 문자열이면 성씨 없이 붙입니다.
+export function withSurname(name: string, surname: string, rand: RandomSource = cryptoRandom): string {
+  if (!surname || !name) return name;
+  return (surname === "random" ? pickFrom(SURNAMES, rand) : surname) + name;
+}
