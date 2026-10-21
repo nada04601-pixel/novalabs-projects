@@ -19,8 +19,8 @@ export default function CamPlayer({ cam }: { cam: Cam }) {
             allowFullScreen
             referrerPolicy="strict-origin-when-cross-origin"
           />
-        ) : hls ? (
-          <HlsPlayer src={hls} title={cam.title} />
+        ) : hls || cam.itsCctv ? (
+          <HlsPlayer src={hls ?? undefined} streamOf={cam.itsCctv && cam.id} title={cam.title} />
         ) : (
           <div className={s.noSource}>
             <strong>영상 연결 준비 중</strong>
@@ -29,7 +29,7 @@ export default function CamPlayer({ cam }: { cam: Cam }) {
           </div>
         )}
       </div>
-      {(src || hls) && href && (
+      {(src || hls || cam.itsCctv) && href && (
         <p className={s.credit}>
           영상 제공: {cam.sourceName ?? "YouTube"} · <a href={href} target="_blank" rel="noopener noreferrer">{src ? "YouTube에서 보기" : "출처 바로가기"}</a>
         </p>

@@ -1,6 +1,9 @@
 // Cloudflare Worker 입구. /api/* 요청만 여기로 오고(wrangler.jsonc의 run_worker_first), 나머지는 out/ 정적 파일을 그대로 내려줍니다.
 // /api/tts/*는 음성 합성 비교 페이지(/lab/tts)용입니다. API 키는 Worker 비밀값에 두고, TTS_PASSWORD를 아는 사람만 쓸 수 있습니다.
+// /api/cams/streams는 실시간 CCTV(/cams)의 국가교통정보센터 영상 주소(24시간 유효)를 받아 20시간 동안 캐시해 나눠 줍니다.
 import { PROVIDERS, parseSpeak, parseVoices, speakRequest, voicesRequest, type Provider } from "../src/lib/tts";
+import { cams } from "../src/features/cams/lib/cams";
+import { itsRequests, matchStreams, parseIts } from "../src/features/cams/lib/its";
 
 interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -8,6 +11,11 @@ interface Env {
   OPENAI_API_KEY?: string;
   TYPECAST_API_KEY?: string;
   ELEVENLABS_API_KEY?: string;
+  ITS_API_KEY?: string;
+}
+
+interface Ctx {
+  waitUntil(p: Promise<unknown>): void;
 }
 
 const json = (data: unknown, status = 200) =>
@@ -73,9 +81,39 @@ async function tts(request: Request, env: Env, path: string): Promise<Response> 
   return json({ error: "없는 주소입니다." }, 404);
 }
 
+// ITS 영상 주소는 24시간만 유효하고 호출 한도(월 100건)가 작아, 데이터센터마다 20시간에 한 번만 받아 캐시합니다.
+const STREAMS_TTL = 20 * 3600;
+
+async function camStreams(env: Env, ctx: Ctx): Promise<Response> {
+  if (!env.ITS_API_KEY) return json({ error: "Worker에 ITS_API_KEY 비밀값이 설정되지 않았습니다." }, 503);
+  const cache = await caches.open("cams");
+  const key = new Request("https://cache.internal/cams/streams-v1");
+  const hit = await cache.match(key);
+  if (hit) return new Response(hit.body, { headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=600" } });
+
+  const streams: Record<string, string> = {};
+  // 같은 요청을 동시에 보내면 ITS가 거절하므로 하나씩 보냅니다. Referer는 인증키에 등록한 사용처입니다.
+  for (const r of itsRequests(cams, env.ITS_API_KEY)) {
+    const res = await fetch(r.url, { headers: { Referer: "https://novalabs.co.kr/" } });
+    const body = await res.json().catch(() => null);
+    if (!res.ok) return json({ error: `ITS 오류 (${res.status}): ${JSON.stringify(body).slice(0, 300)}` }, 502);
+    Object.assign(streams, matchStreams(cams, r.type, parseIts(body)));
+  }
+  const text = JSON.stringify(streams);
+  ctx.waitUntil(cache.put(key, new Response(text, { headers: { "Cache-Control": `public, max-age=${STREAMS_TTL}` } })));
+  return new Response(text, { headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=600" } });
+}
+
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: Ctx): Promise<Response> {
     const { pathname } = new URL(request.url);
+    if (pathname === "/api/cams/streams" && request.method === "GET") {
+      try {
+        return await camStreams(env, ctx);
+      } catch (e) {
+        return json({ error: `영상 주소를 받지 못했습니다: ${e instanceof Error ? e.message : String(e)}` }, 502);
+      }
+    }
     if (pathname.startsWith("/api/tts/")) {
       try {
         return await tts(request, env, pathname.slice("/api/tts/".length));

@@ -39,7 +39,11 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 ## 실시간 관광지 CCTV (/cams, 시험 운영)
 - 나중에 별도 도메인으로 옮길 기능이라 코드를 `src/features/cams/` 한 곳에 모았습니다(사이트의 다른 코드를 가져다 쓰지 않음). 페이지는 `src/app/cams/`(목록·지도)와 `src/app/cams/[id]/`(상세)뿐이고, 메뉴·사이트맵에 넣지 않으며 `noindex`입니다.
 - 장소 자료: `src/features/cams/data/cams.json`. 영상 출처는 `sourceName`(필요하면 `sourceUrl`)에 넣으면 플레이어 아래와 카드에 "○○ 제공"으로 표시됩니다(없으면 "YouTube"). 영상은 `youtubeId`(라이브 영상 ID) 또는 `youtubeChannelId`(UC…, 방송이 다시 시작돼도 그 채널의 현재 라이브를 띄움) 중 하나를 넣고 `isLive`를 `true`로 바꿉니다. 비어 있으면 "영상 준비 중"과 `searchQuery`로 유튜브 라이브 검색 링크를 보여 줍니다. 퍼가기(embed)가 허용된 영상만 재생됩니다.
-- 유튜브가 아닌 영상은 `hlsUrl`(HLS, .m3u8)에 넣으면 hls.js로 재생합니다(사파리는 기본 재생). 국가교통정보센터(ITS) CCTV 주소는 `http://`로 오지만 https로 바꿔 재생합니다(`hlsSrc`). ITS 키: its.go.kr 마이페이지에서 발급, 조회는 `https://openapi.its.go.kr:9443/cctvInfo?apiKey=…&type=its|ex&cctvType=1&minX=…&maxX=…&minY=…&maxY=…&getType=json`(국내 IP에서만, 월 호출 한도 있음). 경찰청 UTIC 개방데이터는 영상 재생까지 등록 IP 대역에서만 되어 공개 사이트에는 쓸 수 없습니다.
+- 유튜브가 아닌 영상은 `hlsUrl`(HLS, .m3u8, 고정 주소)에 넣으면 hls.js로 재생합니다(사파리는 기본 재생). http 주소는 https로 바꿔 재생합니다(`hlsSrc`).
+- 국가교통정보센터(ITS) CCTV는 영상 주소가 24시간만 유효해서 `itsCctv: { type: "its"(국도) | "ex"(고속도로), name: "CCTV 이름" }`만 적어 둡니다. Worker의 `/api/cams/streams`가 도로 유형마다 한 번씩 ITS를 불러(`cctvType=4`, https 주소) 장소 ID → 영상 주소를 만들고 데이터센터마다 20시간 캐시합니다(`src/features/cams/lib/its.ts`). 이름이 바뀌어도 300m 안의 CCTV로 짝을 짓습니다.
+  - 준비: its.go.kr 마이페이지에서 받은 인증키를 Cloudflare Workers & Pages → `novalabs-projects` → Settings → Variables and Secrets에 비밀값 `ITS_API_KEY`로 저장(키 신청 때 사용처를 `https://novalabs.co.kr`로 등록). 호출 한도: 개발용 월 100건.
+  - CCTV 이름 찾기: `https://openapi.its.go.kr:9443/cctvInfo?apiKey=…&type=its|ex&cctvType=4&minX=…&maxX=…&minY=…&maxY=…&getType=json`(국내 IP에서만 응답). 기술기준상 연속 재생 시간과 동시 재생 수가 제한될 수 있습니다.
+- 경찰청 UTIC 개방데이터는 영상 재생까지 등록 IP 대역에서만 되어 공개 사이트에는 쓸 수 없습니다.
 - 지도는 Leaflet + OpenStreetMap(키 불필요), 날씨는 브라우저에서 Open-Meteo를 바로 부릅니다(키 불필요). 스타일은 `cams.module.css`에 두고 사이트 색 변수만 빌려 씁니다.
 - 분류·검색·추천(가까운 곳 + 같은 분류의 다른 지역)은 `src/features/cams/lib/cams.ts`, 테스트는 같은 폴더의 `cams.test.ts`.
 - 라이브 점검: 라이브는 방송이 끊겼다 다시 열리면 영상 ID가 바뀌므로 `.github/workflows/check-cams.yml`이 매일 08:43(한국 시간) 연결된 영상이 아직 방송 중인지 확인합니다(`src/features/cams/scripts/check-live.mjs`, 판단 로직은 `lib/liveCheck.ts`). 끊긴 영상이 있으면 "실시간 CCTV 영상 점검" 이슈를 열고(이미 열려 있으면 결과가 바뀔 때만 댓글), 모두 정상이 되면 닫습니다. Actions 탭에서 "Check cam streams"를 직접 실행할 수도 있습니다.

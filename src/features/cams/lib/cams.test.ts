@@ -66,15 +66,15 @@ describe("실시간 CCTV 목록", () => {
     expect(sourceHref({ ...c, youtubeId: undefined })).toBeNull();
   });
 
-  it("HLS 영상은 https로 재생한다", () => {
+  it("HLS·ITS 영상을 다룬다", () => {
     const c = getCam("kr-gangneung-tollgate")!;
     expect(hasSource(c)).toBe(true);
-    expect(hlsSrc(c)).toMatch(/^https:\/\/cctvsec\.ktict\.co\.kr\//);
+    expect(c.itsCctv).toEqual({ type: "its", name: "[국도35] 강릉 강릉IC" });
     expect(embedUrl(c)).toBeNull();
     expect(thumbnailUrl(c)).toBeNull();
     expect(sourceHref(c)).toBe("https://www.its.go.kr");
-    expect(hlsSrc({ ...c, hlsUrl: "https://a/b.m3u8" })).toBe("https://a/b.m3u8");
-    expect(hlsSrc({ ...c, hlsUrl: undefined })).toBeNull();
+    expect(hlsSrc(c)).toBeNull();
+    expect(hlsSrc({ ...c, hlsUrl: "http://a/b.m3u8" })).toBe("https://a/b.m3u8");
   });
 
   it("영상 주소를 만든다", () => {
