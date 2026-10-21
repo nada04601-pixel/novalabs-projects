@@ -24,6 +24,7 @@
 .body{padding:10px 12px 12px}
 .body h3{margin:0;font-size:15px;line-height:1.4}
 .body p{margin:2px 0 0;color:var(--mut);font-size:13px}
+.body .by{font-size:12px}
 .empty{color:var(--mut);padding:24px 0}
 
 /* 상세 */
@@ -36,7 +37,9 @@
 .btn{display:inline-block;background:var(--acc);color:var(--accfg);padding:9px 16px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;border:0;cursor:pointer}
 .ghost{background:var(--bg);color:var(--fg);border:1px solid var(--line)}
 .panel{background:var(--card);border-radius:14px;padding:16px 18px;margin:0 0 14px}
-.player+.panel{margin-top:14px}
+.player+.panel,.credit+.panel{margin-top:14px}
+.credit{margin:8px 0 0;color:var(--mut);font-size:13px}
+.credit a{color:inherit}
 .panel h2{margin:0 0 8px;font-size:16px}
 .panel p{margin:0;font-size:14px}
 .panel dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:14px}

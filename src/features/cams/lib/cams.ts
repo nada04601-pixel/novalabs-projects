@@ -69,6 +69,14 @@ export function embedUrl(c: Cam): string | null {
 // hqdefault_live.jpg는 방송 중일 때만 있어 끝난 방송이면 깨진 그림이 되므로, 늘 있는 hqdefault.jpg를 씁니다.
 export const thumbnailUrl = (c: Cam) => (c.youtubeId ? `https://i.ytimg.com/vi/${encodeURIComponent(c.youtubeId)}/hqdefault.jpg` : null);
 
+// 출처 링크: 직접 넣은 주소가 없으면 유튜브의 해당 영상(채널 라이브) 페이지
+export function sourceHref(c: Cam): string | null {
+  if (c.sourceUrl) return c.sourceUrl;
+  if (c.youtubeId) return `https://www.youtube.com/watch?v=${encodeURIComponent(c.youtubeId)}`;
+  if (c.youtubeChannelId) return `https://www.youtube.com/channel/${encodeURIComponent(c.youtubeChannelId)}/live`;
+  return null;
+}
+
 export const searchUrl = (c: Cam) => `https://www.youtube.com/results?search_query=${encodeURIComponent(c.searchQuery)}&sp=EgJAAQ%253D%253D`;
 
 // Open-Meteo 날씨 코드(WMO) → 한국어

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cams, distanceKm, embedUrl, filterCams, getCam, hasSource, relatedCams, sourceFirst, thumbnailUrl, weatherLabel } from "./cams";
+import { cams, distanceKm, embedUrl, filterCams, getCam, hasSource, relatedCams, sourceFirst, sourceHref, thumbnailUrl, weatherLabel } from "./cams";
 
 describe("실시간 CCTV 목록", () => {
   it("자료가 올바르다", () => {
@@ -55,6 +55,15 @@ describe("실시간 CCTV 목록", () => {
     expect(sorted.slice(0, n).every(hasSource)).toBe(true);
     expect(sorted.slice(0, n).map((c) => c.id)).toEqual(cams.filter(hasSource).map((c) => c.id));
     expect(getCam("kr-busan-gwangalli")!.youtubeId).toBe("mMFgDRE6CS8");
+  });
+
+  it("출처 이름과 링크를 정한다", () => {
+    const c = getCam("kr-busan-songjeong")!;
+    expect(c.sourceName).toBe("올라호텔");
+    expect(sourceHref(c)).toBe("https://www.youtube.com/watch?v=NBZdNZYF1gI");
+    expect(sourceHref({ ...c, sourceUrl: "https://example.com" })).toBe("https://example.com");
+    expect(sourceHref({ ...c, youtubeId: undefined, youtubeChannelId: "UC1" })).toBe("https://www.youtube.com/channel/UC1/live");
+    expect(sourceHref({ ...c, youtubeId: undefined })).toBeNull();
   });
 
   it("영상 주소를 만든다", () => {

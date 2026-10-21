@@ -19,6 +19,7 @@ export default function CamCard({ cam, on, onHover }: { cam: Cam; on?: boolean; 
       <div className={s.body}>
         <h3>{cam.name}</h3>
         <p>{cam.region} · {categoryOf(cam.category).label}</p>
+        {cam.sourceName && hasSource(cam) && <p className={s.by}>{cam.sourceName} 제공</p>}
       </div>
     </Link>
   );
