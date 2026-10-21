@@ -1,10 +1,12 @@
 import type { Cam } from "../types";
-import { embedUrl, searchUrl, sourceHref } from "../lib/cams";
+import { embedUrl, hlsSrc, searchUrl, sourceHref } from "../lib/cams";
+import HlsPlayer from "./HlsPlayer";
 import s from "../cams.module.css";
 
-// 유튜브 라이브를 띄우고 아래에 영상 출처를 표시합니다. 아직 영상 소스가 없으면 유튜브에서 찾아볼 수 있는 안내를 보여 줍니다.
+// 유튜브 라이브나 HLS 영상을 띄우고 아래에 영상 출처를 표시합니다. 아직 영상 소스가 없으면 유튜브에서 찾아볼 수 있는 안내를 보여 줍니다.
 export default function CamPlayer({ cam }: { cam: Cam }) {
   const src = embedUrl(cam);
+  const hls = hlsSrc(cam);
   const href = sourceHref(cam);
   return (
     <>
@@ -17,6 +19,8 @@ export default function CamPlayer({ cam }: { cam: Cam }) {
             allowFullScreen
             referrerPolicy="strict-origin-when-cross-origin"
           />
+        ) : hls ? (
+          <HlsPlayer src={hls} title={cam.title} />
         ) : (
           <div className={s.noSource}>
             <strong>영상 연결 준비 중</strong>
@@ -25,9 +29,9 @@ export default function CamPlayer({ cam }: { cam: Cam }) {
           </div>
         )}
       </div>
-      {src && href && (
+      {(src || hls) && href && (
         <p className={s.credit}>
-          영상 제공: {cam.sourceName ?? "YouTube"} · <a href={href} target="_blank" rel="noopener noreferrer">YouTube에서 보기</a>
+          영상 제공: {cam.sourceName ?? "YouTube"} · <a href={href} target="_blank" rel="noopener noreferrer">{src ? "YouTube에서 보기" : "출처 바로가기"}</a>
         </p>
       )}
     </>

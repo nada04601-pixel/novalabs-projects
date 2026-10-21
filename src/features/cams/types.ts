@@ -14,6 +14,8 @@ export interface Cam {
   // 영상 소스. 라이브 영상 ID나, 방송이 다시 시작돼도 그 채널의 현재 라이브를 보여 주는 채널 ID(UC…) 중 하나를 넣습니다.
   youtubeId?: string;
   youtubeChannelId?: string;
+  // 유튜브가 아닌 실시간 영상(HLS, .m3u8). 국가교통정보센터(ITS) CCTV처럼 http로 받은 주소도 https로 바꿔 재생합니다.
+  hlsUrl?: string;
   // 영상 출처. 플레이어 아래와 카드에 "○○ 제공"으로 표시합니다. 링크가 없으면 유튜브 영상(채널) 주소로 연결합니다.
   sourceName?: string;
   sourceUrl?: string;

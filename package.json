@@ -16,6 +16,7 @@
     "@tensorflow/tfjs": "4.11.0",
     "@upscalerjs/esrgan-medium": "1.0.0",
     "gifenc": "1.0.3",
+    "hls.js": "^1.7.3",
     "leaflet": "^1.9.4",
     "lunar-javascript": "1.7.7",
     "mediabunny": "1.60.0",
