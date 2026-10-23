@@ -60,6 +60,7 @@ import TypingTest from "@/components/TypingTest";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
 import CharacterCounter from "@/components/CharacterCounter";
+import HwpToHtml from "@/components/HwpToHtml";
 import LottoSimulatorTool from "@/components/LottoSimulatorTool";
 import ShareButtons from "@/components/ShareButtons";
 
@@ -140,6 +141,7 @@ const calculators: Record<string, React.ReactNode> = {
   "name-generator": <NameGenerator />,
   "qr-code": <QrCodeGenerator />,
   "character-counter": <CharacterCounter />,
+  "hwp-to-html": <HwpToHtml />,
   "lotto-simulator": <LottoSimulatorTool />,
 };
 

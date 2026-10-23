@@ -9,7 +9,7 @@ HWPX는 한컴오피스 한글을 COM(`HWPFrame.HwpObject`)으로 띄워 **HWP�
 | `.hwpx` | 한글로 HWP 저장 → pyhwp | Windows + 한컴오피스 한글 + pywin32 |
 | `.hwp` (HWP 3.x 등 pyhwp가 못 읽는 HWP) | 한글로 HWP 5 저장 → pyhwp | Windows + 한컴오피스 한글 + pywin32 |
 
-사이트(브라우저·Cloudflare)에서는 돌릴 수 없는 로컬 도구입니다.
+한컴오피스가 필요한 부분 때문에 PC에서 돌리는 도구입니다. 사이트의 `/tools/hwp-to-html`은 같은 `hwp2html.py`의 변환 함수를 브라우저(Pyodide)에서 쓰고, HWPX는 한컴오피스 없이 직접 읽어 바꿉니다.
 
 ## 설치
 ```bash

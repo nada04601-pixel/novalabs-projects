@@ -10,3 +10,5 @@ public/models
 .dev.vars
 cams-report.md
 __pycache__
+public/pyodide
+public/hwp/hwp2html.py
