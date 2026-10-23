@@ -1,0 +1,4 @@
+pyhwp==0.1b15
+six  # pyhwp가 쓰지만 의존성에 적혀 있지 않음
+pywin32; sys_platform == "win32"  # HWPX 변환(한컴오피스 COM)
+pytest

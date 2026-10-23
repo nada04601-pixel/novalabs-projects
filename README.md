@@ -29,6 +29,11 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - 이미지 용량 줄이기·형식 변환: `/tools/image-compress`. 캔버스로 다시 그려 JPG·WebP·PNG로 저장합니다(`src/components/ImageConverter.tsx`). 목표 용량은 `findQuality`(`src/lib/tools/imageConvert.ts`)가 화질을 이분 탐색해 맞추고, 결과 크기는 `outputSize`가 원본보다 키우지 않고 iOS 캔버스 한도(약 1,670만 화소) 안으로 줄입니다. 같은 형식·같은 크기에서 결과가 더 크면 원본을 그대로 돌려줍니다. HEIC는 브라우저가 열 수 있을 때(Safari)만 변환하고, 아니면 `isHeic`로 알아보고 안내합니다
 - 배경 제거(누끼): `/tools/remove-background`. transformers.js의 `background-removal` 파이프라인을 웹 워커(`src/lib/tools/bgRemove.worker.ts`)에서 돌립니다. 모델은 인물용 MODNet(`Xenova/modnet`, Apache-2.0)과 사물·상품용 BiRefNet lite(`onnx-community/BiRefNet_lite`, MIT)이고(RMBG-1.4는 상업적 사용이 제한돼 쓰지 않음), WebGPU가 있으면 fp16(없으면 fp32), 실패하면 CPU fp32로 다시 시도합니다. 워커에는 긴 변 2048px로 줄인 RGB만 보내고 마스크만 돌려받아, 화면 쪽에서 원본 크기로 키워 오려 냅니다. 배경색·자르기는 마스크를 다시 쓰므로 모델을 다시 돌리지 않습니다(`src/lib/tools/bgRemove.ts`의 `maskBounds`·`cropBox`). ONNX Runtime 경로 설정은 Whisper와 같은 `src/lib/tools/ortEnv.ts`
 
+- HWP·HWPX → HTML 변환: `/tools/hwp-to-html`(`src/components/HwpToHtml.tsx`). 파일 첫 바이트로 형식을 가립니다(OLE → HWP, ZIP → HWPX).
+  - HWP(5.x): 웹 워커(`src/lib/tools/hwp.worker.ts`)가 브라우저용 Python(Pyodide 0.27.7)에서 pyhwp(`hwp5html`)를 돌리고, PC용 도구와 같은 `tools/hwp2html/hwp2html.py`의 `hwp5_to_dir`·`inline_html`로 그림·CSS를 넣은 HTML 한 파일을 만듭니다. Pyodide 본체는 `scripts/copy-models.mjs`가 `public/pyodide/`로, `hwp2html.py`는 `public/hwp/`로 복사하고, npm에 없는 휠(lxml·six는 Pyodide 0.27.7 배포본, olefile, 직접 만든 pyhwp 0.1b15 휠)은 `public/hwp/`에 넣어 두었습니다. pyhwp는 AGPL-3.0이라 고치지 않고 쓰며, 페이지 FAQ에 출처를 적었습니다. pyhwp가 쓰는 `cryptography`(배포용 문서 해독)는 받지 않으므로 배포용 문서는 바꾸지 못합니다
+  - HWPX: `src/lib/tools/hwpx.ts`가 ZIP(`unzip.ts`, 내장 DecompressionStream)을 풀어 OWPML XML을 직접 HTML로 바꿉니다(DOMParser를 써서 화면 쪽에서 실행). 글자·문단 모양은 `header.xml`의 id별 CSS 클래스(`.c{id}`, `.p{id}`, `.b{id}`)로, 표는 열 너비를 한 칸 셀부터 정해 `table-layout:fixed`로, 글 앞·뒤 개체는 쪽 기준 절대 위치로 그립니다. 수식 스크립트는 `hwpxEquation.ts`, 차트(OOXML)는 `hwpxChart.ts`가 SVG로 그립니다. 테스트는 `hwpx.test.ts`(실제 문서는 `HWPX_SAMPLE=경로.hwpx`)
+- HWP·HWPX → HTML PC용 도구(Windows의 한컴오피스로 HWPX·HWP 3.x를 HWP로 저장한 뒤 pyhwp로 변환): `tools/hwp2html/`. 사용법은 `tools/hwp2html/README.md`
+
 ## 영어 페이지 (/en)
 - 해외에서도 쓸 수 있는 도구(PDF·이미지·동영상·오디오·유틸리티) 18개만 영어 버전이 있습니다. 목록은 `src/lib/i18n.ts`의 `EN_TOOLS`(한글 타자 연습, 나이스 바이트 글자수 세기, 한국 기준 계산기는 한국어만).
 - 주소: `/en`(영어 홈), `/en/tools/[slug]`. 한국어 주소는 그대로이고, 두 페이지는 hreflang(`alternates.languages`)과 사이트맵으로 서로 연결됩니다.

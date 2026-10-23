@@ -19,3 +19,14 @@ for (const name of ["ort-wasm-simd-threaded.asyncify.mjs", "ort-wasm-simd-thread
   await cp(new URL(name, ortFrom), new URL(name, ortTo));
 }
 console.log("음성 인식 실행 파일 복사 완료: public/models/ort/");
+
+// HWP → HTML(/tools/hwp-to-html): 브라우저용 Python(Pyodide)과 변환 코드. Pyodide 패키지(lxml·six)와 pyhwp·olefile 휠은
+// npm에 없어 public/hwp/에 넣어 두었고, 여기서는 Pyodide 본체와 tools/hwp2html/hwp2html.py(PC용 도구와 같은 변환 코드)만 복사합니다.
+const pyFrom = new URL("../node_modules/pyodide/", import.meta.url);
+const pyTo = new URL("../public/pyodide/", import.meta.url);
+await mkdir(pyTo, { recursive: true });
+for (const name of ["pyodide.mjs", "pyodide.asm.js", "pyodide.asm.wasm", "python_stdlib.zip", "pyodide-lock.json"]) {
+  await cp(new URL(name, pyFrom), new URL(name, pyTo));
+}
+await cp(new URL("../tools/hwp2html/hwp2html.py", import.meta.url), new URL("../public/hwp/hwp2html.py", import.meta.url));
+console.log("HWP 변환 실행 파일 복사 완료: public/pyodide/, public/hwp/hwp2html.py");
