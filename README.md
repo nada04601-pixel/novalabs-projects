@@ -67,6 +67,14 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - 수동: `node scripts/update-lotto.mjs` (빠진 회차만 추가), `--all`은 전체를 다시 받음. Actions 탭에서 "Update lotto results"를 직접 실행해도 됩니다.
 - 1등 배출점: `src/data/lotto/stores.json`. 동행복권 당첨 판매점 조회(`/wnprchsplcsrch/selectLtWnShp.do`)에서 `node scripts/update-lotto-stores.mjs`로 받으며, 같은 주간 워크플로가 함께 실행합니다. 동행복권은 해외(GitHub Actions) 접속이 자주 끊겨 요청마다 다시 시도하고, 시간이 다 되면 받은 데까지 저장한 뒤 다음 실행 때 빠진 회차부터 이어 받습니다. 실패해도 당첨번호 갱신은 막지 않습니다.
 
+## 유튜브 해외반응 쇼츠 주제 찾기
+
+- 구독자는 적은데 조회수가 큰 쇼츠(조회수 ÷ 구독자 배수)를 찾습니다. 사이트와는 따로 쓰는 도구입니다.
+- 실행: Actions 탭 > "Find outlier shorts" > Run workflow에서 검색어·기간·구독자 최대·조회수 최소·배수를 정해 실행 → 실행 결과 화면에 상위 30개 표, 전체는 `outlier-shorts` CSV로 첨부(`.github/workflows/find-outlier-shorts.yml`).
+- 키: 실시간 CCTV 점검과 같은 `YOUTUBE_API_KEY`. 기본값(검색어 3개 × 2쪽)으로 한 번에 약 600단위를 씁니다(하루 무료 10,000단위).
+- 기준: 최근 30일, 구독자 10만 이하, 조회수 5만 이상, 10배 이상. 쇼츠 여부는 API가 알려 주지 않아 3분 이하 영상을 쇼츠로 봅니다. 구독자 수를 숨긴 채널은 뺍니다.
+- 로컬 실행: `YOUTUBE_API_KEY=... node scripts/youtube-outliers.mjs [--days 30] [--max-subs 100000] [--min-views 50000] [--min-ratio 10] [검색어 ...]` (결과는 `outlier-shorts.csv`), 테스트는 `scripts/youtube-outliers.test.mjs`.
+
 ## 새 계산기 추가 (3단계)
 1. `src/lib/calculators/`에 계산 함수 작성
 2. `src/components/`에 입력·결과 컴포넌트 작성
