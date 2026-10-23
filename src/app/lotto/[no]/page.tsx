@@ -22,6 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `로또 ${d.no}회 당첨번호 (${d.date})`,
     description: `로또 6/45 제${d.no}회(${d.date}) 당첨번호 ${d.nums.join(", ")} 보너스 ${d.bonus}. 1등 ${d.prizes[0][1]}게임, 1~5등 당첨금과 당첨자 수, 1등 배출점(당첨 판매점)을 확인하세요.`,
     alternates: { canonical: `/lotto/${d.no}` },
+    // 회차마다 같은 틀에 숫자만 다른 페이지가 1,000개가 넘어 검색에는 내보내지 않습니다(애드센스 "가치가 별로 없는 콘텐츠" 대응).
+    // 링크는 따라가도록 두어 /lotto·시뮬레이터로 이어지는 길은 살립니다.
+    robots: { index: false, follow: true },
   };
 }
 
