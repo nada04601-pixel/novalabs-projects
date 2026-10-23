@@ -42,6 +42,14 @@ describe("pickOutliers", () => {
     ]);
   });
 
+  it("기본은 조회수 높은 순, sort: ratio면 배수 큰 순", () => {
+    // a: 30만 회 / 구독 1만 = 30배, b: 20만 회 / 구독 2천 = 100배
+    const channels = new Map([channel("c1", 10000), channel("c2", 2000)]);
+    const videos = [video("a", { channelId: "c1", views: 300000 }), video("b", { channelId: "c2", views: 200000 })];
+    expect(pickOutliers(videos, channels, opts).map((r) => r.url.slice(-1))).toEqual(["a", "b"]);
+    expect(pickOutliers(videos, channels, { ...opts, sort: "ratio" }).map((r) => r.url.slice(-1))).toEqual(["b", "a"]);
+  });
+
   it("구독자가 많거나, 조회수·배수가 모자라거나, 3분이 넘으면 뺀다", () => {
     const channels = new Map([channel("big", 200000), channel("small", 20000)]);
     const rows = pickOutliers(

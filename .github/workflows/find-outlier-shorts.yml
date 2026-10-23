@@ -1,4 +1,4 @@
-# 해외반응 쇼츠 주제 찾기: 구독자는 적은데 조회수가 큰 쇼츠를 찾아 실행 결과 화면에 표로 보여 주고, CSV를 첨부합니다.
+# 해외반응 쇼츠 주제 찾기: 구독자는 적은데 조회수가 큰 쇼츠를 찾아 실행 결과 화면에 표로 보여 주고(기본: 조회수 높은 순), CSV를 첨부합니다.
 # Actions 탭 > "Find outlier shorts" > Run workflow에서 기준을 바꿔 실행합니다.
 # check-cams.yml과 같은 YOUTUBE_API_KEY를 씁니다. 기본값으로 한 번 돌리면 약 600단위(하루 무료 10,000단위)를 씁니다.
 name: Find outlier shorts
@@ -14,13 +14,18 @@ on:
         default: "30"
       max_subs:
         description: "구독자 최대"
-        default: "100000"
+        default: "10000"
       min_views:
         description: "조회수 최소"
-        default: "50000"
+        default: "100000"
       min_ratio:
         description: "조회수 ÷ 구독자 최소 배수"
         default: "10"
+      sort:
+        description: "정렬 기준"
+        type: choice
+        options: [views, ratio]
+        default: views
 
 permissions:
   contents: read
@@ -41,9 +46,10 @@ jobs:
           MAX_SUBS: ${{ inputs.max_subs }}
           MIN_VIEWS: ${{ inputs.min_views }}
           MIN_RATIO: ${{ inputs.min_ratio }}
+          SORT: ${{ inputs.sort }}
         run: |
           IFS=',' read -ra qs <<< "$QUERIES"
-          node scripts/youtube-outliers.mjs --days "$DAYS" --max-subs "$MAX_SUBS" --min-views "$MIN_VIEWS" --min-ratio "$MIN_RATIO" --out outlier-shorts.csv "${qs[@]}"
+          node scripts/youtube-outliers.mjs --days "$DAYS" --max-subs "$MAX_SUBS" --min-views "$MIN_VIEWS" --min-ratio "$MIN_RATIO" --sort "$SORT" --out outlier-shorts.csv "${qs[@]}"
       - uses: actions/upload-artifact@v4
         with:
           name: outlier-shorts

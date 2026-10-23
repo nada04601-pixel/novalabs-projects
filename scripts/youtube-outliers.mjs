@@ -1,9 +1,10 @@
 // 해외반응 쇼츠 주제 찾기: 구독자는 적은데 조회수가 큰 쇼츠를 YouTube Data API로 찾아 CSV로 저장합니다.
 // 사용: YOUTUBE_API_KEY=... node scripts/youtube-outliers.mjs [옵션] [검색어 ...]
 //   --days 30         최근 며칠 안에 올라온 영상만 (기본 30)
-//   --max-subs 100000 구독자가 이 수 이하인 채널만 (기본 10만)
-//   --min-views 50000 조회수가 이 수 이상인 영상만 (기본 5만)
+//   --max-subs 10000  구독자가 이 수 이하인 채널만 (기본 1만)
+//   --min-views 100000 조회수가 이 수 이상인 영상만 (기본 10만)
 //   --min-ratio 10    조회수 ÷ 구독자가 이 배수 이상인 영상만 (기본 10배)
+//   --sort views      정렬 기준: views(조회수 높은 순, 기본) 또는 ratio(배수 큰 순)
 //   --pages 2         검색어마다 검색 결과를 몇 쪽(쪽당 50개)까지 볼지 (기본 2)
 //   --out outlier-shorts.csv
 // 검색어를 안 주면 DEFAULT_QUERIES를 씁니다.
@@ -24,9 +25,9 @@ export function parseDuration(iso) {
   return Number(d) * 86400 + Number(h) * 3600 + Number(min) * 60 + Number(s);
 }
 
-// 영상·채널 자료를 합쳐 기준에 맞는 것만 배수가 큰 순서로 돌려줍니다.
+// 영상·채널 자료를 합쳐 기준에 맞는 것만 sort 기준(views: 조회수, ratio: 배수)으로 큰 순서대로 돌려줍니다.
 // 구독자 수를 숨긴 채널은 배수를 셀 수 없어 뺍니다.
-export function pickOutliers(videos, channels, { maxSubs, minViews, minRatio }) {
+export function pickOutliers(videos, channels, { maxSubs, minViews, minRatio, sort = "views" }) {
   const rows = [];
   for (const v of videos) {
     const ch = channels.get(v.snippet.channelId);
@@ -49,7 +50,7 @@ export function pickOutliers(videos, channels, { maxSubs, minViews, minRatio }) 
       query: v.query,
     });
   }
-  return rows.sort((a, b) => b.ratio - a.ratio);
+  return rows.sort((a, b) => b[sort] - a[sort]);
 }
 
 function csvCell(value) {
@@ -66,7 +67,7 @@ export function toCsv(rows, today) {
   return "﻿" + [head.join(","), ...lines].join("\n") + "\n";
 }
 
-// GitHub Actions 실행 결과 화면에 보여 줄 표 (배수가 큰 순서로 limit개)
+// GitHub Actions 실행 결과 화면에 보여 줄 표 (rows 순서대로 limit개)
 export function toMarkdown(rows, limit = 30) {
   const cell = (s) => String(s).replaceAll("|", "\\|").replaceAll("\n", " ");
   const lines = rows
@@ -76,8 +77,8 @@ export function toMarkdown(rows, limit = 30) {
 }
 
 function parseArgs(argv) {
-  const opts = { days: 30, maxSubs: 100000, minViews: 50000, minRatio: 10, pages: 2, out: "outlier-shorts.csv" };
-  const names = { "--days": "days", "--max-subs": "maxSubs", "--min-views": "minViews", "--min-ratio": "minRatio", "--pages": "pages", "--out": "out" };
+  const opts = { days: 30, maxSubs: 10000, minViews: 100000, minRatio: 10, sort: "views", pages: 2, out: "outlier-shorts.csv" };
+  const names = { "--days": "days", "--max-subs": "maxSubs", "--min-views": "minViews", "--min-ratio": "minRatio", "--sort": "sort", "--pages": "pages", "--out": "out" };
   const queries = [];
   for (let i = 0; i < argv.length; i++) {
     const key = names[argv[i]];
@@ -87,8 +88,10 @@ function parseArgs(argv) {
     }
     const value = argv[++i];
     if (value === undefined) throw new Error(`${argv[i - 1]} 다음에 값이 없습니다`);
-    opts[key] = key === "out" ? value : Number(value);
-    if (key !== "out" && !Number.isFinite(opts[key])) throw new Error(`${argv[i - 1]} 값이 숫자가 아닙니다: ${value}`);
+    const isText = key === "out" || key === "sort";
+    opts[key] = isText ? value : Number(value);
+    if (key === "sort" && !["views", "ratio"].includes(value)) throw new Error(`--sort는 views 또는 ratio입니다: ${value}`);
+    if (!isText && !Number.isFinite(opts[key])) throw new Error(`${argv[i - 1]} 값이 숫자가 아닙니다: ${value}`);
   }
   return { opts, queries: queries.length ? queries : DEFAULT_QUERIES };
 }
@@ -154,7 +157,7 @@ async function main() {
   const summary = `영상 ${videos.length}개 중 ${rows.length}개가 기준에 맞습니다`;
   console.log(`${summary} → ${opts.out}`);
   if (process.env.GITHUB_STEP_SUMMARY) {
-    const criteria = `최근 ${opts.days}일 · 구독자 ${opts.maxSubs.toLocaleString("ko-KR")} 이하 · 조회수 ${opts.minViews.toLocaleString("ko-KR")} 이상 · ${opts.minRatio}배 이상 · 검색어: ${queries.join(", ")}`;
+    const criteria = `최근 ${opts.days}일 · 구독자 ${opts.maxSubs.toLocaleString("ko-KR")} 이하 · 조회수 ${opts.minViews.toLocaleString("ko-KR")} 이상 · ${opts.minRatio}배 이상 · ${opts.sort === "views" ? "조회수" : "배수"} 높은 순 · 검색어: ${queries.join(", ")}`;
     await appendFile(process.env.GITHUB_STEP_SUMMARY, `## 해외반응 쇼츠 후보\n\n${criteria}\n\n${summary}.\n\n${rows.length ? toMarkdown(rows) : ""}`);
   }
 }
