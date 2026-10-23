@@ -29,9 +29,6 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - 이미지 용량 줄이기·형식 변환: `/tools/image-compress`. 캔버스로 다시 그려 JPG·WebP·PNG로 저장합니다(`src/components/ImageConverter.tsx`). 목표 용량은 `findQuality`(`src/lib/tools/imageConvert.ts`)가 화질을 이분 탐색해 맞추고, 결과 크기는 `outputSize`가 원본보다 키우지 않고 iOS 캔버스 한도(약 1,670만 화소) 안으로 줄입니다. 같은 형식·같은 크기에서 결과가 더 크면 원본을 그대로 돌려줍니다. HEIC는 브라우저가 열 수 있을 때(Safari)만 변환하고, 아니면 `isHeic`로 알아보고 안내합니다
 - 배경 제거(누끼): `/tools/remove-background`. transformers.js의 `background-removal` 파이프라인을 웹 워커(`src/lib/tools/bgRemove.worker.ts`)에서 돌립니다. 모델은 인물용 MODNet(`Xenova/modnet`, Apache-2.0)과 사물·상품용 BiRefNet lite(`onnx-community/BiRefNet_lite`, MIT)이고(RMBG-1.4는 상업적 사용이 제한돼 쓰지 않음), WebGPU가 있으면 fp16(없으면 fp32), 실패하면 CPU fp32로 다시 시도합니다. 워커에는 긴 변 2048px로 줄인 RGB만 보내고 마스크만 돌려받아, 화면 쪽에서 원본 크기로 키워 오려 냅니다. 배경색·자르기는 마스크를 다시 쓰므로 모델을 다시 돌리지 않습니다(`src/lib/tools/bgRemove.ts`의 `maskBounds`·`cropBox`). ONNX Runtime 경로 설정은 Whisper와 같은 `src/lib/tools/ortEnv.ts`
 
-## 위탁판매 자동화 (apps/dropship)
-- 도매매 상품을 네이버 스마트스토어에 등록하고, 주문이 들어오면 도매매에 고객 배송지로 발주하는 Node 프로그램입니다. 사이트와 따로 돌며(고정 IP 컴퓨터 필요) 사이트 빌드·테스트에서는 빠집니다(`tsconfig.json`의 exclude, `vitest.config.ts`). 설정·사용법·쿠팡 등 확장 방법은 `apps/dropship/README.md`.
-
 ## 영어 페이지 (/en)
 - 해외에서도 쓸 수 있는 도구(PDF·이미지·동영상·오디오·유틸리티) 18개만 영어 버전이 있습니다. 목록은 `src/lib/i18n.ts`의 `EN_TOOLS`(한글 타자 연습, 나이스 바이트 글자수 세기, 한국 기준 계산기는 한국어만).
 - 주소: `/en`(영어 홈), `/en/tools/[slug]`. 한국어 주소는 그대로이고, 두 페이지는 hreflang(`alternates.languages`)과 사이트맵으로 서로 연결됩니다.
