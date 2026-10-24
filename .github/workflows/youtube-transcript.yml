@@ -1,0 +1,43 @@
+# 유튜브 영상 자막(스크립트) 가져오기: 해외반응 쇼츠 대본에 원본 대사와 시간을 옮길 때 씁니다.
+# Actions 탭 > "YouTube transcript" > Run workflow에서 영상 주소(또는 ID)와 언어를 넣어 실행합니다.
+# 결과는 실행 로그에 "[분:초] 문장"으로 찍히고, 원본 .vtt와 함께 첨부됩니다. 직접 올린 자막이 없으면 자동 생성 자막을 씁니다.
+name: YouTube transcript
+
+on:
+  workflow_dispatch:
+    inputs:
+      video:
+        description: "영상 주소 또는 ID"
+        required: true
+      lang:
+        description: "자막 언어 (예: en, ko)"
+        default: "en"
+
+permissions:
+  contents: read
+
+jobs:
+  transcript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Install yt-dlp
+        run: pipx install yt-dlp
+      - name: Download subtitles
+        env:
+          VIDEO: ${{ inputs.video }}
+          LANG_CODE: ${{ inputs.lang }}
+        run: |
+          case "$VIDEO" in http*) url="$VIDEO" ;; *) url="https://www.youtube.com/watch?v=$VIDEO" ;; esac
+          yt-dlp --skip-download --write-subs --write-auto-subs --sub-langs "$LANG_CODE" --sub-format vtt -o "transcript.%(ext)s" "$url"
+          ls transcript.*.vtt
+      # 첨부 파일을 못 받는 환경(Claude 클라우드 세션 등)에서도 실행 로그로 읽을 수 있게 남깁니다.
+      - name: Print transcript
+        run: node scripts/vtt-to-text.mjs transcript.*.vtt | tee transcript.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: transcript
+          path: transcript.*
