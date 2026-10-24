@@ -38,6 +38,11 @@ describe("findCredits", () => {
     expect(findCredits(text)).toBe("https://www.tiktok.com/@scot.crew_/video/123 @scot.crew_");
   });
 
+  it("배경음악 출처 줄의 링크는 원작자로 치지 않는다", () => {
+    expect(findCredits("🎵Music provided by 브금대통령\n🎵Track : Light Ahead - https://youtu.be/abc")).toBe("");
+    expect(findCredits("BGM https://youtu.be/abc\n원본 https://youtu.be/xyz")).toBe("https://youtu.be/xyz");
+  });
+
   it("같은 표시는 한 번만, 없으면 빈 문자열", () => {
     expect(findCredits("@abc @abc")).toBe("@abc");
     expect(findCredits("")).toBe("");
@@ -54,6 +59,13 @@ describe("shortenText", () => {
 });
 
 describe("pickOutliers", () => {
+  it("creditedOnly면 원본 출처가 없는 영상을 뺀다", () => {
+    const channels = new Map([channel("c1", 10000)]);
+    const videos = [video("a", { description: "원본 @origin" }), video("b", { description: "#해외반응" })];
+    expect(pickOutliers(videos, channels, opts).map((r) => r.url.slice(-1))).toEqual(["a", "b"]);
+    expect(pickOutliers(videos, channels, { ...opts, creditedOnly: true }).map((r) => r.url.slice(-1))).toEqual(["a"]);
+  });
+
   it("설명란과 원본 표시를 함께 담는다", () => {
     const channels = new Map([channel("c1", 10000)]);
     const [row] = pickOutliers([video("a", { description: "출처 @origin\n재밌게 보세요" })], channels, opts);

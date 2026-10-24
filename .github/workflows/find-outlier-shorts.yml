@@ -26,6 +26,11 @@ on:
         type: choice
         options: [views, ratio]
         default: views
+      credits:
+        description: "원본 출처(SNS 링크·@아이디)가 설명란에 있는 영상만 볼지 (only) 모두 볼지 (all)"
+        type: choice
+        options: [only, all]
+        default: only
 
 permissions:
   contents: read
@@ -47,9 +52,10 @@ jobs:
           MIN_VIEWS: ${{ inputs.min_views }}
           MIN_RATIO: ${{ inputs.min_ratio }}
           SORT: ${{ inputs.sort }}
+          CREDITS: ${{ inputs.credits }}
         run: |
           IFS=',' read -ra qs <<< "$QUERIES"
-          node scripts/youtube-outliers.mjs --days "$DAYS" --max-subs "$MAX_SUBS" --min-views "$MIN_VIEWS" --min-ratio "$MIN_RATIO" --sort "$SORT" --out outlier-shorts.csv "${qs[@]}"
+          node scripts/youtube-outliers.mjs --days "$DAYS" --max-subs "$MAX_SUBS" --min-views "$MIN_VIEWS" --min-ratio "$MIN_RATIO" --sort "$SORT" --credits "$CREDITS" --out outlier-shorts.csv "${qs[@]}"
       # 첨부 파일을 못 받는 환경(Claude 클라우드 세션 등)에서도 실행 로그로 결과를 읽을 수 있게 남깁니다.
       - name: Print results
         run: cat outlier-shorts.csv
