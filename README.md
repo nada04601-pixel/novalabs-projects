@@ -76,6 +76,12 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - CSV에는 영상 설명란(앞 300자, 줄바꿈은 한 칸으로)과 "원본 표시"(설명란에 적힌 틱톡·인스타·유튜브 등 SNS 링크와 `@아이디`)도 담습니다. 번역·재업로드 영상의 원작자를 찾을 때 씁니다. 기본은 원본 출처가 적힌 영상만 보여 주고(`--credits only`, 배경음악 출처 줄의 링크는 원본으로 치지 않음), 실행 화면에서 `all`을 고르면 출처 상관없이 모두 봅니다.
 - 로컬 실행: `YOUTUBE_API_KEY=... node scripts/youtube-outliers.mjs [--days 30] [--max-subs 10000] [--min-views 100000] [--min-ratio 10] [--sort views|ratio] [--credits only|all] [검색어 ...]` (결과는 `outlier-shorts.csv`), 테스트는 `scripts/youtube-outliers.test.mjs`.
 
+## 유튜브 영상 자막(스크립트) 가져오기
+
+- 해외반응 쇼츠 대본에 원본 대사와 시간을 옮길 때 씁니다. 사이트와는 따로 쓰는 도구입니다.
+- 실행: Actions 탭 > "YouTube transcript" > Run workflow에서 영상 주소(또는 ID)와 자막 언어(기본 `en`)를 넣어 실행 → 실행 로그에 `[분:초] 문장`, 원본 `.vtt`와 `transcript.txt`는 첨부(`.github/workflows/youtube-transcript.yml`).
+- yt-dlp로 직접 올린 자막을, 없으면 자동 생성 자막을 받습니다. 자동 자막에서 겹쳐 나오는 줄은 `scripts/vtt-to-text.mjs`가 한 번만 남깁니다(테스트 `scripts/vtt-to-text.test.mjs`). 유튜브가 서버 접속을 막으면 실패할 수 있습니다.
+
 ## 새 계산기 추가 (3단계)
 1. `src/lib/calculators/`에 계산 함수 작성
 2. `src/components/`에 입력·결과 컴포넌트 작성
