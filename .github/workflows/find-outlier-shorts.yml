@@ -50,6 +50,9 @@ jobs:
         run: |
           IFS=',' read -ra qs <<< "$QUERIES"
           node scripts/youtube-outliers.mjs --days "$DAYS" --max-subs "$MAX_SUBS" --min-views "$MIN_VIEWS" --min-ratio "$MIN_RATIO" --sort "$SORT" --out outlier-shorts.csv "${qs[@]}"
+      # 첨부 파일을 못 받는 환경(Claude 클라우드 세션 등)에서도 실행 로그로 결과를 읽을 수 있게 남깁니다.
+      - name: Print results
+        run: cat outlier-shorts.csv
       - uses: actions/upload-artifact@v4
         with:
           name: outlier-shorts
