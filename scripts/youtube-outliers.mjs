@@ -16,6 +16,7 @@ import { pathToFileURL } from "node:url";
 const API = "https://www.googleapis.com/youtube/v3";
 const DEFAULT_QUERIES = ["해외반응", "외국인 반응", "외국 반응"];
 const SHORTS_MAX_SEC = 180;
+const DESCRIPTION_MAX = 300; // CSV에 넣을 설명란 최대 글자 수 (실행 로그로도 읽기 때문에 짧게)
 
 // "PT1M5S" 같은 ISO 8601 길이를 초로 바꿉니다. 읽을 수 없으면 null
 export function parseDuration(iso) {
@@ -23,6 +24,23 @@ export function parseDuration(iso) {
   if (!m) return null;
   const [, d = 0, h = 0, min = 0, s = 0] = m;
   return Number(d) * 86400 + Number(h) * 3600 + Number(min) * 60 + Number(s);
+}
+
+// 설명란에서 원작자 표시로 보이는 SNS 링크와 @아이디를 찾아 공백으로 이어 돌려줍니다.
+// 번역·재업로드 채널은 "원본: @아이디"처럼 적는 경우가 많습니다. 이메일 주소는 아이디로 보지 않습니다.
+export function findCredits(description) {
+  const text = description ?? "";
+  const links =
+    text.match(/https?:\/\/(?:[\w-]+\.)?(?:tiktok\.com|instagram\.com|youtube\.com|youtu\.be|x\.com|twitter\.com|facebook\.com|douyin\.com|xiaohongshu\.com|xhslink\.com)\/\S*/gi) ?? [];
+  const cleanLinks = links.map((l) => l.replace(/[).,!]+$/, ""));
+  const handles = (text.match(/(?<![\w.@])@[\w.-]{2,30}/g) ?? []).map((h) => h.replace(/[.-]+$/, ""));
+  return [...new Set([...cleanLinks, ...handles])].join(" ");
+}
+
+// 줄바꿈과 연속 공백을 한 칸으로 줄이고 max 글자까지만 남깁니다.
+export function shortenText(text, max = DESCRIPTION_MAX) {
+  const s = (text ?? "").replace(/\s+/g, " ").trim();
+  return s.length > max ? `${s.slice(0, max)}…` : s;
 }
 
 // 영상·채널 자료를 합쳐 기준에 맞는 것만 sort 기준(views: 조회수, ratio: 배수)으로 큰 순서대로 돌려줍니다.
@@ -48,6 +66,8 @@ export function pickOutliers(videos, channels, { maxSubs, minViews, minRatio, so
       seconds: sec,
       url: `https://www.youtube.com/shorts/${v.id}`,
       query: v.query,
+      credits: findCredits(v.snippet.description),
+      description: shortenText(v.snippet.description),
     });
   }
   return rows.sort((a, b) => b[sort] - a[sort]);
@@ -60,9 +80,9 @@ function csvCell(value) {
 
 // 엑셀·구글 시트에서 한글이 깨지지 않게 BOM을 붙입니다.
 export function toCsv(rows, today) {
-  const head = ["찾은 날짜", "영상 제목", "채널", "구독자", "조회수", "배수", "올린 날짜", "길이(초)", "링크", "검색어"];
+  const head = ["찾은 날짜", "영상 제목", "채널", "구독자", "조회수", "배수", "올린 날짜", "길이(초)", "링크", "검색어", "원본 표시", "설명란"];
   const lines = rows.map((r) =>
-    [today, r.title, r.channel, r.subs, r.views, r.ratio, r.published, r.seconds, r.url, r.query].map(csvCell).join(","),
+    [today, r.title, r.channel, r.subs, r.views, r.ratio, r.published, r.seconds, r.url, r.query, r.credits, r.description].map(csvCell).join(","),
   );
   return "﻿" + [head.join(","), ...lines].join("\n") + "\n";
 }
