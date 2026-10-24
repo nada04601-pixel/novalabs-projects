@@ -73,6 +73,7 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - 실행: Actions 탭 > "Find outlier shorts" > Run workflow에서 검색어·기간·구독자 최대·조회수 최소·배수·정렬 기준을 정해 실행 → 실행 결과 화면에 상위 30개 표, 전체는 `outlier-shorts` CSV로 첨부(`.github/workflows/find-outlier-shorts.yml`).
 - 키: 실시간 CCTV 점검과 같은 `YOUTUBE_API_KEY`. 기본값(검색어 3개 × 2쪽)으로 한 번에 약 600단위를 씁니다(하루 무료 10,000단위).
 - 기준: 최근 30일, 구독자 1만 이하, 조회수 10만 이상, 10배 이상, 조회수 높은 순(`--sort ratio`면 배수 큰 순). 쇼츠 여부는 API가 알려 주지 않아 3분 이하 영상을 쇼츠로 봅니다. 구독자 수를 숨긴 채널은 뺍니다.
+- CSV에는 영상 설명란(앞 300자, 줄바꿈은 한 칸으로)과 "원본 표시"(설명란에 적힌 틱톡·인스타·유튜브 등 SNS 링크와 `@아이디`)도 담습니다. 번역·재업로드 영상의 원작자를 찾을 때 씁니다.
 - 로컬 실행: `YOUTUBE_API_KEY=... node scripts/youtube-outliers.mjs [--days 30] [--max-subs 10000] [--min-views 100000] [--min-ratio 10] [--sort views|ratio] [검색어 ...]` (결과는 `outlier-shorts.csv`), 테스트는 `scripts/youtube-outliers.test.mjs`.
 
 ## 새 계산기 추가 (3단계)
