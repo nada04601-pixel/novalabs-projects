@@ -5,6 +5,7 @@
 //   --min-views 100000 조회수가 이 수 이상인 영상만 (기본 10만)
 //   --min-ratio 10    조회수 ÷ 구독자가 이 배수 이상인 영상만 (기본 10배)
 //   --sort views      정렬 기준: views(조회수 높은 순, 기본) 또는 ratio(배수 큰 순)
+//   --credits only    only(기본): 설명란에 원본 출처(SNS 링크·@아이디)가 적힌 영상만, all: 모두
 //   --pages 2         검색어마다 검색 결과를 몇 쪽(쪽당 50개)까지 볼지 (기본 2)
 //   --out outlier-shorts.csv
 // 검색어를 안 주면 DEFAULT_QUERIES를 씁니다.
@@ -27,9 +28,15 @@ export function parseDuration(iso) {
 }
 
 // 설명란에서 원작자 표시로 보이는 SNS 링크와 @아이디를 찾아 공백으로 이어 돌려줍니다.
-// 번역·재업로드 채널은 "원본: @아이디"처럼 적는 경우가 많습니다. 이메일 주소는 아이디로 보지 않습니다.
+// 번역·재업로드 채널은 "원본: @아이디"처럼 적는 경우가 많습니다. 이메일 주소는 아이디로 보지 않고,
+// 배경음악 출처 줄("Music provided by …", "브금" 등)의 링크는 원작자가 아니라서 뺍니다.
+const MUSIC_LINE = /music|bgm|track|브금|배경음악|음원/i;
+
 export function findCredits(description) {
-  const text = description ?? "";
+  const text = (description ?? "")
+    .split("\n")
+    .filter((line) => !MUSIC_LINE.test(line))
+    .join("\n");
   const links =
     text.match(/https?:\/\/(?:[\w-]+\.)?(?:tiktok\.com|instagram\.com|youtube\.com|youtu\.be|x\.com|twitter\.com|facebook\.com|douyin\.com|xiaohongshu\.com|xhslink\.com)\/\S*/gi) ?? [];
   const cleanLinks = links.map((l) => l.replace(/[).,!]+$/, ""));
@@ -45,7 +52,8 @@ export function shortenText(text, max = DESCRIPTION_MAX) {
 
 // 영상·채널 자료를 합쳐 기준에 맞는 것만 sort 기준(views: 조회수, ratio: 배수)으로 큰 순서대로 돌려줍니다.
 // 구독자 수를 숨긴 채널은 배수를 셀 수 없어 뺍니다.
-export function pickOutliers(videos, channels, { maxSubs, minViews, minRatio, sort = "views" }) {
+// creditedOnly면 원본 출처를 찾지 못한 영상도 뺍니다.
+export function pickOutliers(videos, channels, { maxSubs, minViews, minRatio, sort = "views", creditedOnly = false }) {
   const rows = [];
   for (const v of videos) {
     const ch = channels.get(v.snippet.channelId);
@@ -56,6 +64,8 @@ export function pickOutliers(videos, channels, { maxSubs, minViews, minRatio, so
     const views = Number(v.statistics.viewCount ?? 0);
     const ratio = views / Math.max(subs, 1);
     if (subs > maxSubs || views < minViews || ratio < minRatio) continue;
+    const credits = findCredits(v.snippet.description);
+    if (creditedOnly && !credits) continue;
     rows.push({
       title: v.snippet.title,
       channel: v.snippet.channelTitle,
@@ -66,7 +76,7 @@ export function pickOutliers(videos, channels, { maxSubs, minViews, minRatio, so
       seconds: sec,
       url: `https://www.youtube.com/shorts/${v.id}`,
       query: v.query,
-      credits: findCredits(v.snippet.description),
+      credits,
       description: shortenText(v.snippet.description),
     });
   }
@@ -97,8 +107,8 @@ export function toMarkdown(rows, limit = 30) {
 }
 
 function parseArgs(argv) {
-  const opts = { days: 30, maxSubs: 10000, minViews: 100000, minRatio: 10, sort: "views", pages: 2, out: "outlier-shorts.csv" };
-  const names = { "--days": "days", "--max-subs": "maxSubs", "--min-views": "minViews", "--min-ratio": "minRatio", "--sort": "sort", "--pages": "pages", "--out": "out" };
+  const opts = { days: 30, maxSubs: 10000, minViews: 100000, minRatio: 10, sort: "views", credits: "only", pages: 2, out: "outlier-shorts.csv" };
+  const names = { "--days": "days", "--max-subs": "maxSubs", "--min-views": "minViews", "--min-ratio": "minRatio", "--sort": "sort", "--credits": "credits", "--pages": "pages", "--out": "out" };
   const queries = [];
   for (let i = 0; i < argv.length; i++) {
     const key = names[argv[i]];
@@ -108,9 +118,10 @@ function parseArgs(argv) {
     }
     const value = argv[++i];
     if (value === undefined) throw new Error(`${argv[i - 1]} 다음에 값이 없습니다`);
-    const isText = key === "out" || key === "sort";
+    const isText = key === "out" || key === "sort" || key === "credits";
     opts[key] = isText ? value : Number(value);
     if (key === "sort" && !["views", "ratio"].includes(value)) throw new Error(`--sort는 views 또는 ratio입니다: ${value}`);
+    if (key === "credits" && !["only", "all"].includes(value)) throw new Error(`--credits는 only 또는 all입니다: ${value}`);
     if (!isText && !Number.isFinite(opts[key])) throw new Error(`${argv[i - 1]} 값이 숫자가 아닙니다: ${value}`);
   }
   return { opts, queries: queries.length ? queries : DEFAULT_QUERIES };
@@ -171,13 +182,13 @@ async function main() {
   const channelIds = [...new Set(videos.map((v) => v.snippet.channelId))];
   const channels = new Map((await listByIds("channels", "statistics", channelIds, key)).map((c) => [c.id, c]));
 
-  const rows = pickOutliers(videos, channels, opts);
+  const rows = pickOutliers(videos, channels, { ...opts, creditedOnly: opts.credits === "only" });
   const today = new Date().toISOString().slice(0, 10);
   await writeFile(opts.out, toCsv(rows, today));
   const summary = `영상 ${videos.length}개 중 ${rows.length}개가 기준에 맞습니다`;
   console.log(`${summary} → ${opts.out}`);
   if (process.env.GITHUB_STEP_SUMMARY) {
-    const criteria = `최근 ${opts.days}일 · 구독자 ${opts.maxSubs.toLocaleString("ko-KR")} 이하 · 조회수 ${opts.minViews.toLocaleString("ko-KR")} 이상 · ${opts.minRatio}배 이상 · ${opts.sort === "views" ? "조회수" : "배수"} 높은 순 · 검색어: ${queries.join(", ")}`;
+    const criteria = `최근 ${opts.days}일 · 구독자 ${opts.maxSubs.toLocaleString("ko-KR")} 이하 · 조회수 ${opts.minViews.toLocaleString("ko-KR")} 이상 · ${opts.minRatio}배 이상 · ${opts.sort === "views" ? "조회수" : "배수"} 높은 순 · ${opts.credits === "only" ? "원본 출처 있는 영상만" : "출처 상관없이"} · 검색어: ${queries.join(", ")}`;
     await appendFile(process.env.GITHUB_STEP_SUMMARY, `## 해외반응 쇼츠 후보\n\n${criteria}\n\n${summary}.\n\n${rows.length ? toMarkdown(rows) : ""}`);
   }
 }
