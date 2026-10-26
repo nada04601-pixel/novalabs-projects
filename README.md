@@ -76,6 +76,14 @@ npm test         # 정산 로직 등 단위 테스트(Vitest)
 - CSV에는 영상 설명란(앞 300자, 줄바꿈은 한 칸으로)과 "원본 표시"(설명란에 적힌 틱톡·인스타·유튜브 등 SNS 링크와 `@아이디`)도 담습니다. 번역·재업로드 영상의 원작자를 찾을 때 씁니다. 기본은 원본 출처가 적힌 영상만 보여 주고(`--credits only`, 배경음악 출처 줄의 링크는 원본으로 치지 않음), 실행 화면에서 `all`을 고르면 출처 상관없이 모두 봅니다.
 - 로컬 실행: `YOUTUBE_API_KEY=... node scripts/youtube-outliers.mjs [--days 30] [--max-subs 10000] [--min-views 100000] [--min-ratio 10] [--sort views|ratio] [--credits only|all] [검색어 ...]` (결과는 `outlier-shorts.csv`), 테스트는 `scripts/youtube-outliers.test.mjs`.
 
+## 쇼핑 쇼츠 영상 템플릿
+
+- 상품 영상 클립과 대본으로 9:16(1080×1920) 쇼핑 쇼츠를 만듭니다. 사이트와는 따로 쓰는 도구이고 ffmpeg(libass)가 필요합니다.
+- 실행: `node scripts/shopping-shorts.mjs 설정.json` (예시 `scripts/shopping-shorts.example.json`, 파일 경로는 설정 파일 기준).
+- 화면: 위쪽 훅 제목 2줄(둘째 줄 노란색), 가운데 상품 영상(꽉 차게 자르고 짧으면 반복), 아래쪽 어두운 띠(`coverBand`, 원본에 박힌 자막을 가림) 위에 대본 자막 한 줄씩, 마지막 `ctaSeconds`초 구매 안내(`cta`), 맨 아래 광고 표시 문구(`disclosure`, 넣었을 때만). 글꼴은 Pretendard.
+- 시간: `narration`(음성 파일)이 있으면 그 길이를 대본 글자 수 비율로 나누고, 없으면 줄마다 글자당 0.15초 + 0.3초(최소 1.2초). 소리는 내레이션·배경 음악(`bgm`, `bgmVolume` 기본 0.12)·원본 소리(`originalAudio` 배율, 기본 0)를 섞고, 하나도 없으면 무음 트랙을 넣습니다.
+- 테스트: `scripts/shopping-shorts.test.mjs`
+
 ## 새 계산기 추가 (3단계)
 1. `src/lib/calculators/`에 계산 함수 작성
 2. `src/components/`에 입력·결과 컴포넌트 작성
