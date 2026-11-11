@@ -9,6 +9,9 @@ describe("국가교통정보센터 CCTV", () => {
     const reqs = itsRequests(cams, "KEY");
     expect(reqs.map((r) => r.type)).toEqual(["its"]);
     const q = new URL(reqs[0].url).searchParams;
+    // 강릉IC와 속초 CCTV를 한 번에 덮는다
+    expect(Number(q.get("maxY"))).toBeGreaterThan(38.1899);
+    expect(Number(q.get("minX"))).toBeLessThan(128.5954);
     expect(q.get("apiKey")).toBe("KEY");
     expect(q.get("cctvType")).toBe("4");
     expect(Number(q.get("minX"))).toBeLessThan(cam.lng);
@@ -33,6 +36,9 @@ describe("국가교통정보센터 CCTV", () => {
       { cctvname: "[국도35] 강릉 강릉IC", cctvurl: "http://x/2", coordx: 128.854423, coordy: 37.737599 },
     ];
     expect(matchStreams(cams, "its", items)).toEqual({ "kr-gangneung-tollgate": "https://x/2" });
+    // 속초: 장소(해변)에서 581m 떨어진 CCTV라도 적어 둔 CCTV 좌표 근처면 이름이 달라도 찾는다
+    const sokcho = { cctvname: "[국도7] 속초 고속터미널", cctvurl: "https://x/3", coordx: 128.59545, coordy: 38.18992 };
+    expect(matchStreams(cams, "its", [sokcho])).toEqual({ "kr-sokcho-beach": "https://x/3" });
     // 이름이 바뀌어도 300m 안이면 같은 CCTV로 본다
     expect(matchStreams(cams, "its", [{ ...items[1], cctvname: "강릉IC(변경)" }])).toEqual({ "kr-gangneung-tollgate": "https://x/2" });
     // 멀리 있는 다른 CCTV는 쓰지 않는다

@@ -87,7 +87,9 @@ const STREAMS_TTL = 20 * 3600;
 async function camStreams(env: Env, ctx: Ctx): Promise<Response> {
   if (!env.ITS_API_KEY) return json({ error: "Worker에 ITS_API_KEY 비밀값이 설정되지 않았습니다." }, 503);
   const cache = await caches.open("cams");
-  const key = new Request("https://cache.internal/cams/streams-v1");
+  // ITS로 연결한 장소가 바뀌면(추가·이름 변경) 캐시 키도 바뀌어 바로 새로 받습니다.
+  const ids = cams.filter((c) => c.itsCctv).map((c) => `${c.id}:${c.itsCctv!.name}`).join("|");
+  const key = new Request(`https://cache.internal/cams/streams-v2?${encodeURIComponent(ids)}`);
   const hit = await cache.match(key);
   if (hit) return new Response(hit.body, { headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=600" } });
 

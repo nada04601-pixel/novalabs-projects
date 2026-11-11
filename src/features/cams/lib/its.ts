@@ -7,12 +7,15 @@ export const ITS_API = "https://openapi.its.go.kr:9443/cctvInfo";
 
 const MARGIN = 0.02; // 위경도 범위 여유(약 2km)
 
+// CCTV 위치: 따로 적은 CCTV 좌표가 있으면 그것, 없으면 장소 좌표
+const spot = (c: Cam) => ({ lat: c.itsCctv?.lat ?? c.lat, lng: c.itsCctv?.lng ?? c.lng });
+
 // 도로 유형별 요청 주소
 export function itsRequests(list: Cam[], apiKey: string): { type: ItsRoad; url: string }[] {
   const types = [...new Set(list.filter((c) => c.itsCctv).map((c) => c.itsCctv!.type))];
   return types.map((type) => {
-    const sel = list.filter((c) => c.itsCctv?.type === type);
-    const lng = sel.map((c) => c.lng), lat = sel.map((c) => c.lat);
+    const sel = list.filter((c) => c.itsCctv?.type === type).map(spot);
+    const lng = sel.map((p) => p.lng), lat = sel.map((p) => p.lat);
     const q = new URLSearchParams({
       apiKey, type, cctvType: "4",
       minX: (Math.min(...lng) - MARGIN).toFixed(4), maxX: (Math.max(...lng) + MARGIN).toFixed(4),
@@ -45,8 +48,9 @@ export function matchStreams(list: Cam[], type: ItsRoad, items: ItsItem[]): Reco
   for (const c of list) {
     if (c.itsCctv?.type !== type) continue;
     const exact = items.find((i) => i.cctvname === c.itsCctv!.name);
+    const p = spot(c);
     const near = items
-      .map((i) => ({ i, d: Math.hypot((Number(i.coordx) - c.lng) * 88, (Number(i.coordy) - c.lat) * 111) }))
+      .map((i) => ({ i, d: Math.hypot((Number(i.coordx) - p.lng) * 88, (Number(i.coordy) - p.lat) * 111) }))
       .filter((x) => x.d <= 0.3)
       .sort((a, b) => a.d - b.d)[0]?.i;
     const hit = exact ?? near;

@@ -18,7 +18,8 @@ export interface Cam {
   // 유튜브가 아닌 실시간 영상(HLS, .m3u8). 국가교통정보센터(ITS) CCTV처럼 http로 받은 주소도 https로 바꿔 재생합니다.
   hlsUrl?: string;
   // 국가교통정보센터(ITS) CCTV. 주소가 24시간마다 바뀌므로 이름만 적어 두고 Worker(/api/cams/streams)에서 그때그때 받습니다.
-  itsCctv?: { type: ItsRoad; name: string };
+  // CCTV가 장소 표시 위치에서 떨어져 있으면 lat·lng에 CCTV 좌표를 적습니다(이름이 바뀌었을 때 이 좌표 근처에서 찾음).
+  itsCctv?: { type: ItsRoad; name: string; lat?: number; lng?: number };
   // 영상 출처. 플레이어 아래와 카드에 "○○ 제공"으로 표시합니다. 링크가 없으면 유튜브 영상(채널) 주소로 연결합니다.
   sourceName?: string;
   sourceUrl?: string;
