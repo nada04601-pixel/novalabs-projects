@@ -20,7 +20,8 @@ export type NetSalaryResult = {
   annualNet: number;
 };
 
-const floor10 = (n: number) => Math.floor(n / 10) * 10;
+// 10원 미만 버림. 3,000,000 × 0.009가 26,999.999…로 계산되는 소수 오차 때문에 10원이 덜 나오지 않게, 먼저 소수 둘째 자리에서 반올림합니다.
+const floor10 = (n: number) => Math.floor(Math.round(n * 100) / 1000) * 10;
 
 function earnedIncomeDeduction(g: number) {
   let d: number;

@@ -11,7 +11,8 @@ export default function RentConversionCalculator() {
   const [newDeposit, setNewDeposit] = useState("200000000");
   const [rent, setRent] = useState("1000000");
   const [rate, setRate] = useState("4.5");
-  const [baseRate, setBaseRate] = useState("2.5");
+  // 한국은행 기준금리 기본값: 2026-08-27부터 연 3.00%(2026-11-23 한국은행 누리집 확인)
+  const [baseRate, setBaseRate] = useState("3");
 
   const annualRate = Math.min(num(rate), 100) / 100;
   const cap = legalConversionCap(Math.min(num(baseRate), 100) / 100);

@@ -2,7 +2,7 @@
 // 출처: 국민연금공단, 국민건강보험공단, 고용노동부, 국세청 / 확인일 2026-10
 export const RATES = {
   year: 2026,
-  checkedAt: "2026년 10월",
+  checkedAt: "2026년 11월",
   pension: { rate: 0.0475, minBase: 410_000, maxBase: 6_590_000 }, // 근로자 부담 4.75%, 2026.7~2027.6 상·하한
   health: { rate: 0.03595 }, // 근로자 부담 3.595%
   longTermCare: { rateOfHealth: 0.1314 }, // 건강보험료의 13.14%

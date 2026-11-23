@@ -6,6 +6,8 @@ import { getTool } from "@/data/tools";
 import { site } from "@/data/site";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ShareButtons from "@/components/ShareButtons";
+import AuthorBox from "@/components/AuthorBox";
+import { ContentSections, SourceList } from "@/components/ContentSections";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -37,22 +39,25 @@ export default async function GuidePage({ params }: Props) {
       <Breadcrumbs items={[{ label: "가이드", href: "/guides" }, { label: guide.title }]} />
       <h1>{guide.title}</h1>
       <p className="meta">
-        <time dateTime={guide.date}>{guide.date.replaceAll("-", ".")}</time> · {site.name}
+        <time dateTime={guide.date}>{guide.date.replaceAll("-", ".")}</time>
+        {guide.updated && guide.updated !== guide.date && (
+          <> · 고침 <time dateTime={guide.updated}>{guide.updated.replaceAll("-", ".")}</time></>
+        )}{" "}
+        · {site.operator.name}
       </p>
       <p className="lead">{guide.description}</p>
 
-      {guide.sections.map((s) => (
-        <section key={s.heading}>
-          <h2>{s.heading}</h2>
-          {s.body.map((para, i) => <p key={i}>{para}</p>)}
-        </section>
-      ))}
+      <ContentSections sections={guide.sections} />
 
       {toolLink && (
         <p>
           <Link className="btn" href={toolLink.href}>{toolLink.title} 바로가기</Link>
         </p>
       )}
+
+      {guide.sources && <SourceList sources={guide.sources} checked={guide.updated} />}
+
+      <AuthorBox updated={guide.updated} />
 
       <ShareButtons title={guide.title} path={`/guides/${guide.slug}`} />
 
@@ -78,8 +83,9 @@ export default async function GuidePage({ params }: Props) {
             headline: guide.title,
             description: guide.description,
             datePublished: guide.date,
-            dateModified: guide.date,
-            author: { "@type": "Organization", name: site.name, url: site.url },
+            dateModified: guide.updated ?? guide.date,
+            author: { "@type": "Organization", name: site.operator.name, url: `${site.url}/about` },
+            publisher: { "@type": "Organization", name: site.name, url: site.url },
             mainEntityOfPage: `${site.url}/guides/${guide.slug}`,
           }),
         }}
