@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   title: `${title} (최신 ${latestDraw.no}회·1회부터 전체)`,
   description: `로또 6/45 최신 ${latestDraw.no}회(${latestDraw.date}) 당첨번호 ${latestDraw.nums.join(", ")} 보너스 ${latestDraw.bonus}와 1~5등 당첨금, 1등 배출점, 1회부터 전체 당첨번호 검색, 번호별 출현 횟수를 확인하세요.`,
   alternates: { canonical: "/lotto" },
+  // 애드센스 심사 동안 검색 결과·메뉴·사이트맵에서 뺍니다(대표 결정 2026-11-23, src/data/nav.ts HIDDEN_PAGES).
+  robots: { index: false, follow: true },
 };
 
 const faq = [

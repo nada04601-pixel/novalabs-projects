@@ -9,6 +9,8 @@ export default function UnemploymentCalculator() {
   const [hours, setHours] = useState("8");
   const [period, setPeriod] = useState<InsuredPeriod>("1to3");
   const [age, setAge] = useState<"under50" | "over50">("under50");
+  // 월 통상임금은 비워 두면 평균임금만으로 계산합니다.
+  const [ordinary, setOrdinary] = useState("");
 
   const r = calcUnemployment({
     wages3m: num(wages),
@@ -16,6 +18,7 @@ export default function UnemploymentCalculator() {
     dailyHours: num(hours),
     period,
     over50OrDisabled: age === "over50",
+    monthlyOrdinaryWage: num(ordinary),
   });
 
   return (
@@ -45,6 +48,9 @@ export default function UnemploymentCalculator() {
             <option value="over50">50세 이상 또는 장애인</option>
           </select>
         </label>
+        <label>월 통상임금 (선택: 기본급 + 매달 고정 수당)
+          <input inputMode="numeric" placeholder="예: 3000000" value={ordinary} onChange={(e) => setOrdinary(e.target.value)} />
+        </label>
       </div>
 
       <div className="result" aria-live="polite">
@@ -53,12 +59,17 @@ export default function UnemploymentCalculator() {
           <strong>{won(r.total)}</strong>
           <small>하루 {won(r.daily)} × {r.days}일 · 한 달(30일) 약 {won(r.monthly)}</small>
         </div>
-        {r.raw < r.lower && <p className="warn">평균임금의 60%가 하한액보다 적어 하한액이 적용됩니다.</p>}
-        {r.raw > r.upper && <p className="warn">평균임금의 60%가 상한액보다 많아 상한액이 적용됩니다.</p>}
+        {r.usesOrdinary && <p className="warn">1일 평균임금이 1일 통상임금보다 적어, 법에 따라 통상임금을 기준으로 계산했습니다.</p>}
+        {r.raw < r.lower && <p className="warn">기준 임금의 60%가 하한액보다 적어 하한액이 적용됩니다.</p>}
+        {r.raw > r.upper && <p className="warn">기준 임금의 60%가 상한액보다 많아 상한액이 적용됩니다.</p>}
+        {r.ordinaryDaily === 0 && (
+          <p className="note-sm">월급이 대부분 기본급과 고정 수당이라면 월 통상임금 칸도 채워 보세요. 통상임금이 평균임금보다 크면 통상임금을 기준으로 계산합니다.</p>
+        )}
         <table>
           <tbody>
             <tr><th>1일 평균임금</th><td>{won(r.avgDaily)}</td></tr>
-            <tr><th>평균임금의 60%</th><td>{won(r.raw)}</td></tr>
+            {r.ordinaryDaily > 0 && <tr><th>1일 통상임금 (월 통상임금 ÷ 209 × 8)</th><td>{won(r.ordinaryDaily)}</td></tr>}
+            <tr><th>기준 임금({r.usesOrdinary ? "통상임금" : "평균임금"})의 60%</th><td>{won(r.raw)}</td></tr>
             <tr><th>1일 하한액 / 상한액</th><td>{won(r.lower)} / {won(r.upper)}</td></tr>
             <tr><th>소정급여일수</th><td>{r.days}일</td></tr>
             <tr className="sum"><th>구직급여 일액</th><td>{won(r.daily)}</td></tr>

@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { DIGITAL_CATEGORIES, getTool, tools } from "@/data/tools";
-import { hasEn } from "@/lib/i18n";
+import { DIGITAL_CATEGORIES, getTool, isHiddenTool, tools } from "@/data/tools";
 import { RATES } from "@/data/rates/2026";
+import { toolExtras } from "@/data/extras";
+import { ContentSections, SourceList } from "@/components/ContentSections";
 import Link from "next/link";
 import { guidesForTool } from "@/data/guides";
 import ToolSidebar from "@/components/ToolSidebar";
@@ -76,13 +77,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: tool.title,
     description: tool.metaDescription,
-    alternates: {
-      canonical: `/tools/${tool.slug}`,
-      // 영어 버전이 있는 도구는 언어별 페이지를 서로 알려 줍니다(hreflang).
-      ...(hasEn(tool.slug) && {
-        languages: { ko: `/tools/${tool.slug}`, en: `/en/tools/${tool.slug}`, "x-default": `/tools/${tool.slug}` },
-      }),
-    },
+    // 영어 페이지가 심사 동안 noindex라 언어별 주소(hreflang)는 알리지 않습니다.
+    alternates: { canonical: `/tools/${tool.slug}` },
+    // 숨긴 도구는 검색 결과에서 뺍니다.
+    ...(isHiddenTool(tool.slug) && { robots: { index: false, follow: true } }),
   };
 }
 
@@ -149,10 +147,11 @@ export default async function ToolPage({ params }: Props) {
   const tool = getTool((await params).slug);
   if (!tool) notFound();
   const related = guidesForTool(tool.slug);
+  const extra = toolExtras[tool.slug];
 
+  // 본문(article)을 먼저 두고 왼쪽 메뉴는 뒤에 둡니다. 화면에서는 CSS 격자로 메뉴가 왼쪽에 보입니다.
   return (
     <div className="w wide page with-side">
-      <ToolSidebar current={`/tools/${tool.slug}`} />
       <article>
       <Breadcrumbs items={[{ label: "도구함", href: "/tools" }, { label: tool.category, href: "/tools" }, { label: tool.title }]} />
       <span className="badge">{tool.category}</span>
@@ -167,6 +166,8 @@ export default async function ToolPage({ params }: Props) {
         </section>
       ))}
 
+      {extra && <ContentSections sections={extra.sections} />}
+
       <section>
         <h2>자주 묻는 질문</h2>
         {tool.faq.map((f) => (
@@ -176,6 +177,8 @@ export default async function ToolPage({ params }: Props) {
           </details>
         ))}
       </section>
+
+      {extra && <SourceList sources={extra.sources} checked={extra.updated} />}
 
       <ShareButtons title={tool.title} path={`/tools/${tool.slug}`} />
 
@@ -213,6 +216,7 @@ export default async function ToolPage({ params }: Props) {
         }}
       />
       </article>
+      <ToolSidebar current={`/tools/${tool.slug}`} />
     </div>
   );
 }

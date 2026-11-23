@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { site } from "@/data/site";
-import { tools } from "@/data/tools";
+import { listedTools as tools } from "@/data/tools";
 import { RATES } from "@/data/rates/2026";
 
 export const metadata: Metadata = { title: "소개" };
@@ -36,7 +36,12 @@ export default function About() {
       <p>계산 결과는 일반적인 기준을 적용한 추정치입니다. 회사의 급여 규정, 금융회사의 상품 조건, 개별 사정에 따라 실제 금액은 달라질 수 있습니다. 중요한 결정을 내리기 전에는 급여명세서, 상품설명서, 관계 기관 안내로 최종 금액을 확인하세요. 법률이나 세무 판단이 필요한 경우에는 전문가와 상담하는 것이 안전합니다.</p>
 
       <h2>운영자</h2>
-      <p>소프트웨어 개발 회사 노바랩스의 웹 개발자가 직접 만들고 운영합니다. 계산 오류나 바뀐 제도를 발견하셨다면 <Link href="/contact">문의 페이지</Link>나 {site.email}로 알려주세요. 확인 후 빠르게 반영하겠습니다.</p>
+      <p>{site.operator.bio}</p>
+      <p>계산 공식은 한곳(계산 코드)에만 두고, 계산기 화면과 가이드 글의 예시·표가 모두 그 코드를 함께 씁니다. 그래서 요율이 바뀌면 한 번 고친 값이 계산기와 글에 같이 반영되고, 글에서 본 숫자와 계산기에 넣어 본 숫자가 서로 다르지 않습니다.</p>
+
+      <h2>글을 쓰고 고치는 방법</h2>
+      <p>가이드 글은 관계 기관 안내와 법령 원문을 먼저 확인하고 씁니다. 보강한 글에는 아래쪽에 참고한 자료 목록과 확인한 날짜를 적어, 어떤 자료를 언제 기준으로 썼는지 바로 볼 수 있게 했습니다. 고친 글은 제목 아래에 고친 날짜를 함께 표시합니다.</p>
+      <p>계산 오류나 바뀐 제도를 발견하셨다면 <Link href="/contact">문의 페이지</Link>나 {site.email}로 알려주세요. 확인 후 빠르게 반영하겠습니다.</p>
     </div>
   );
 }

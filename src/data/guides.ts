@@ -1,13 +1,17 @@
 import { RATES } from "@/data/rates/2026";
 import { calcNetSalary } from "@/lib/calculators/netSalary";
+import type { ContentSection, Source } from "@/data/content";
+import { guideExtras } from "@/data/extras";
 
 export type Guide = {
   slug: string;
   title: string;
   description: string;
   date: string; // 공개일 YYYY-MM-DD. 빌드 날짜(한국 시간)보다 미래면 아직 공개하지 않습니다.
+  updated?: string; // 마지막으로 고친 날(보강한 글만). 글에 "최종 확인"으로 보입니다.
   tool?: string; // 관련 계산기 슬러그
-  sections: { heading: string; body: string[] }[];
+  sections: ContentSection[];
+  sources?: Source[]; // 참고한 자료(관계 기관·법령 원문)
 };
 
 const n = (v: number) => v.toLocaleString("ko-KR");
@@ -756,7 +760,7 @@ const allGuides: Guide[] = [
       {
         heading: "법정 상한이 있습니다",
         body: [
-          "주택임대차보호법은 계약 기간 중이나 계약을 갱신하면서 보증금을 월세로 바꿀 때 전환율의 상한을 정해 두었습니다. 상한은 연 10%와 '한국은행 기준금리 + 연 2%' 가운데 낮은 비율입니다. 기준금리가 연 2.5%라면 상한은 연 4.5%입니다.",
+          "주택임대차보호법은 계약 기간 중이나 계약을 갱신하면서 보증금을 월세로 바꿀 때 전환율의 상한을 정해 두었습니다. 상한은 연 10%와 '한국은행 기준금리 + 연 2%' 가운데 낮은 비율입니다. 예를 들어 한국은행 기준금리가 연 3.00%(2026년 8월 27일부터)라면 상한은 연 5%입니다.",
           "이 상한은 기존 계약을 바꿀 때 적용되며, 새로 계약하는 경우에는 당사자가 자유롭게 정합니다. 계약 갱신 때 집주인이 보증금이나 월세를 올리는 것도 기존 금액의 5% 이내로 제한됩니다.",
         ],
       },
@@ -874,7 +878,7 @@ const allGuides: Guide[] = [
       {
         heading: "야간근로와 휴일근로",
         body: [
-          "오후 10시부터 다음 날 오전 6시 사이에 일하면 야간근로로 50%를 더 받습니다. 휴일근로는 주휴일이나 근로자의 날, 공휴일처럼 쉬는 날에 일한 경우로, 8시간까지는 50%, 8시간을 넘는 부분은 100%를 더 받습니다.",
+          "오후 10시부터 다음 날 오전 6시 사이에 일하면 야간근로로 50%를 더 받습니다. 휴일근로는 주휴일이나 노동절(옛 근로자의 날), 공휴일처럼 쉬는 날에 일한 경우로, 8시간까지는 50%, 8시간을 넘는 부분은 100%를 더 받습니다.",
           "가산은 겹쳐서 적용됩니다. 연장근로가 오후 10시 이후까지 이어졌다면 연장 50%와 야간 50%가 함께 붙어 그 시간은 통상임금의 2배가 됩니다.",
         ],
       },
@@ -1028,7 +1032,7 @@ const allGuides: Guide[] = [
         heading: "받기 위한 조건",
         body: [
           "과세기간 종료일(12월 31일) 기준으로 무주택 세대의 세대주여야 합니다. 세대주가 주택 관련 공제를 받지 않았다면 세대원도 받을 수 있습니다.",
-          "집은 국민주택규모(전용 85㎡) 이하이거나 기준시가 4억 원 이하여야 하며, 오피스텔과 고시원도 포함됩니다. 임대차계약서의 주소와 주민등록 주소가 같아야 하므로 전입신고를 꼭 해 두세요.",
+          "집은 국민주택규모(전용 85㎡, 수도권 밖 도시지역이 아닌 읍·면은 100㎡) 이하이거나 기준시가 4억 원 이하여야 하며, 오피스텔과 고시원도 포함됩니다. 2026년부터는 기본공제를 받는 자녀·손자녀가 3명 이상이면 전용 100㎡ 이하까지 인정됩니다. 임대차계약서의 주소와 주민등록 주소가 같아야 하므로 전입신고를 꼭 해 두세요.",
         ],
       },
       {
@@ -3452,7 +3456,22 @@ const allGuides: Guide[] = [
 // 빌드 시점(한국 시간)에 공개일이 지난 글만 내보냅니다. 예약한 글은 공개일 이후 다시 배포하면 나타납니다.
 const today = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
+// 보강한 글(src/data/extras)은 원래 글 뒤에 소제목을 붙이거나 글 전체를 바꿉니다.
+const withExtra = (g: Guide): Guide => {
+  const x = guideExtras[g.slug];
+  if (!x) return g;
+  return {
+    ...g,
+    title: x.title ?? g.title,
+    description: x.description ?? g.description,
+    updated: x.updated,
+    sections: x.mode === "replace" ? x.sections : [...g.sections, ...x.sections],
+    sources: x.sources,
+  };
+};
+
 export const guides: Guide[] = allGuides
+  .map(withExtra)
   .filter((g) => g.date <= today)
   .sort((a, b) => b.date.localeCompare(a.date));
 
