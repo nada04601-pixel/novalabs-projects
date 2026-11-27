@@ -2,6 +2,7 @@ import { RATES } from "@/data/rates/2026";
 import { calcNetSalary } from "@/lib/calculators/netSalary";
 import type { ContentSection, Source } from "@/data/content";
 import { guideExtras } from "@/data/extras";
+import { guidesDec } from "@/data/guidesDec";
 
 export type Guide = {
   slug: string;
@@ -760,7 +761,7 @@ const allGuides: Guide[] = [
       {
         heading: "법정 상한이 있습니다",
         body: [
-          "주택임대차보호법은 계약 기간 중이나 계약을 갱신하면서 보증금을 월세로 바꿀 때 전환율의 상한을 정해 두었습니다. 상한은 연 10%와 '한국은행 기준금리 + 연 2%' 가운데 낮은 비율입니다. 예를 들어 한국은행 기준금리가 연 3.00%(2026년 8월 27일부터)라면 상한은 연 5%입니다.",
+          "주택임대차보호법은 계약 기간 중이나 계약을 갱신하면서 보증금을 월세로 바꿀 때 전환율의 상한을 정해 두었습니다. 상한은 연 10%와 '한국은행 기준금리 + 연 2%' 가운데 낮은 비율입니다. 예를 들어 한국은행 기준금리가 연 3.25%(2026년 11월 26일부터)라면 상한은 연 5.25%입니다.",
           "이 상한은 기존 계약을 바꿀 때 적용되며, 새로 계약하는 경우에는 당사자가 자유롭게 정합니다. 계약 갱신 때 집주인이 보증금이나 월세를 올리는 것도 기존 금액의 5% 이내로 제한됩니다.",
         ],
       },
@@ -3470,7 +3471,10 @@ const withExtra = (g: Guide): Guide => {
   };
 };
 
-export const guides: Guide[] = allGuides
+// 예약 글까지 모두 포함한 목록(시험에서 날짜·슬러그 겹침을 확인할 때 씁니다).
+export const scheduledGuides: Guide[] = [...allGuides, ...guidesDec];
+
+export const guides: Guide[] = scheduledGuides
   .map(withExtra)
   .filter((g) => g.date <= today)
   .sort((a, b) => b.date.localeCompare(a.date));

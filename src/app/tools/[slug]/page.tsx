@@ -9,6 +9,9 @@ import { guidesForTool } from "@/data/guides";
 import ToolSidebar from "@/components/ToolSidebar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NetSalaryCalculator from "@/components/NetSalaryCalculator";
+import SocialInsuranceCalculator from "@/components/SocialInsuranceCalculator";
+import CarTaxCalculator from "@/components/CarTaxCalculator";
+import ElectricityCalculator from "@/components/ElectricityCalculator";
 import SeveranceCalculator from "@/components/SeveranceCalculator";
 import LoanCalculator from "@/components/LoanCalculator";
 import SavingsCalculator from "@/components/SavingsCalculator";
@@ -87,6 +90,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // 새 도구를 추가하면 여기에 슬러그와 컴포넌트를 연결하세요.
 const calculators: Record<string, React.ReactNode> = {
   "net-salary": <NetSalaryCalculator />,
+  "social-insurance": <SocialInsuranceCalculator />,
   "severance-pay": <SeveranceCalculator />,
   "loan-interest": <LoanCalculator />,
   "savings-interest": <SavingsCalculator />,
@@ -102,6 +106,8 @@ const calculators: Record<string, React.ReactNode> = {
   mbti: <MbtiTest />,
   percent: <PercentCalculator />,
   vat: <VatCalculator />,
+  "car-tax": <CarTaxCalculator />,
+  "electricity-bill": <ElectricityCalculator />,
   "wage-converter": <WageConverterCalculator />,
   "unemployment-benefit": <UnemploymentCalculator />,
   "savings-goal": <SavingsGoalCalculator />,
