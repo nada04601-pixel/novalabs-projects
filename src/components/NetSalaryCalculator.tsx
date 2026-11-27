@@ -41,7 +41,7 @@ export default function NetSalaryCalculator() {
         <label>부양가족 수 (본인 포함)
           <input inputMode="numeric" value={dependents} onChange={(e) => setDependents(e.target.value)} />
         </label>
-        <label>8~20세 자녀 수
+        <label>9~20세 자녀 수
           <input inputMode="numeric" value={children} onChange={(e) => setChildren(e.target.value)} />
         </label>
       </div>

@@ -20,8 +20,8 @@ export const krw = (v: number) => {
 // 소수 자리 고정: 25.4
 export const fx = (v: number, d = 1) => v.toLocaleString("ko-KR", { minimumFractionDigits: d, maximumFractionDigits: d });
 
-// 한국은행 기준금리(연). 2026년 8월 27일 연 3.00%로 변경, 2026년 11월 23일 한국은행 누리집에서 확인.
+// 한국은행 기준금리(연). 2026년 11월 26일 연 3.25%로 변경(직전 3.00%, 2026-08-27부터), 2026년 11월 27일 한국은행 누리집에서 확인.
 // 금리가 바뀌면 아래 세 값만 고치면 묶음 d의 전월세 전환 표와 문장이 함께 바뀝니다.
-export const BASE_RATE = 0.03;
-export const BASE_RATE_CHANGED = "2026년 8월 27일";
-export const BASE_RATE_CHECKED = "2026년 11월 23일";
+export const BASE_RATE = 0.0325;
+export const BASE_RATE_CHANGED = "2026년 11월 26일";
+export const BASE_RATE_CHECKED = "2026년 11월 27일";

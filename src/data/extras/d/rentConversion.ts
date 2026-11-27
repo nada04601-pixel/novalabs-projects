@@ -7,7 +7,7 @@ import { BASE_RATE, BASE_RATE_CHANGED, BASE_RATE_CHECKED, krw, pr, won } from ".
 const cap = legalConversionCap(BASE_RATE);
 const monthly = (amount: number, rate: number) => depositToRent(amount, 0, rate).monthlyRent;
 
-// 기준금리별 상한 표: 2.50%(2025.5~2026.7), 2.75%(2026.7~8), 3.00%(2026.8~), 3.25%·3.50%는 가정
+// 기준금리별 상한 표: 2.50%(2025.5~2026.7), 2.75%(2026.7~8), 3.00%(2026.8~11), 3.25%(2026.11.26~), 3.50%는 가정
 const baseRates = [0.025, 0.0275, 0.03, 0.0325, 0.035];
 const step = monthly(100_000_000, 0.0025);
 
@@ -30,7 +30,7 @@ const r2dRent = 800_000;
 const r2dRates = [0.04, cap, 0.06, 0.07];
 
 export const rentConversionGuideExtra: GuideExtra = {
-  updated: "2026-11-23",
+  updated: "2026-11-27",
   mode: "append",
   sections: [
     {
@@ -48,7 +48,7 @@ export const rentConversionGuideExtra: GuideExtra = {
           won(monthly(50_000_000, legalConversionCap(b))),
           won(monthly(100_000_000, legalConversionCap(b))),
         ]),
-        note: `월세 = 전환하는 보증금 × 상한 ÷ 12, 원 단위 반올림. 기준금리 연 2.5%는 2025년 5월부터 2026년 7월까지, 2.75%는 2026년 7월부터 8월까지의 값이고 3.25%·3.5%는 비교를 위한 가정입니다. '현재'는 ${BASE_RATE_CHECKED} 확인 기준입니다.`,
+        note: `월세 = 전환하는 보증금 × 상한 ÷ 12, 원 단위 반올림. 기준금리 연 2.5%는 2025년 5월부터 2026년 7월까지, 2.75%는 2026년 7월부터 8월까지, 3.00%는 2026년 8월부터 11월까지의 값이고 3.5%는 비교를 위한 가정입니다. '현재'는 ${BASE_RATE_CHECKED} 확인 기준입니다.`,
       },
       after: [
         `기준금리가 0.25%포인트 오르면 상한도 0.25%포인트 오르고, 전환하는 보증금 1억 원당 월세 상한은 약 ${won(step)} 늘어납니다. 기준금리는 한국은행 금융통화위원회가 정하므로, 전환을 협의하는 날의 금리를 다시 확인하세요.`,
@@ -117,7 +117,7 @@ const oneEok = depositToRent(100_000_000, 0, cap);
 const oneEokCredit = calcRentTaxCredit(45_000_000, oneEok.monthlyRent, 12);
 
 export const rentConversionToolExtra: ToolExtra = {
-  updated: "2026-11-23",
+  updated: "2026-11-27",
   sections: [
     {
       heading: "지금 기준금리로 계산한 상한 월세",

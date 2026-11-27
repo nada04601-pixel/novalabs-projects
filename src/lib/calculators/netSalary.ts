@@ -4,7 +4,7 @@ export type NetSalaryInput = {
   annualSalary: number; // 세전 연봉(원)
   monthlyNonTaxable: number; // 월 비과세액(원)
   dependents: number; // 본인 포함 부양가족 수
-  children: number; // 8세 이상 20세 이하 자녀 수
+  children: number; // 자녀세액공제 대상 자녀 수(2026년분 9세 이상 20세 이하, 소득세법 제59조의2·부칙 <법률 제21548호> 제2조, 확인 2026-11-27)
 };
 
 export type NetSalaryResult = {
